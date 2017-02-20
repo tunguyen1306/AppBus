@@ -7,53 +7,55 @@ import com.j256.ormlite.table.DatabaseTable;
 @DatabaseTable(tableName = "DmTuyenChiTietTram")
 public class DmTuyenChiTietTram {
     @DatabaseField
-    private Integer  id;
+    private Integer  ID;
     @DatabaseField
-    private String idTuyen;
+    private String IDTUYEN;
     @DatabaseField
-    private String maTram;
+    private String MATRAM;
     @DatabaseField
-    private Boolean tramDau;
+    private Boolean TRAMDAU;
     @DatabaseField
-    private Boolean tramCuoi;
+    private Boolean TRAMCUOI;
+
+
 
     public Integer getId() {
-        return id;
+        return ID;
     }
 
     public void setId(Integer id) {
-        this.id = id;
+        this.ID = id;
     }
 
     public String getIdTuyen() {
-        return idTuyen;
+        return IDTUYEN;
     }
 
     public void setIdTuyen(String idTuyen) {
-        this.idTuyen = idTuyen;
+        this.IDTUYEN = idTuyen;
     }
 
     public String getMaTram() {
-        return maTram;
+        return MATRAM;
     }
 
     public void setMaTram(String maTram) {
-        this.maTram = maTram;
+        this.MATRAM = maTram;
     }
 
     public Boolean getTramDau() {
-        return tramDau;
+        return TRAMDAU;
     }
 
     public void setTramDau(Boolean tramDau) {
-        this.tramDau = tramDau;
+        this.TRAMDAU = tramDau;
     }
 
     public Boolean getTramCuoi() {
-        return tramCuoi;
+        return TRAMCUOI;
     }
 
     public void setTramCuoi(Boolean tramCuoi) {
-        this.tramCuoi = tramCuoi;
+        this.TRAMCUOI = tramCuoi;
     }
 }

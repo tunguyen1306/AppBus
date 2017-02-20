@@ -8,53 +8,57 @@ import com.j256.ormlite.table.DatabaseTable;
 @DatabaseTable(tableName = "DmXe")
 public class DmXe {
     @DatabaseField
-    private String maXe;
+    private String MAXE;
     @DatabaseField
-    private String soXe;
+    private String SOXE;
     @DatabaseField
-    private String loaiXe;
+    private String LOAIXE;
     @DatabaseField
-    private String maTaiXe;
+    private String MATAIXE;
     @DatabaseField
-    private String soGhe;
+    private String SOGHE;
+
+    public DmXe(String MAXE,String SOXE,String LOAIXE,String MATAIXE,String SOGHE){
+
+    }
 
     public String getMaXe() {
-        return maXe;
+        return MAXE;
     }
 
     public void setMaXe(String maXe) {
-        this.maXe = maXe;
+        this.MAXE = maXe;
     }
 
     public String getSoXe() {
-        return soXe;
+        return SOXE;
     }
 
     public void setSoXe(String soXe) {
-        this.soXe = soXe;
+        this.SOXE = soXe;
     }
 
     public String getLoaiXe() {
-        return loaiXe;
+        return LOAIXE;
     }
 
     public void setLoaiXe(String loaiXe) {
-        this.loaiXe = loaiXe;
+        this.LOAIXE = loaiXe;
     }
 
     public String getMaTaiXe() {
-        return maTaiXe;
+        return MATAIXE;
     }
 
     public void setMaTaiXe(String maTaiXe) {
-        this.maTaiXe = maTaiXe;
+        this.MATAIXE = maTaiXe;
     }
 
     public String getSoGhe() {
-        return soGhe;
+        return SOGHE;
     }
 
     public void setSoGhe(String soGhe) {
-        this.soGhe = soGhe;
+        this.SOGHE = soGhe;
     }
 }

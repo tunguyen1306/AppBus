@@ -7,63 +7,65 @@ import com.j256.ormlite.table.DatabaseTable;
 @DatabaseTable(tableName = "LoTrinhChoXe")
 public class LoTrinhChoXe {
     @DatabaseField
-    private Integer idLoTrinh;
+    private Integer IDLOTRINH;
     @DatabaseField
-    private String maXe;
+    private String MAXE;
     @DatabaseField
-    private String idTuyen;
+    private String IDTUYEN;
     @DatabaseField
-    private String maTaiXe;
+    private String MATAIXE;
     @DatabaseField
-    private Boolean cam;
+    private Boolean CAM;
     @DatabaseField
-    private Boolean kichHoat;
+    private Boolean KICHHOAT;
+
+
 
     public Integer getIdLoTrinh() {
-        return idLoTrinh;
+        return IDLOTRINH;
     }
 
     public void setIdLoTrinh(Integer idLoTrinh) {
-        this.idLoTrinh = idLoTrinh;
+        this.IDLOTRINH = idLoTrinh;
     }
 
     public String getMaXe() {
-        return maXe;
+        return MAXE;
     }
 
     public void setMaXe(String maXe) {
-        this.maXe = maXe;
+        this.MAXE = maXe;
     }
 
     public String getIdTuyen() {
-        return idTuyen;
+        return IDTUYEN;
     }
 
     public void setIdTuyen(String idTuyen) {
-        this.idTuyen = idTuyen;
+        this.IDTUYEN = idTuyen;
     }
 
     public String getMaTaiXe() {
-        return maTaiXe;
+        return MATAIXE;
     }
 
     public void setMaTaiXe(String maTaiXe) {
-        this.maTaiXe = maTaiXe;
+        this.MATAIXE = maTaiXe;
     }
 
     public Boolean getCam() {
-        return cam;
+        return CAM;
     }
 
     public void setCam(Boolean cam) {
-        this.cam = cam;
+        this.CAM = cam;
     }
 
     public Boolean getKichHoat() {
-        return kichHoat;
+        return KICHHOAT;
     }
 
     public void setKichHoat(Boolean kichHoat) {
-        this.kichHoat = kichHoat;
+        this.KICHHOAT = kichHoat;
     }
 }
