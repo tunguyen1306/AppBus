@@ -1,6 +1,9 @@
 package davisoft.app.busticket.printer;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+
 import android.content.Context;
 
 import davisoft.app.busticket.adapter.USBAdapter;
@@ -44,19 +47,17 @@ public class PrintOrder {
 
         p.resetAll();
         p.initialize();
+        p.select_code_tab((byte)16); // WCP1252
         p.feedBack((byte)2);
         p.color(0);
         p.alignCenter();
         p.setText("CONG TY TNHH XE BUYT BECAMEX TOKYU");
-        p.newLine();
-        p.setText("CÔNG TY TNHH XE BUÝT BECAMEX TOKYU");
         p.newLine();
         p.alignCenter();
         p.setText("DC:NP6-5,Đuong 30/4,P.Phu Hoa,TP.TDM,Binh Duong");
         p.newLine();
         p.alignCenter();
         p.setText("MST : 3702255565  -  DT: 0650-222-0555");
-
         p.newLine();
         p.alignLeft();
         p.setText("\t\t\tMau so: 01VEDB1/011");
@@ -67,25 +68,25 @@ public class PrintOrder {
         p.setText("\t\t\tSo ve: 0000234");
         p.newLine();
         p.alignCenter();
-        p.chooseFont(1);
+        p.double_height_width_on();
         p.setText("Gia 10.000");
-
+        p.double_height_width_off();
         p.newLine();
-        p.chooseFont(1);
         p.alignCenter();
-        p.setText("Lien:Giao cho hanh khach (da bao gom bao hiem hanh khach)");
-
+        p.setText("Lien:Giao cho hanh khach");
+        p.alignCenter();
+        p.setText("(da bao gom bao hiem hanh khach)");
         p.newLine();
         p.alignLeft();
-        p.setText("Ngay: 16/02/2017");
-        p.setText("\t\tGio:  5:38:15 PM");
+        p.setText("Ngay: "+new SimpleDateFormat("dd/MM/yyyy").format(Calendar.getInstance()));
+        p.setText("\t\tGio: "+new SimpleDateFormat("hh:mm:ss a").format(Calendar.getInstance()));
         p.newLine();
-        p.chooseFont(1);
+
         p.alignCenter();
         p.setText("Tuyen: 51 Toa nha Becamex -- DH Quoc Te Mien Dong");
 
         p.newLine();
-        p.chooseFont(1);
+
         p.alignLeft();
         p.setText("So xe: 61B-007.26");
 
@@ -95,25 +96,20 @@ public class PrintOrder {
         p.setText("Gia ve: 10000 dong/luot/HK");
 
         p.newLine();
-        p.chooseFont(1);
+
         p.alignCenter();
         p.setText("Vui long giu ve de kiem soat");
-
-
-        p.chooseFont(1);
         p.alignCenter();
         p.setText("In tai CONG TY TNHH XE BUYT BECAMEX TOKYU");
 
-        p.chooseFont(1);
+
         p.alignCenter();
         p.setText("Lien giao cho hanh khach");
 
 
         p.newLine();
-        p.alignLeft();
-        p.setText("MST : 3702255565");
-
-        p.setText("\t\t\tDT: 0650-222-0555");
+        p.alignCenter();
+        p.setText("MST : 3702255565  -  DT: 0650-222-0555");
         p.newLine();
 
         p.feed((byte)3);
@@ -121,13 +117,24 @@ public class PrintOrder {
         return p.finalCommandSet();
 
     }
+
     public class PrinterOptions {
+
         String commandSet="";
         public String initialize()
         {
             final byte[] Init={27,64};
             commandSet+=new String(Init);
+
             return new String(Init);
+        }
+        public  void select_code_tab(byte cp)
+        {
+            byte[] result = new byte[3];
+            result[0] = 27;
+            result[1] = 116;
+            result[2] = cp;
+            commandSet+=new String(result);
         }
         public String chooseFont(int Options)
         {
@@ -331,6 +338,32 @@ public class PrintOrder {
             commandSet+=s;
             return s;
         }
+
+        public  void double_height_width_on()
+        {
+            byte[] result = new byte[3];
+            result[0] = 27;
+            result[1] = 33;
+            result[2] = 56;
+            String s=new String(result);
+            commandSet+=s;
+        }
+
+        /**
+         * double height width mode off Font A
+         * ESC ! n
+         * @return bytes for this command
+         */
+        public  void  double_height_width_off()
+        {
+            byte[] result = new byte[3];
+            result[0] = 27;
+            result[1] = 33;
+            result[2] = 0;
+            String s=new String(result);
+            commandSet+=s;
+        }
+
         public String finit()
         {
             final byte[] FeedAndCut={29,'V',66,0};
