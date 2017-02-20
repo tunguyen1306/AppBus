@@ -33,7 +33,14 @@ import java.util.HashMap;
 import java.util.List;
 
 import davisoft.app.busticket.adapter.USBAdapter;
+import davisoft.app.busticket.data.ControlDatabase;
+import davisoft.app.busticket.data.ResClien;
+import davisoft.app.busticket.data.pojo.DmTaiXe;
+import davisoft.app.busticket.data.pojo.DmTram;
 import davisoft.app.busticket.printer.PrintOrder;
+import retrofit.Callback;
+import retrofit.RetrofitError;
+import retrofit.client.Response;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -50,6 +57,7 @@ public class MainActivity extends AppCompatActivity {
 
     final Context context = this;
     public static List<Integer> dataTickets=new ArrayList<Integer>();
+    public  List<DmTaiXe> dmTaixe=new ArrayList<>();
     private int orientation = Configuration.ORIENTATION_LANDSCAPE;
 
 
@@ -61,6 +69,9 @@ public class MainActivity extends AppCompatActivity {
         initData();
         initEvent();
         initUSB();
+        CallDmTaiXe();
+        CallDmTram();
+
     }
     private final BroadcastReceiver mUsbReceiver = new BroadcastReceiver() {
         public void onReceive(Context context, Intent intent) {
@@ -460,7 +471,113 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    ////LoadDMTAIXE///////
+    List<DmTaiXe> ItemAllDmTaiXe;
+    List<String> ListmaTaiXe = new ArrayList<>();
+    List<String> ListtenTaiXe = new ArrayList<>();
+    List<String> Listtuoi = new ArrayList<>();
+    List<String> ListgioiTinh = new ArrayList<>();
+    List<String> ListbangLai = new ArrayList<>();
+    List<String> Listsdt = new ArrayList<>();
+    List<String> ListdiaChiNoiO = new ArrayList<>();
+    List<String> Listemail = new ArrayList<>();
+
+    public void CallDmTaiXe() {
+        ResClien restClient = new ResClien();
+        restClient.GetService().GetDMTAIXEs(new Callback<List<DmTaiXe>>() {
+            @Override
+            public void success(List<DmTaiXe> DmTaiXe, Response response) {
+                for (int i = 0; i < DmTaiXe.size(); i++) {
+                    String tmpStr10 = Integer.toString(DmTaiXe.get(i).getTUOI());
+                    ListmaTaiXe.add(DmTaiXe.get(i).getMATAIXE());
+                    ListtenTaiXe.add(DmTaiXe.get(i).getTENTAIXE());
+                    Listtuoi.add(tmpStr10);
+                    ListgioiTinh.add(DmTaiXe.get(i).getGIOITINH());
+                    ListbangLai.add(DmTaiXe.get(i).getBANGLAI());
+                    Listsdt.add(DmTaiXe.get(i).getSDT());
+                    ListdiaChiNoiO.add(DmTaiXe.get(i).getDIACHINOIO());
+                    Listemail.add(DmTaiXe.get(i).getEMAIL());
+                }
+                loadDataAllAdvert();
+            }
+
+            @Override
+            public void failure(RetrofitError error) {
+                Log.d("myLogs", "-------ERROR-------Slide");
+                Log.d("myLogs", Log.getStackTraceString(error));
+            }
+        });
+
+    }
+    private List<DmTaiXe> getAllItemsAllAdvert() {
+        List<DmTaiXe> items = new ArrayList<>();
+        for (int i = 0; i < ListmaTaiXe.size(); i++) {
+            items.add(
+                    new DmTaiXe(
+                            ListmaTaiXe.get(i),
+                            ListtenTaiXe.get(i),
+                            Listtuoi.get(i),
+                            ListgioiTinh.get(i),
+                            ListbangLai.get(i),
+                            Listsdt.get(i),
+                            ListdiaChiNoiO.get(i),
+                            Listemail.get(i)
+
+                    )
+            );
+        }
+        return items;
+    }
+    private void loadDataAllAdvert() {
+        ItemAllDmTaiXe = getAllItemsAllAdvert();
+    }
+    ///LoadDMTAIXE///
+
+    ////LoadDMTAIXE///////
+    List<DmTram> ItemAllDmTram;
+    List<String> ListID = new ArrayList<>();
+    List<String> ListMaTram = new ArrayList<>();
+    List<String> ListTenTram = new ArrayList<>();
 
 
+    public void CallDmTram() {
+        ResClien restClient = new ResClien();
+        restClient.GetService().GetDMTRAMs(new Callback<List<DmTram>>() {
+            @Override
+            public void success(List<DmTram> DmTram, Response response) {
+                for (int i = 0; i < DmTram.size(); i++) {
+                    String tmpStr10 = Integer.toString(DmTram.get(i).getId());
+                    ListMaTram.add(DmTram.get(i).getMaTram());
+                    ListTenTram.add(DmTram.get(i).getTenTram());
+                    ListID.add(tmpStr10);
+
+                }
+                loadDataAllTram();
+            }
+
+            @Override
+            public void failure(RetrofitError error) {
+                Log.d("myLogs", "-------ERROR-------Slide");
+                Log.d("myLogs", Log.getStackTraceString(error));
+            }
+        });
+
+    }
+    private List<DmTram> getAllTram() {
+        List<DmTram> items = new ArrayList<>();
+        for (int i = 0; i < ListmaTaiXe.size(); i++) {
+            items.add(
+                    new DmTram(
+                            ListID.get(i),
+                            ListMaTram.get(i),
+                            ListTenTram.get(i))
+            );
+        }
+        return items;
+    }
+    private void loadDataAllTram() {
+        ItemAllDmTram = getAllTram();
+    }
+    ///LoadDMTAIXE///
 
 }

@@ -7,33 +7,37 @@ import com.j256.ormlite.table.DatabaseTable;
 @DatabaseTable(tableName = "DmTram")
 public class DmTram {
     @DatabaseField
-    private Integer id;
+    private Integer ID;
     @DatabaseField
-    private String maTram;
+    private String MATRAM;
     @DatabaseField
-    private String tenTram;
-
+    private String TENTRAM;
+public DmTram(String ID,String MATRAM,String TENTRAM){
+    this.ID=Integer.parseInt(ID);
+    this.MATRAM=MATRAM;
+    this.TENTRAM=TENTRAM;
+}
     public Integer getId() {
-        return id;
+        return ID;
     }
 
     public void setId(Integer id) {
-        this.id = id;
+        this.ID = id;
     }
 
     public String getMaTram() {
-        return maTram;
+        return MATRAM;
     }
 
     public void setMaTram(String maTram) {
-        this.maTram = maTram;
+        this.MATRAM = maTram;
     }
 
     public String getTenTram() {
-        return tenTram;
+        return TENTRAM;
     }
 
     public void setTenTram(String tenTram) {
-        this.tenTram = tenTram;
+        this.TENTRAM = tenTram;
     }
 }

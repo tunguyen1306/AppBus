@@ -6,83 +6,97 @@ import com.j256.ormlite.table.DatabaseTable;
 @DatabaseTable(tableName = "DmTaiXe")
 public class DmTaiXe {
     @DatabaseField
-    private String maTaiXe;
+    private String MATAIXE;
     @DatabaseField
-    private String tenTaiXe;
+    private String TENTAIXE;
     @DatabaseField
-    private Integer tuoi;
+    private Integer TUOI;
     @DatabaseField
-    private String gioiTinh;
+    private String GIOITINH;
     @DatabaseField
-    private String bangLai;
+    private String BANGLAI;
     @DatabaseField
-    private String sdt;
+    private String SDT;
     @DatabaseField
-    private String diaChiNoiO;
+    private String DIACHINOIO;
     @DatabaseField
-    private String email;
+    private String EMAIL;
+public DmTaiXe(String MATAIXE,String TENTAIXE,String TUOI,String GIOITINH,String BANGLAI,String SDT,String DIACHINOIO,String EMAIL){
+    this.MATAIXE=MATAIXE;
+    this.TENTAIXE=TENTAIXE;
+    this.TUOI=Integer.parseInt(TUOI);
+    this.GIOITINH=GIOITINH;
+    this.BANGLAI=BANGLAI;
+    this.SDT=SDT;
+    this.DIACHINOIO=DIACHINOIO;
+    this.EMAIL=EMAIL;
 
-    public String getMaTaiXe() {
-        return maTaiXe;
+}
+
+    public String getEMAIL() {
+        return EMAIL;
     }
 
-    public void setMaTaiXe(String maTaiXe) {
-        this.maTaiXe = maTaiXe;
+    public void setEMAIL(String EMAIL) {
+        this.EMAIL = EMAIL;
     }
 
-    public String getTenTaiXe() {
-        return tenTaiXe;
+    public String getMATAIXE() {
+        return MATAIXE;
     }
 
-    public void setTenTaiXe(String tenTaiXe) {
-        this.tenTaiXe = tenTaiXe;
+    public void setMATAIXE(String MATAIXE) {
+        this.MATAIXE = MATAIXE;
     }
 
-    public Integer getTuoi() {
-        return tuoi;
+    public String getTENTAIXE() {
+        return TENTAIXE;
     }
 
-    public void setTuoi(Integer tuoi) {
-        this.tuoi = tuoi;
+    public void setTENTAIXE(String TENTAIXE) {
+        this.TENTAIXE = TENTAIXE;
     }
 
-    public String getGioiTinh() {
-        return gioiTinh;
+    public Integer getTUOI() {
+        return TUOI;
     }
 
-    public void setGioiTinh(String gioiTinh) {
-        this.gioiTinh = gioiTinh;
+    public void setTUOI(Integer TUOI) {
+        this.TUOI = TUOI;
     }
 
-    public String getBangLai() {
-        return bangLai;
+    public String getGIOITINH() {
+        return GIOITINH;
     }
 
-    public void setBangLai(String bangLai) {
-        this.bangLai = bangLai;
+    public void setGIOITINH(String GIOITINH) {
+        this.GIOITINH = GIOITINH;
     }
 
-    public String getSdt() {
-        return sdt;
+    public String getBANGLAI() {
+        return BANGLAI;
     }
 
-    public void setSdt(String sdt) {
-        this.sdt = sdt;
+    public void setBANGLAI(String BANGLAI) {
+        this.BANGLAI = BANGLAI;
     }
 
-    public String getDiaChiNoiO() {
-        return diaChiNoiO;
+    public String getSDT() {
+        return SDT;
     }
 
-    public void setDiaChiNoiO(String diaChiNoiO) {
-        this.diaChiNoiO = diaChiNoiO;
+    public void setSDT(String SDT) {
+        this.SDT = SDT;
     }
 
-    public String getEmail() {
-        return email;
+    public String getDIACHINOIO() {
+        return DIACHINOIO;
     }
 
-    public void setEmail(String email) {
-        this.email = email;
+    public void setDIACHINOIO(String DIACHINOIO) {
+        this.DIACHINOIO = DIACHINOIO;
     }
+
+
+
 }
