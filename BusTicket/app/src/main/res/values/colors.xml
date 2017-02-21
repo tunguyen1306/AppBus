@@ -3,4 +3,14 @@
     <color name="colorPrimary">#3f51b5</color>
     <color name="colorPrimaryDark">#303f9f</color>
     <color name="colorAccent">#ff4081</color>
+    <color name="colorBackground">#6ab344</color>
+    <color name="colorTimeThread">#fafcf8</color>
+    <color name="colorBackgroundContent">#d8dfe2</color>
+    <color name="colorText1">#F7FBF5</color>
+    <color name="colorText2">#F7FBF5</color>
+    <color name="colorText3">#F7FBF5</color>
+    <color name="colorText4">#ff4081</color>
+
+    <color name="colorBackgroundButton">#7ad4df</color>
 </resources>
+
