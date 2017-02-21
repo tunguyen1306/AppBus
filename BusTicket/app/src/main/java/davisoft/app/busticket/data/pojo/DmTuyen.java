@@ -5,13 +5,16 @@ import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
+import java.io.Serializable;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-@DatabaseTable(tableName = "DmTuyen")
-public class DmTuyen {
+
+public class DmTuyen implements Serializable {
+    @DatabaseField(generatedId = true, columnName = "Id")
+    public int Id;
     @DatabaseField
     public String IDTUYEN;
     @DatabaseField
@@ -31,7 +34,7 @@ public class DmTuyen {
     @DatabaseField
     public Integer MUCDO;
     @DatabaseField
-    public Date THOIGIANTOANTRAM;
+    public String THOIGIANTOANTRAM;
     @DatabaseField
     public double GIAVE1;
     @DatabaseField
@@ -93,7 +96,7 @@ public class DmTuyen {
         this.MATRAMCUOI=MATRAMCUOI;
         this.TONGTRAM=TONGTRAM;
         this.MUCDO=Integer.parseInt(MUCDO) ;
-        this.THOIGIANTOANTRAM=changeToate(THOIGIANTOANTRAM) ;
+        this.THOIGIANTOANTRAM=THOIGIANTOANTRAM ;
         this.GIAVE1=Double.parseDouble(GIAVE1) ;
         this.DIENGIAIVE1=DIENGIAIVE1;
         this.CAMVE1=Boolean.parseBoolean(CAMVE1) ;
@@ -210,11 +213,11 @@ public Date changeToate( String dateString)
         this.MUCDO = MUCDO;
     }
 
-    public Date GETTHOIGIANTOANTRAM() {
+    public String GETTHOIGIANTOANTRAM() {
         return THOIGIANTOANTRAM;
     }
 
-    public void SETTHOIGIANTOANTRAM(Date THOIGIANTOANTRAM) {
+    public void SETTHOIGIANTOANTRAM(String THOIGIANTOANTRAM) {
         this.THOIGIANTOANTRAM = THOIGIANTOANTRAM;
     }
 

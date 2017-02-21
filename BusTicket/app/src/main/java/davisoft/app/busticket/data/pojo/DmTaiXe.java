@@ -3,8 +3,12 @@ package davisoft.app.busticket.data.pojo;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
-@DatabaseTable(tableName = "DmTaiXe")
-public class DmTaiXe {
+import java.io.Serializable;
+
+
+public class DmTaiXe implements Serializable {
+    @DatabaseField(generatedId = true, columnName = "Id")
+    public int Id;
     @DatabaseField
     public String MATAIXE;
     @DatabaseField

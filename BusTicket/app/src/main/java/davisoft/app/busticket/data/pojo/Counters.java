@@ -4,12 +4,16 @@ import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
+import java.io.Serializable;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-@DatabaseTable(tableName = "Counters")
-public class Counters {
+public class Counters implements Serializable
+
+    {
+    @DatabaseField(generatedId = true, columnName = "Id")
+    public int Id;
 //    @DatabaseField
 //    public String counter1;
 //    @DatabaseField

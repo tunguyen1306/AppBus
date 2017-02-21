@@ -86,37 +86,37 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
     }
     public Dao<DmTaiXe, Integer> getDmTaiXeMangasDao() throws SQLException {
         if (DmTaiXeMangasesDao == null) {
-            DmTaiXeMangasesDao = getDao(Counters.class);
+            DmTaiXeMangasesDao = getDao(DmTaiXe.class);
         }
         return DmTaiXeMangasesDao;
     }
     public Dao<DmTram, Integer> getDmTramMangasDao() throws SQLException {
         if (DmTramMangasesDao == null) {
-            DmTramMangasesDao = getDao(Counters.class);
+            DmTramMangasesDao = getDao(DmTram.class);
         }
         return DmTramMangasesDao;
     }
     public Dao<DmTuyen, Integer> getDmTuyenMangasDao() throws SQLException {
         if (DmTuyenMangasesDao == null) {
-            DmTuyenMangasesDao = getDao(Counters.class);
+            DmTuyenMangasesDao = getDao(DmTuyen.class);
         }
         return DmTuyenMangasesDao;
     }
     public Dao<DmTuyenChiTietTram, Integer> getDmTuyenChiTietTramMangasDao() throws SQLException {
         if (DmTuyenChiTietTramMangasesDao == null) {
-            DmTuyenChiTietTramMangasesDao = getDao(Counters.class);
+            DmTuyenChiTietTramMangasesDao = getDao(DmTuyenChiTietTram.class);
         }
         return DmTuyenChiTietTramMangasesDao;
     }
     public Dao<DmXe, Integer> getDmXeMangasDao() throws SQLException {
         if (DmXeMangasesDao == null) {
-            DmXeMangasesDao = getDao(Counters.class);
+            DmXeMangasesDao = getDao(DmXe.class);
         }
         return DmXeMangasesDao;
     }
     public Dao<LoTrinhChoXe, Integer> getLoTrinhChoXeMangasDao() throws SQLException {
         if (LoTrinhChoXeMangasesDao == null) {
-            LoTrinhChoXeMangasesDao = getDao(Counters.class);
+            LoTrinhChoXeMangasesDao = getDao(LoTrinhChoXe.class);
         }
         return LoTrinhChoXeMangasesDao;
     }

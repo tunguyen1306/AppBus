@@ -5,8 +5,12 @@ package davisoft.app.busticket.data.pojo;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
+import java.io.Serializable;
+
 @DatabaseTable(tableName = "DmXe")
-public class DmXe {
+public class DmXe implements Serializable {
+    @DatabaseField(generatedId = true, columnName = "Id")
+    public int Id;
     @DatabaseField
     public String MAXE;
     @DatabaseField

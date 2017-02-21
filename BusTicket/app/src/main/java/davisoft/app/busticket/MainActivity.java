@@ -625,7 +625,7 @@ public class MainActivity extends AppCompatActivity {
 
                     MUCDO.add(Integer.toString(DmTuyen.get(i).GETMUCDO()));
 
-                    THOIGIANTOANTRAM.add(DmTuyen.get(i).GETTHOIGIANTOANTRAM().toString());
+                    THOIGIANTOANTRAM.add(DmTuyen.get(i).GETTHOIGIANTOANTRAM().toString()!=null?DmTuyen.get(i).GETTHOIGIANTOANTRAM().toString():"2017/01/01");
 
                     GIAVE1.add(Double.toString(DmTuyen.get(i).GETGIAVE1()));
 
@@ -838,7 +838,7 @@ public class MainActivity extends AppCompatActivity {
                     ListMAXELoTrinhChoXe.add(DmXe.get(i).getMaXe());
                     ListMATAIXELoTrinhChoXe.add(DmXe.get(i).getMaTaiXe().toString());
                     ListCAM.add(DmXe.get(i).getCam().toString());
-                    ListKICHHOAT.add(DmXe.get(i).getKichHoat().toString());
+                    ListKICHHOAT.add(DmXe.get(i).getKichHoat().toString()!=null?DmXe.get(i).getKichHoat().toString():"True");
 
                 }
                 loadLoTrinhChoXe();

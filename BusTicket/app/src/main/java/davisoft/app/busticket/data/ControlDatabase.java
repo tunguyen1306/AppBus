@@ -598,7 +598,8 @@ public class ControlDatabase {
                 DmTuyen.TENTUYENEND=TENTUYENEND;DmTuyen.TENTUYENVN=TENTUYENVN;
                 DmTuyen.MATRAMDAU=MATRAMDAU; DmTuyen.MATRAMGIUA=MATRAMGIUA;
                 DmTuyen.MATRAMCUOI=MATRAMCUOI; DmTuyen.TONGTRAM=TONGTRAM;
-                DmTuyen.MUCDO=Integer.parseInt(MUCDO) ; DmTuyen.THOIGIANTOANTRAM=changeToate(THOIGIANTOANTRAM) ;
+                DmTuyen.MUCDO=Integer.parseInt(MUCDO) ;
+                DmTuyen.THOIGIANTOANTRAM=THOIGIANTOANTRAM ;
                 DmTuyen.GIAVE1=Double.parseDouble(GIAVE1) ;DmTuyen.DIENGIAIVE1=DIENGIAIVE1;
                 DmTuyen.CAMVE1=Boolean.parseBoolean(CAMVE1) ;DmTuyen.IDVE1IDHOADON=IDVE1IDHOADON;
                 DmTuyen.GIAVE2=Double.parseDouble(GIAVE2) ; DmTuyen.DIENGIAIVE2=DIENGIAIVE2;
