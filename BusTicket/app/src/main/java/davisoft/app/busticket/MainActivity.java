@@ -8,6 +8,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.res.Configuration;
+import android.content.res.Resources;
+import android.graphics.drawable.ColorDrawable;
 import android.hardware.usb.UsbConfiguration;
 import android.hardware.usb.UsbConstants;
 import android.hardware.usb.UsbDevice;
@@ -23,6 +25,9 @@ import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.GridView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -86,7 +91,26 @@ public class MainActivity extends AppCompatActivity {
         initEvent();
         initUSB();
 
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
 
+                    Thread.sleep(200);
+                    runOnUiThread(new Runnable() {
+
+                        @Override
+                        public void run() {
+                            resetLayout();
+                        }
+                    });
+
+                } catch (Exception e) {
+
+                }
+
+            }
+        }).start();
 
     }
 
@@ -131,7 +155,10 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    private void print() {
+    private void print(final String soTien) {
+        CuurentLuot=(Integer.valueOf(CuurentLuot)+1)+"";
+        MaVe=String.format("%07d",Integer.valueOf(CuurentLuot));
+        Toast.makeText(getApplicationContext(),"print:"+soTien+"",Toast.LENGTH_LONG).show();
         if (mDevice != null && mUsbManager.hasPermission(mDevice)) {
             UsbInterface intf = mDevice.getInterface(0);
             for (int i = 0; i < intf.getEndpointCount(); i++) {
@@ -152,7 +179,7 @@ public class MainActivity extends AppCompatActivity {
                             public void run() {
                                 // TODO Auto-generated method stub
                                 Log.i("Thread:", "in run thread");
-                                String s = new PrintOrder().testData();
+                                String s = new PrintOrder().buildData(CountersLocal,MaVe,soTien,TenTuyen,BienSoXe);
                                 byte[] array = s.getBytes(StandardCharsets.UTF_8);
                                 s = new String(array, StandardCharsets.ISO_8859_1);
                                 array = s.getBytes();
@@ -166,14 +193,13 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         }
+        else {
+            initUSB();
+        }
     }
 
-    private void testPrinter() {
-        Toast.makeText(this, "Printer", Toast.LENGTH_LONG).show();
-        String msg = "This is a test message";
-        PrintOrder printer = new PrintOrder();
-        printer.Print(this, msg);
-    }
+
+
 
     private void initEvent() {
 
@@ -183,7 +209,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
 
 
-                print();
+
                 findViewById(R.id.layout_popup).animate()
                         .translationY(0)
                         .alpha(1.0f)
@@ -216,137 +242,360 @@ public class MainActivity extends AppCompatActivity {
 
 
     }
+
+
+
+    HashMap<String,Boolean> hasSyncRest=new HashMap<String,Boolean>();
     String CuurentLuot="1";
     String MaTaiXe="";
     String MaTuyen="";
     String BienSoXe="";
-    String TramDau="";
-    String TramGiua="";
-    String TramCuoi="";
-    String TramChiTiet="";
+    String TenTuyen="";
+    String MaVe="0000001";
     Counters CountersLocal=null;
     LoTrinhChoXe LoTrinhChoXeLocal=null;
     DmXe DmXeLocal=null;
     DmTuyen DmTuyenLocal=null;
+    List<DmTuyen> ListTuyenByMaXe=new ArrayList<>();
+    List<LoTrinhChoXe> ListLoTrinhByMaXe=new ArrayList<>();
     private void resetTicket()
-    { DecimalFormat df = new DecimalFormat("0.00##");
+    {   DecimalFormat df = new DecimalFormat("#,###");
         if (DmTuyenLocal!=null)
         {
             GridLayout gLayout= ((GridLayout) findViewById(R.id.grid_layout_tk));
             if (DmTuyenLocal.GETCAMVE1())
             {
-                gLayout.getChildAt(0).setEnabled(false);
-                ((TextView)gLayout.getChildAt(0).findViewById(R.id.txt_button)).setText("");
+                gLayout.getChildAt(0).findViewById(R.id.layout_button).setEnabled(false);
+                gLayout.getChildAt(0).findViewById(R.id.layout_button).setBackground(Resources.getSystem().getDrawable(R.drawable.btn_selector_disable));
+                ((TextView)gLayout.getChildAt(0).findViewById(R.id.txt_button)).setText("...");
             }else
             {
-                gLayout.getChildAt(0).setEnabled(true);
+
+                gLayout.getChildAt(0).findViewById(R.id.layout_button).setTag(df.format(DmTuyenLocal.GETGIAVE1()).replaceAll(",","."));
                 if (DmTuyenLocal.GETDIENGIAIVE1()!=null && DmTuyenLocal.GETDIENGIAIVE1().trim()!="")
                 {
                     ((TextView)gLayout.getChildAt(0).findViewById(R.id.txt_button)).setText(DmTuyenLocal.GETDIENGIAIVE1());
                 }
                 else
                 {
-                    ((TextView)gLayout.getChildAt(0).findViewById(R.id.txt_button)).setText(df.format(DmTuyenLocal.GETGIAVE1()));
+                    ((TextView)gLayout.getChildAt(0).findViewById(R.id.txt_button)).setText(df.format(DmTuyenLocal.GETGIAVE1()).replaceAll(",","."));
                 }
             }
             if (DmTuyenLocal.GETCAMVE2())
             {
-                gLayout.getChildAt(1).setEnabled(false);
+                gLayout.getChildAt(1).findViewById(R.id.layout_button).setEnabled(false);
+                gLayout.getChildAt(1).findViewById(R.id.layout_button).setBackground(Resources.getSystem().getDrawable(R.drawable.btn_selector_disable));
                 ((TextView)gLayout.getChildAt(1).findViewById(R.id.txt_button)).setText("");
             }else
             {
+                gLayout.getChildAt(1).findViewById(R.id.layout_button).setTag(df.format(DmTuyenLocal.GETGIAVE2()).replaceAll(",","."));
                 if (DmTuyenLocal.GETDIENGIAIVE2()!=null && DmTuyenLocal.GETDIENGIAIVE2().trim()!="")
                 {
                     ((TextView)gLayout.getChildAt(1).findViewById(R.id.txt_button)).setText(DmTuyenLocal.GETDIENGIAIVE2());
                 }
                 else
                 {
-                    ((TextView)gLayout.getChildAt(1).findViewById(R.id.txt_button)).setText(df.format(DmTuyenLocal.GETGIAVE2()));
+                    ((TextView)gLayout.getChildAt(1).findViewById(R.id.txt_button)).setText(df.format(DmTuyenLocal.GETGIAVE2()).replaceAll(",","."));
                 }
             }
             if (DmTuyenLocal.GETCAMVE3())
             {
-                gLayout.getChildAt(2).setEnabled(false);
+                gLayout.getChildAt(2).findViewById(R.id.layout_button).setEnabled(false);
+                gLayout.getChildAt(2).findViewById(R.id.layout_button).setBackground(Resources.getSystem().getDrawable(R.drawable.btn_selector_disable));
                 ((TextView)gLayout.getChildAt(2).findViewById(R.id.txt_button)).setText("");
             }else
             {
+                gLayout.getChildAt(2).findViewById(R.id.layout_button).setTag(df.format(DmTuyenLocal.GETGIAVE3()).replaceAll(",","."));
                 if (DmTuyenLocal.GETDIENGIAIVE3()!=null && DmTuyenLocal.GETDIENGIAIVE3().trim()!="")
                 {
                     ((TextView)gLayout.getChildAt(2).findViewById(R.id.txt_button)).setText(DmTuyenLocal.GETDIENGIAIVE3());
                 }
                 else
                 {
-                    ((TextView)gLayout.getChildAt(2).findViewById(R.id.txt_button)).setText(df.format(DmTuyenLocal.GETGIAVE3()));
+                    ((TextView)gLayout.getChildAt(2).findViewById(R.id.txt_button)).setText(df.format(DmTuyenLocal.GETGIAVE3()).replaceAll(",","."));
                 }
             }
 
             if (DmTuyenLocal.GETCAMVE4())
             {
-                gLayout.getChildAt(3).setEnabled(false);
+                gLayout.getChildAt(3).findViewById(R.id.layout_button).setEnabled(false);
+                gLayout.getChildAt(3).findViewById(R.id.layout_button).setBackground(Resources.getSystem().getDrawable(R.drawable.btn_selector_disable));
                 ((TextView)gLayout.getChildAt(3).findViewById(R.id.txt_button)).setText("");
             }else
             {
+                gLayout.getChildAt(3).findViewById(R.id.layout_button).setTag(df.format(DmTuyenLocal.GETGIAVE4()).replaceAll(",","."));
                 if (DmTuyenLocal.GETDIENGIAIVE4()!=null && DmTuyenLocal.GETDIENGIAIVE4().trim()!="")
                 {
                     ((TextView)gLayout.getChildAt(3).findViewById(R.id.txt_button)).setText(DmTuyenLocal.GETDIENGIAIVE4());
                 }
                 else
                 {
-                    ((TextView)gLayout.getChildAt(3).findViewById(R.id.txt_button)).setText(df.format(DmTuyenLocal.GETGIAVE4()));
+                    ((TextView)gLayout.getChildAt(3).findViewById(R.id.txt_button)).setText(df.format(DmTuyenLocal.GETGIAVE4()).replaceAll(",","."));
                 }
             }
 
             if (DmTuyenLocal.GETCAMVE5())
             {
-                gLayout.getChildAt(4).setEnabled(false);
+                gLayout.getChildAt(4).findViewById(R.id.layout_button).setEnabled(false);
+                gLayout.getChildAt(4).findViewById(R.id.layout_button).setBackground(Resources.getSystem().getDrawable(R.drawable.btn_selector_disable));
                 ((TextView)gLayout.getChildAt(4).findViewById(R.id.txt_button)).setText("");
             }else
             {
-
+                gLayout.getChildAt(4).findViewById(R.id.layout_button).setTag(df.format(DmTuyenLocal.GETGIAVE5()).replaceAll(",","."));
                 if (DmTuyenLocal.GETDIENGIAIVE5()!=null && DmTuyenLocal.GETDIENGIAIVE5().trim()!="")
                 {
                     ((TextView)gLayout.getChildAt(4).findViewById(R.id.txt_button)).setText(DmTuyenLocal.GETDIENGIAIVE5());
                 }
                 else
                 {
-                    ((TextView)gLayout.getChildAt(4).findViewById(R.id.txt_button)).setText(df.format(DmTuyenLocal.GETGIAVE5()));
+                    ((TextView)gLayout.getChildAt(4).findViewById(R.id.txt_button)).setText(df.format(DmTuyenLocal.GETGIAVE5()).replaceAll(",","."));
                 }
             }
 
+
             if (DmTuyenLocal.GETCAMVE6())
             {
-                gLayout.getChildAt(5).setEnabled(false);
+                gLayout.getChildAt(5).findViewById(R.id.layout_button).setEnabled(false);
+                gLayout.getChildAt(5).findViewById(R.id.layout_button).setBackground(Resources.getSystem().getDrawable(R.drawable.btn_selector_disable));
                 ((TextView)gLayout.getChildAt(5).findViewById(R.id.txt_button)).setText("");
             }else
             {
+                gLayout.getChildAt(5).findViewById(R.id.layout_button).setTag(df.format(DmTuyenLocal.GETGIAVE6()).replaceAll(",","."));
                 if (DmTuyenLocal.GETDIENGIAIVE6()!=null && DmTuyenLocal.GETDIENGIAIVE6().trim()!="")
                 {
                     ((TextView)gLayout.getChildAt(5).findViewById(R.id.txt_button)).setText(DmTuyenLocal.GETDIENGIAIVE6());
                 }
                 else
                 {
-                    ((TextView)gLayout.getChildAt(5).findViewById(R.id.txt_button)).setText(df.format(DmTuyenLocal.GETGIAVE6()));
+                    ((TextView)gLayout.getChildAt(5).findViewById(R.id.txt_button)).setText(df.format(DmTuyenLocal.GETGIAVE6()).replaceAll(",","."));
                 }
 
 
             }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
         }
 
     }
+    private String getTramDauGiuaCuoi(DmTuyen tuyen)
+    {
+        String TramDauD="";
+        String TramGiuaD="";
+        String TramCuoiD="";
+        for (DmTram dmtram : ItemAllDmTram) {
+            if (tuyen.GETMATRAMDAU() != null && tuyen.GETMATRAMDAU().trim() != "" && dmtram.getMaTram().trim().toLowerCase().equals(tuyen.GETMATRAMDAU().trim().toLowerCase())) {
+                TramDauD = dmtram.getTenTram();
+            }
+            if (tuyen.GETMATRAMGIUA() != null && tuyen.GETMATRAMGIUA().trim() != "" && dmtram.getMaTram().trim().toLowerCase().equals(tuyen.GETMATRAMGIUA().trim().toLowerCase())) {
+                TramGiuaD = dmtram.getTenTram();
+            }
+            if (tuyen.GETMATRAMCUOI() != null && tuyen.GETMATRAMCUOI().trim() != "" && dmtram.getMaTram().trim().toLowerCase().equals(tuyen.GETMATRAMCUOI().trim().toLowerCase())) {
+                TramCuoiD = dmtram.getTenTram();
+            }
+        }
+        return TramDauD+ (TramGiuaD.trim().length()>0?(" - " +TramGiuaD):"")+(TramCuoiD.trim().length()>0?(" - " +TramCuoiD):"");
+
+    }
+    private String getChiTietTramByTuyen(DmTuyen tuyen)
+    {
+        String TramChiTiet="";
+        for (DmTuyenChiTietTram dmtuyenchitiet : ItemAllCHiTietTuyen) {
+            if (dmtuyenchitiet.getIdTuyen().trim().equals(tuyen.GETIDTUYEN().trim()))
+            {
+                for (DmTram dmtram : ItemAllDmTram) {
+                    if(dmtram.getMaTram().trim().equals(dmtuyenchitiet.getMaTram().trim()))
+                    {
+                        if (  TramChiTiet.length()>0)
+                        {
+                            TramChiTiet+=" - "+dmtram.getTenTram();
+                        }else
+                        {
+                            TramChiTiet+=dmtram.getTenTram();
+                        }
+                    }
+                }
+
+
+            }
+        }
+        return TramChiTiet;
+    }
+    private void checkAllDataReady()
+    {
+        boolean check=true;
+        if (hasSyncRest.size()>0)
+        {
+            for (Boolean b:hasSyncRest.values())
+            {
+                check&=b;
+            }
+
+        }
+        if(check)
+        {
+            for (Counters ct : ItemCounters) {
+                if (ct.getMAXE().trim().toLowerCase().equals(MainActivity.MaXe.trim().toLowerCase())) {
+                    CountersLocal = ct;
+                    Time today = new Time(Time.getCurrentTimezone());
+                    today.setToNow();
+                    String date=String.format("%02d", today.monthDay) + "/" + String.format("%02d", (today.month + 1)) + "/" + today.year;
+                    if (CountersLocal.getLastday() != null && CountersLocal.getLastday().trim() != "" && CountersLocal.getLastday().trim().equals(date)) {
+                        CuurentLuot = CountersLocal.getLuot();
+                    } else {
+
+                        CountersLocal.setLastday(date);
+                        CountersLocal.setLuot(CuurentLuot);
+
+                    }
+
+                    for (LoTrinhChoXe ltx : ItemAllLoTrinhChoXe) {
+                        if (ltx.getKichHoat() && ltx.getMaXe().trim().toLowerCase().equals(MainActivity.MaXe.toLowerCase())) {
+                            LoTrinhChoXeLocal = ltx;
+                            MaTaiXe = LoTrinhChoXeLocal.getMaTaiXe();
+                            MaTuyen = LoTrinhChoXeLocal.getIdTuyen();
+
+                        }
+                        if(ltx.getMaXe().trim().toLowerCase().equals(MainActivity.MaXe.toLowerCase()))
+                        {
+                            ListLoTrinhByMaXe.add(ltx);
+                        }
+                    }
+                    for (DmXe dmxe : ItemAllDmXe) {
+                        if (dmxe.getMaXe().trim().toLowerCase().equals(MainActivity.MaXe.toLowerCase())) {
+                            DmXeLocal = dmxe;
+                            BienSoXe = DmXeLocal.getSoXe();
+                            break;
+                        }
+                    }
+                    for (DmTuyen dmtuyen : ItemAllDmTuyen) {
+                        if (dmtuyen.GETIDTUYEN().trim().toLowerCase().equals(MaTuyen.trim().toLowerCase())) {
+                            DmTuyenLocal = dmtuyen;
+                            break;
+                        }
+                    }
+                    for (LoTrinhChoXe ltx : ListLoTrinhByMaXe) {
+                        for (DmTuyen dmtuyen : ItemAllDmTuyen) {
+                            if (ltx.getIdTuyen().trim().equals(dmtuyen.GETMATUYEN().trim()))
+                            {
+                                ListTuyenByMaXe.add(dmtuyen);
+                                break;
+                            }
+                        }
+                    }
+
+
+                    break;
+                }
+            }
+            if (CountersLocal == null) {
+
+            } else if(LoTrinhChoXeLocal==null)
+            {
+
+            }else if(DmXeLocal==null)
+            {
+
+            }else if(DmTuyenLocal==null)
+            {
+
+            }
+            else
+            {
+
+
+                ((TextView)findViewById(R.id.txtTitle1)).setText(CountersLocal.getTenCongTy());
+                // ((TextView)findViewById(R.id.txtTitle2)).setText("");
+                TenTuyen=getTramDauGiuaCuoi(DmTuyenLocal);
+                ((TextView)findViewById(R.id.txtTitle3)).setText("Mã Tuyến: "+DmTuyenLocal.GETMATUYEN()+" - "+DmTuyenLocal.GETTENTUYENVN()+" ("+TenTuyen+")");
+                ((TextView)findViewById(R.id.txtTitle4)).setText(getChiTietTramByTuyen(DmTuyenLocal));
+                resetTicket();
+                findViewById(R.id.layout_popup_loading).animate()
+                        .alpha(0f)
+                        .setDuration(200)
+                        .setListener(new AnimatorListenerAdapter() {
+                            @Override
+                            public void onAnimationEnd(Animator animation) {
+                                super.onAnimationEnd(animation);
+                                findViewById(R.id.layout_popup_loading).setVisibility(View.GONE);
+                            }
+                        });
+                initGridViewTuyen();
+
+
+            }
+        }
+    }
+
+    public class GridViewTuyenAdapter extends ArrayAdapter<DmTuyen> {
+        public GridViewTuyenAdapter(Context context, int resource, List<DmTuyen> objects) {
+            super(context, resource, objects);
+        }
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            View v = convertView;
+
+            if(null == v) {
+                LayoutInflater inflater = (LayoutInflater)getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                v = inflater.inflate(R.layout.tuyen_item, null);
+            }
+            DmTuyen dmTuyen = getItem(position);
+
+            TextView txtMaTuyen = (TextView) v.findViewById(R.id.txtMaTuyen);
+            TextView txtTenTuyen = (TextView) v.findViewById(R.id.txtTenTuyen);
+            txtMaTuyen.setText(dmTuyen.GETMATUYEN());
+            txtTenTuyen.setText(dmTuyen.GETTENTUYENVN()+" ("+getTramDauGiuaCuoi(dmTuyen)+")");
+            txtTenTuyen.setSelected(true);
+            if (dmTuyen.GETTENTUYENVN().trim().equals("Đỏ"))
+            {
+                txtTenTuyen.setBackground(Resources.getSystem().getDrawable(android.R.color.holo_red_dark));
+            }
+            if (dmTuyen.GETTENTUYENVN().trim().equals("Xanh Biển"))
+            {
+                txtTenTuyen.setBackground(Resources.getSystem().getDrawable(android.R.color.holo_blue_dark));
+            }
+            if (dmTuyen.GETTENTUYENVN().trim().equals("Nâu"))
+            {
+                txtTenTuyen.setBackground(Resources.getSystem().getDrawable(android.R.color.darker_gray));
+            }
+            if (dmTuyen.GETTENTUYENVN().trim().equals("Vàng"))
+            {
+                txtTenTuyen.setBackground(Resources.getSystem().getDrawable(android.R.color.holo_orange_dark));
+            }
+            if (dmTuyen.GETTENTUYENVN().trim().equals("Xanh Lá"))
+            {
+                txtTenTuyen.setBackground(Resources.getSystem().getDrawable(android.R.color.holo_green_dark));
+            }
+            if (dmTuyen.GETTENTUYENVN().trim().equals("Hồng"))
+            {
+                ColorDrawable colorDrawable = new ColorDrawable(getResources().getColor(R.color.colorAccent));
+
+                txtTenTuyen.setBackground(colorDrawable);
+            }
+           for (LoTrinhChoXe ltx: ListLoTrinhByMaXe)
+           {
+                if(ltx.getIdTuyen().trim().equals(dmTuyen.GETMATUYEN().trim()) && ltx.getCam())
+                {
+
+                    txtMaTuyen.setBackground(Resources.getSystem().getDrawable(android.R.color.darker_gray));
+                    break;
+                }
+           }
+
+            return v;
+        }
+    }
+
+    public void initGridViewTuyen()
+    {
+        ((GridView)findViewById(R.id.gv_Tuyen)).setAdapter(new GridViewTuyenAdapter(getApplicationContext(),R.layout.tuyen_item,ItemAllDmTuyen));
+    }
+    public void updateGridView()
+    {
+
+
+        Log.d("W-I-GV", ((GridView)findViewById(R.id.gv_Tuyen)).getWidth() + " - " + ((GridView)findViewById(R.id.gv_Tuyen)).getHeight());
+        Log.d("W-I-GV1", MainActivity.convertPixelsToDp(((GridView)findViewById(R.id.gv_Tuyen)).getWidth() ,getApplicationContext()) + " - " +MainActivity.convertPixelsToDp( ((GridView)findViewById(R.id.gv_Tuyen)).getHeight(),getApplicationContext()));
+    }
+
     private void initData() {
 
         CallDmTaiXe();
@@ -356,117 +605,6 @@ public class MainActivity extends AppCompatActivity {
         CallCHiTietTuyen();
         CallLoTrinhChoXe();
         CallCounters();
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    Thread.sleep(5000);
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            for (Counters ct : ItemCounters) {
-                                if (ct.getMAXE().trim().toLowerCase().equals(MainActivity.MaXe.trim().toLowerCase())) {
-                                    CountersLocal = ct;
-                                    Time today = new Time(Time.getCurrentTimezone());
-                                    today.setToNow();
-                                    String date=String.format("%02d", today.monthDay) + "/" + String.format("%02d", (today.month + 1)) + "/" + today.year;
-                                    if (CountersLocal.getLastday() != null && CountersLocal.getLastday().trim() != "" && CountersLocal.getLastday().trim().equals(date)) {
-                                        CuurentLuot = CountersLocal.getLuot();
-                                    } else {
-
-                                        CountersLocal.setLastday(date);
-                                        CountersLocal.setLuot(CuurentLuot);
-
-                                    }
-
-                                    for (LoTrinhChoXe ltx : ItemAllLoTrinhChoXe) {
-                                        if (ltx.getKichHoat() && ltx.getMaXe().trim().toLowerCase().equals(MainActivity.MaXe.toLowerCase())) {
-                                            LoTrinhChoXeLocal = ltx;
-                                            MaTaiXe = LoTrinhChoXeLocal.getMaTaiXe();
-                                            MaTuyen = LoTrinhChoXeLocal.getIdTuyen();
-                                            break;
-                                        }
-                                    }
-                                    for (DmXe dmxe : ItemAllDmXe) {
-                                        if (dmxe.getMaXe().trim().toLowerCase().equals(MainActivity.MaXe.toLowerCase())) {
-                                            DmXeLocal = dmxe;
-                                            BienSoXe = DmXeLocal.getSoXe();
-                                            break;
-                                        }
-                                    }
-                                    for (DmTuyen dmtuyen : ItemAllDmTuyen) {
-                                        if (dmtuyen.GETIDTUYEN().trim().toLowerCase().equals(MaTuyen.trim().toLowerCase())) {
-                                            DmTuyenLocal = dmtuyen;
-                                            break;
-                                        }
-                                    }
-                                    for (DmTram dmtram : ItemAllDmTram) {
-                                        if (DmTuyenLocal.GETMATRAMDAU() != null && DmTuyenLocal.GETMATRAMDAU().trim() != "" && dmtram.getMaTram().trim().toLowerCase().equals(DmTuyenLocal.GETMATRAMDAU().trim().toLowerCase())) {
-                                            TramDau = dmtram.getTenTram();
-                                        }
-                                        if (DmTuyenLocal.GETMATRAMGIUA() != null && DmTuyenLocal.GETMATRAMGIUA().trim() != "" && dmtram.getMaTram().trim().toLowerCase().equals(DmTuyenLocal.GETMATRAMGIUA().trim().toLowerCase())) {
-                                            TramGiua = dmtram.getTenTram();
-                                        }
-                                        if (DmTuyenLocal.GETMATRAMCUOI() != null && DmTuyenLocal.GETMATRAMCUOI().trim() != "" && dmtram.getMaTram().trim().toLowerCase().equals(DmTuyenLocal.GETMATRAMCUOI().trim().toLowerCase())) {
-                                            TramCuoi = dmtram.getTenTram();
-                                        }
-
-
-                                    }
-                                    for (DmTuyenChiTietTram dmtuyenchitiet : ItemAllCHiTietTuyen) {
-                                        if (dmtuyenchitiet.getIdTuyen().trim().equals(MaTuyen.trim()))
-                                        {
-                                            for (DmTram dmtram : ItemAllDmTram) {
-                                                if(dmtram.getMaTram().trim().equals(dmtuyenchitiet.getMaTram().trim()))
-                                                {
-                                                    if (  TramChiTiet.length()>0)
-                                                    {
-                                                        TramChiTiet+=" - "+dmtram.getTenTram();
-                                                    }else
-                                                    {
-                                                        TramChiTiet+=dmtram.getTenTram();
-                                                    }
-                                                }
-                                            }
-
-
-                                        }
-                                    }
-
-                                    break;
-                                }
-                            }
-                            if (CountersLocal == null) {
-
-                            } else if(LoTrinhChoXeLocal==null)
-                            {
-
-                            }else if(DmXeLocal==null)
-                            {
-
-                            }else if(DmTuyenLocal==null)
-                            {
-
-                            }
-                            else
-                            {
-
-
-                                ((TextView)findViewById(R.id.txtTitle1)).setText(CountersLocal.getTenCongTy());
-                                // ((TextView)findViewById(R.id.txtTitle2)).setText("");
-                                ((TextView)findViewById(R.id.txtTitle3)).setText("Mã Tuyến: "+DmTuyenLocal.GETMATUYEN()+" - "+DmTuyenLocal.GETTENTUYENVN()+" ("+TramDau+ (TramGiua.trim().length()>0?(" - " +TramGiua):"")+(TramCuoi.trim().length()>0?(" - " +TramCuoi):"")+")");
-                                ((TextView)findViewById(R.id.txtTitle4)).setText(TramChiTiet);
-                                resetTicket();
-
-
-                            }
-                        }
-                    });
-                } catch (InterruptedException e) {
-
-                }
-            }
-        }).start();
 
         MainActivity.dataTickets.clear();
         MainActivity.dataTickets.add(1);
@@ -480,7 +618,13 @@ public class MainActivity extends AppCompatActivity {
     private void init() {
         Time today = new Time(Time.getCurrentTimezone());
         today.setToNow();
-        ((TextView) findViewById(R.id.txt_TimeNow)).setText(String.format("%02d", today.monthDay) + "/" + String.format("%02d", (today.month + 1)) + "/" + today.year + " " + today.format("%k:%M:%S"));             // Day of the month (1-31)
+        String strAMPM="AM";
+        int AMPM= Calendar.getInstance().get(Calendar.AM_PM);
+        if (AMPM==Calendar.PM)
+        {
+            strAMPM="PM";
+        }
+        ((TextView) findViewById(R.id.txt_TimeNow)).setText("Ngày: "+String.format("%02d", today.monthDay) + "/" + String.format("%02d", (today.month + 1)) + "/" + today.year + "    -   Giờ: " + today.format("%k:%M:%S ")+strAMPM);             // Day of the month (1-31)
         switch (getResources().getDisplayMetrics().densityDpi) {
             case DisplayMetrics.DENSITY_LOW:
                 // ...
@@ -529,9 +673,15 @@ public class MainActivity extends AppCompatActivity {
                         Thread.sleep(1000);
                         runOnUiThread(new Runnable() {@Override
                             public void run() {
+                            String strAMPM="AM";
+                            int AMPM= Calendar.getInstance().get(Calendar.AM_PM);
+                            if (AMPM==Calendar.PM)
+                            {
+                                strAMPM="PM";
+                            }
                                 Time today = new Time(Time.getCurrentTimezone());
                                 today.setToNow();
-                                ((TextView) findViewById(R.id.txt_TimeNow)).setText(String.format("%02d", today.monthDay) + "/" + String.format("%02d", (today.month + 1)) + "/" + today.year + " " + today.format("%k:%M:%S"));             // Day of the month (1-31)
+                                ((TextView) findViewById(R.id.txt_TimeNow)).setText("Ngày: "+String.format("%02d", today.monthDay) + "/" + String.format("%02d", (today.month + 1)) + "/" + today.year + "    -   Giờ: " + today.format("%k:%M:%S ")+strAMPM);             // Day of the month (1-31)
 }
                         });
                     }
@@ -561,9 +711,11 @@ public class MainActivity extends AppCompatActivity {
     private void resetLayout() {
         if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
             changeColumnCount(((GridLayout) findViewById(R.id.grid_layout_tk)));
+            updateGridView();
 
         } else if (orientation == Configuration.ORIENTATION_PORTRAIT) {
             changeColumnCount(((GridLayout) findViewById(R.id.grid_layout_tk)));
+            updateGridView();
         }
 
     }
@@ -598,14 +750,8 @@ public class MainActivity extends AppCompatActivity {
                 LayoutInflater layoutInflater = (LayoutInflater) this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
                 View view = layoutInflater.inflate(R.layout.tikcket_item, null);
                 view.findViewById(R.id.txt_button).setVisibility(View.GONE);
-                view.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                       // resetLayout();
-                       // testPrinter();
 
-                    }
-                });
+
                 count = i * columnCount + j;
                 //  lParams.setGravity(Gravity.CENTER);
                 if (view != null && count < viewsCount) {
@@ -614,6 +760,34 @@ public class MainActivity extends AppCompatActivity {
                     lParams.columnSpec = colSpec;
                     view.setLayoutParams(lParams);
                     gridLayout.addView(view, lParams);
+                    view.findViewById(R.id.layout_button).setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            // resetLayout();
+                            // testPrinter();
+
+                            if (v.isEnabled() &&  v.getTag()!=null)
+                            {
+                                String sotien=v.getTag().toString();
+                                print(sotien);
+                            }
+
+                        }
+                    });
+                    view.findViewById(R.id.txt_button).setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            // resetLayout();
+                            // testPrinter();
+
+                            if (  ((View)v.getParent()).isEnabled() &&    ((View)v.getParent()).getTag()!=null)
+                            {
+                                String sotien=  ((View)v.getParent()).getTag().toString();
+                                print(sotien);
+                            }
+
+                        }
+                    });
                 } else {
                     break;
                 }
@@ -634,8 +808,8 @@ public class MainActivity extends AppCompatActivity {
                             int countView = gridLayout.getChildCount();
                             for (int i = 0; i < countView; i++) {
                                 Log.d("W-I-G", gridLayout.getChildAt(i).getWidth() + " - " + gridLayout.getChildAt(i).getHeight());    LinearLayout.LayoutParams lParam = (LinearLayout.LayoutParams) gridLayout.getChildAt(i).findViewById(R.id.layout_button).getLayoutParams();
-                                lParam.width = gridLayout.getChildAt(i).getWidth() - 30;
-                                lParam.height = gridLayout.getChildAt(i).getHeight() - 30;
+                                lParam.width = gridLayout.getChildAt(i).getWidth()-(int)MainActivity.convertDpToPixel(10,getApplicationContext());
+                                lParam.height = gridLayout.getChildAt(i).getHeight()-(int)MainActivity.convertDpToPixel(10,getApplicationContext());
                                 gridLayout.getChildAt(i).findViewById(R.id.layout_button).setLayoutParams(lParam);
                                 gridLayout.getChildAt(i).requestLayout();
                                 //lParam.width=  gridLayout.getChildAt(i).findViewById(R.id.button_text).getLayoutParams().width;
@@ -658,6 +832,19 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    public static float convertDpToPixel(float dp, Context context){
+        Resources resources = context.getResources();
+        DisplayMetrics metrics = resources.getDisplayMetrics();
+        float px = dp * ((float)metrics.densityDpi / DisplayMetrics.DENSITY_DEFAULT);
+        return px;
+    }
+
+    public static float convertPixelsToDp(float px, Context context){
+        Resources resources = context.getResources();
+        DisplayMetrics metrics = resources.getDisplayMetrics();
+        float dp = px / ((float)metrics.densityDpi / DisplayMetrics.DENSITY_DEFAULT);
+        return dp;
+    }
     @Override
     protected void onStart() {
         super.onStart();
@@ -718,6 +905,8 @@ public class MainActivity extends AppCompatActivity {
     List<String> Listemail = new ArrayList<>();
 
     public void CallDmTaiXe() {
+        final StackTraceElement[] ste = Thread.currentThread().getStackTrace();
+        hasSyncRest.put(ste[2].getMethodName(),false);
         ResClien restClient = new ResClien();
         restClient.GetService().GetDMTAIXEs(new Callback<List<DmTaiXe>>() {
             @Override
@@ -734,6 +923,8 @@ public class MainActivity extends AppCompatActivity {
                     Listemail.add(DmTaiXe.get(i).getEMAIL());
                 }
                 loadDataAllAdvert();
+                hasSyncRest.put(ste[2].getMethodName(),true);
+                checkAllDataReady();
             }
 
             @Override
@@ -778,6 +969,8 @@ public class MainActivity extends AppCompatActivity {
 
 
     public void CallDmTram() {
+        final StackTraceElement[] ste = Thread.currentThread().getStackTrace();
+        hasSyncRest.put(ste[2].getMethodName(),false);
         ResClien restClient = new ResClien();
         restClient.GetService().GetDMTRAMs(new Callback<List<DmTram>>() {
             @Override
@@ -790,6 +983,8 @@ public class MainActivity extends AppCompatActivity {
 
                 }
                 loadDataAllTram();
+                hasSyncRest.put(ste[2].getMethodName(),true);
+                checkAllDataReady();
             }
 
             @Override
@@ -858,6 +1053,8 @@ public class MainActivity extends AppCompatActivity {
     List<String> IDVE6IDHOADON = new ArrayList<>();
 
     public void CallDmTuyen() {
+        final StackTraceElement[] ste = Thread.currentThread().getStackTrace();
+        hasSyncRest.put(ste[2].getMethodName(),false);
         ResClien restClient = new ResClien();
         restClient.GetService().GetDMTUYENs(new Callback<List<DmTuyen>>() {
             @Override
@@ -935,6 +1132,8 @@ public class MainActivity extends AppCompatActivity {
 
                 }
                 loadDataAllDmTuyen();
+                hasSyncRest.put(ste[2].getMethodName(),true);
+                checkAllDataReady();
             }
 
             @Override
@@ -1007,6 +1206,8 @@ public class MainActivity extends AppCompatActivity {
     List<String> ListSOGHE = new ArrayList<>();
 
     public void CallDmXe() {
+        final StackTraceElement[] ste = Thread.currentThread().getStackTrace();
+        hasSyncRest.put(ste[2].getMethodName(),false);
         ResClien restClient = new ResClien();
         restClient.GetService().GetDMXEs(new Callback<List<DmXe>>() {
             @Override
@@ -1021,6 +1222,8 @@ public class MainActivity extends AppCompatActivity {
 
                 }
                 loadDataAllXe();
+                hasSyncRest.put(ste[2].getMethodName(),true);
+                checkAllDataReady();
             }
 
             @Override
@@ -1055,6 +1258,8 @@ public class MainActivity extends AppCompatActivity {
     List<String> ListTRAMCUOI = new ArrayList<>();
 
     public void CallCHiTietTuyen() {
+        final StackTraceElement[] ste = Thread.currentThread().getStackTrace();
+        hasSyncRest.put(ste[2].getMethodName(),false);
         ResClien restClient = new ResClien();
         restClient.GetService().GetDMTUYENCHITIETTRAMs(new Callback<List<DmTuyenChiTietTram>>() {
             @Override
@@ -1069,6 +1274,8 @@ public class MainActivity extends AppCompatActivity {
 
                 }
                 loadCHiTietTuyen();
+                hasSyncRest.put(ste[2].getMethodName(),true);
+                checkAllDataReady();
             }
 
             @Override
@@ -1101,6 +1308,8 @@ public class MainActivity extends AppCompatActivity {
     List<String> ListCAM = new ArrayList<>();
     List<String> ListKICHHOAT = new ArrayList<>();
     public void CallLoTrinhChoXe() {
+        final StackTraceElement[] ste = Thread.currentThread().getStackTrace();
+        hasSyncRest.put(ste[2].getMethodName(),false);
         ResClien restClient = new ResClien();
         restClient.GetService().GetLOTRINHCHOXEs(new Callback<List<LoTrinhChoXe>>() {
             @Override
@@ -1116,6 +1325,8 @@ public class MainActivity extends AppCompatActivity {
 
                 }
                 loadLoTrinhChoXe();
+                hasSyncRest.put(ste[2].getMethodName(),true);
+                checkAllDataReady();
             }
 
             @Override
@@ -1165,6 +1376,8 @@ public class MainActivity extends AppCompatActivity {
     List<String> TenCongTy=new ArrayList<>();
     List<String> DiaChi=new ArrayList<>();
     public void CallCounters() {
+        final StackTraceElement[] ste = Thread.currentThread().getStackTrace();
+        hasSyncRest.put(ste[2].getMethodName(),false);
         ResClien restClient = new ResClien();
         restClient.GetService().GetCounters(new Callback<List<Counters>>() {
             @Override
@@ -1196,6 +1409,8 @@ public class MainActivity extends AppCompatActivity {
 
                 }
                 loadCounters();
+                hasSyncRest.put(ste[2].getMethodName(),true);
+                checkAllDataReady();
             }
 
             @Override

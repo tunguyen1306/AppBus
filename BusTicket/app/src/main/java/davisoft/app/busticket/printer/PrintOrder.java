@@ -7,6 +7,8 @@ import java.util.Calendar;
 import android.content.Context;
 
 import davisoft.app.busticket.adapter.USBAdapter;
+import davisoft.app.busticket.data.pojo.Counters;
+import davisoft.app.busticket.data.pojo.DmTuyen;
 
 public class PrintOrder {
 
@@ -110,6 +112,86 @@ public class PrintOrder {
         p.newLine();
         p.alignCenter();
         p.setText("MST : 3702255565  -  DT: 0650-222-0555");
+        p.newLine();
+
+        p.feed((byte)3);
+        p.finit();
+        return p.finalCommandSet();
+
+    }
+    public String buildData(Counters info,String mave, String soTien, String tuyen,String bsx)
+    {
+        PrinterOptions p=new PrinterOptions();
+
+        p.resetAll();
+        p.initialize();
+        p.select_code_tab((byte)16); // WCP1252
+        p.feedBack((byte)2);
+        p.color(0);
+        p.alignCenter();
+        p.setText(info.getTenCongTy().replaceAll("\\P{Print}", "").toUpperCase());
+        p.newLine();
+        p.alignCenter();
+        p.setText("DC:"+info.getDiaChi().replaceAll("\\P{Print}", ""));
+        p.newLine();
+        p.alignCenter();
+        p.setText("MST : "+info.getMST().replaceAll("\\P{Print}", "")+"  -  DT: "+info.getDT().replaceAll("\\P{Print}", "")+"");
+        p.newLine();
+        p.alignLeft();
+
+        p.setText("\t\t\tMau so: 01VEDB1/011");
+        p.alignLeft();
+        p.setText("\t\t\tKy hieu: AA/13T");
+        p.newLine();
+        p.alignLeft();
+        p.setText("\t\t\tSo ve: "+mave);
+        p.newLine();
+        p.alignCenter();
+        p.double_height_width_on();
+
+        p.setText("Gia "+soTien);
+
+
+        p.double_height_width_off();
+        p.newLine();
+        p.alignCenter();
+        p.setText("Lien:Giao cho hanh khach");
+        p.alignCenter();
+        p.setText("(da bao gom bao hiem hanh khach)");
+        p.newLine();
+        p.alignLeft();
+        p.setText("Ngay: "+new SimpleDateFormat("dd/MM/yyyy").format(Calendar.getInstance()));
+        p.setText("\t\tGio: "+new SimpleDateFormat("hh:mm:ss a").format(Calendar.getInstance()));
+        p.newLine();
+
+        p.alignCenter();
+        p.setText("Tuyen: "+tuyen);
+
+        p.newLine();
+
+        p.alignLeft();
+        p.setText("So xe: "+bsx);
+
+        p.newLine();
+        p.alignLeft();
+
+        p.setText("Gia ve: "+soTien+" dong/luot/HK");
+
+        p.newLine();
+
+        p.alignCenter();
+        p.setText("Vui long giu ve de kiem soat");
+        p.alignCenter();
+        p.setText("In tai "+info.getTenCongTy().replaceAll("\\P{Print}", "").toUpperCase());
+
+
+        p.alignCenter();
+        p.setText("Lien giao cho hanh khach");
+
+
+        p.newLine();
+        p.alignCenter();
+        p.setText("MST : "+info.getMST().replaceAll("\\P{Print}", "")+"  -  DT: "+info.getDT().replaceAll("\\P{Print}", "")+"");
         p.newLine();
 
         p.feed((byte)3);
