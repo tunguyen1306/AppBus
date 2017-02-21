@@ -693,7 +693,26 @@ public class MainActivity extends AppCompatActivity {
         List<DmTuyen> items = new ArrayList<>();
         for (int i = 0; i < IDTUYEN.size(); i++) {
             items.add(
-                    new DmTuyen(IDTUYEN.get(i),MATUYEN.get(i),TENTUYENEND.get(i),TENTUYENVN.get(i),MATRAMDAU.get(i),MATRAMGIUA.get(i),MATRAMCUOI.get(i),TONGTRAM.get(i),MUCDO.get(i), THOIGIANTOANTRAM.get(i),GIAVE1.get(i),DIENGIAIVE1.get(i),CAMVE1.get(i),IDVE1IDHOADON.get(i),GIAVE2.get(i),DIENGIAIVE2.get(i),CAMVE2.get(i),IDVE2IDHOADON.get(i),GIAVE3.get(i),DIENGIAIVE3.get(i),CAMVE3.get(i),IDVE3IDHOADON.get(i),GIAVE4.get(i),DIENGIAIVE4.get(i),CAMVE4.get(i),IDVE4IDHOADON.get(i),GIAVE5.get(i),DIENGIAIVE5.get(i),CAMVE5.get(i),IDVE5IDHOADON.get(i),GIAVE6.get(i),DIENGIAIVE6.get(i),CAMVE6.get(i),IDVE6IDHOADON.get(i))
+                    new DmTuyen(IDTUYEN.get(i),
+                            MATUYEN.get(i),
+                            TENTUYENEND.get(i),
+                            TENTUYENVN.get(i),
+                            MATRAMDAU.get(i),
+                            MATRAMGIUA.get(i),
+                            MATRAMCUOI.get(i),
+                            TONGTRAM.get(i),
+                            MUCDO.get(i),
+                            THOIGIANTOANTRAM.get(i),
+                            GIAVE1.get(i),
+                            DIENGIAIVE1.get(i),
+                            CAMVE1.get(i),
+                            IDVE1IDHOADON.get(i),
+                            GIAVE2.get(i),
+                            DIENGIAIVE2.get(i)
+                            ,CAMVE2.get(i),
+                            IDVE2IDHOADON.get(i),
+                            GIAVE3.get(i),
+                            DIENGIAIVE3.get(i),CAMVE3.get(i),IDVE3IDHOADON.get(i),GIAVE4.get(i),DIENGIAIVE4.get(i),CAMVE4.get(i),IDVE4IDHOADON.get(i),GIAVE5.get(i),DIENGIAIVE5.get(i),CAMVE5.get(i),IDVE5IDHOADON.get(i),GIAVE6.get(i),DIENGIAIVE6.get(i),CAMVE6.get(i),IDVE6IDHOADON.get(i))
             );
         }
         return items;
