@@ -85,7 +85,40 @@ public class DmTuyen implements Serializable {
     public String IDVE6IDHOADON;
 
 
-    public  DmTuyen(String IDTUYEN,String MATUYEN,String TENTUYENEND,String TENTUYENVN,String MATRAMDAU,String MATRAMGIUA,String MATRAMCUOI,String MUCDO,String THOIGIANTOANTRAM,String GIAVE1,String DIENGIAIVE1,String  CAMVE1,String IDVE1IDHOADON,String GIAVE2,String DIENGIAIVE2,String  CAMVE2,String IDVE2IDHOADON,String GIAVE3,String DIENGIAIVE3,String  CAMVE3,String IDVE3IDHOADON,String GIAVE4,String DIENGIAIVE4,String  CAMVE4,String IDVE4IDHOADON,String GIAVE5,String DIENGIAIVE5,String  CAMVE5,String IDVE5IDHOADON,String GIAVE6,String DIENGIAIVE6,String  CAMVE6,String IDVE6IDHOADON,String TONGTRAM)
+    public  DmTuyen(String IDTUYEN,
+                    String MATUYEN,
+                    String TENTUYENEND,
+                    String TENTUYENVN,
+                    String MATRAMDAU,
+                    String MATRAMGIUA,
+                    String MATRAMCUOI,
+                    String MUCDO,
+                    String THOIGIANTOANTRAM,
+                    String GIAVE1,
+                    String DIENGIAIVE1,
+                    String CAMVE1,
+                    String IDVE1IDHOADON,
+                    String GIAVE2,
+                    String DIENGIAIVE2,
+                    String CAMVE2,
+                    String IDVE2IDHOADON,
+                    String GIAVE3,
+                    String DIENGIAIVE3,
+                    String CAMVE3,
+                    String IDVE3IDHOADON,
+                    String GIAVE4,
+                    String DIENGIAIVE4,
+                    String CAMVE4,
+                    String IDVE4IDHOADON,
+                    String GIAVE5,
+                    String DIENGIAIVE5,
+                    String CAMVE5,
+                    String IDVE5IDHOADON,
+                    String GIAVE6,
+                    String DIENGIAIVE6,
+                    String  CAMVE6,
+                    String IDVE6IDHOADON,
+                    String TONGTRAM)
     {
         this.IDTUYEN=IDTUYEN;
         this.MATUYEN=MATUYEN;
@@ -95,7 +128,7 @@ public class DmTuyen implements Serializable {
         this.MATRAMGIUA=MATRAMGIUA;
         this.MATRAMCUOI=MATRAMCUOI;
         this.TONGTRAM=TONGTRAM;
-        this.MUCDO=Integer.parseInt(MUCDO) ;
+        this.MUCDO=MUCDO!=null && MUCDO!=""? Integer.parseInt(MUCDO):0 ;
         this.THOIGIANTOANTRAM=THOIGIANTOANTRAM ;
         this.GIAVE1=Double.parseDouble(GIAVE1) ;
         this.DIENGIAIVE1=DIENGIAIVE1;

@@ -625,7 +625,7 @@ public class MainActivity extends AppCompatActivity {
 
                     MUCDO.add(Integer.toString(DmTuyen.get(i).GETMUCDO()));
 
-                    THOIGIANTOANTRAM.add(DmTuyen.get(i).GETTHOIGIANTOANTRAM().toString()!=null?DmTuyen.get(i).GETTHOIGIANTOANTRAM().toString():"2017/01/01");
+                    THOIGIANTOANTRAM.add(DmTuyen.get(i).GETTHOIGIANTOANTRAM()!=null?DmTuyen.get(i).GETTHOIGIANTOANTRAM().toString():"2017/01/01");
 
                     GIAVE1.add(Double.toString(DmTuyen.get(i).GETGIAVE1()));
 
@@ -693,7 +693,8 @@ public class MainActivity extends AppCompatActivity {
         List<DmTuyen> items = new ArrayList<>();
         for (int i = 0; i < IDTUYEN.size(); i++) {
             items.add(
-                    new DmTuyen(IDTUYEN.get(i),
+                    new DmTuyen(
+                            IDTUYEN.get(i),
                             MATUYEN.get(i),
                             TENTUYENEND.get(i),
                             TENTUYENVN.get(i),
@@ -712,7 +713,22 @@ public class MainActivity extends AppCompatActivity {
                             ,CAMVE2.get(i),
                             IDVE2IDHOADON.get(i),
                             GIAVE3.get(i),
-                            DIENGIAIVE3.get(i),CAMVE3.get(i),IDVE3IDHOADON.get(i),GIAVE4.get(i),DIENGIAIVE4.get(i),CAMVE4.get(i),IDVE4IDHOADON.get(i),GIAVE5.get(i),DIENGIAIVE5.get(i),CAMVE5.get(i),IDVE5IDHOADON.get(i),GIAVE6.get(i),DIENGIAIVE6.get(i),CAMVE6.get(i),IDVE6IDHOADON.get(i))
+                            DIENGIAIVE3.get(i),
+                            CAMVE3.get(i),
+                            IDVE3IDHOADON.get(i),
+                            GIAVE4.get(i),
+                            DIENGIAIVE4.get(i),
+                            CAMVE4.get(i),
+                            IDVE4IDHOADON.get(i),
+                            GIAVE5.get(i),
+                            DIENGIAIVE5.get(i),
+                            CAMVE5.get(i),
+                            IDVE5IDHOADON.get(i),
+                            GIAVE6.get(i),
+                            DIENGIAIVE6.get(i),
+                            CAMVE6.get(i),
+                            IDVE6IDHOADON.get(i)
+                    )
             );
         }
         return items;
@@ -899,12 +915,12 @@ public class MainActivity extends AppCompatActivity {
                     CopyRight.add(DmXe.get(i).getCopyRight().toString());
                     LogoCopyRight.add(DmXe.get(i).getLogoCopyRight());
                     CopyRightKey.add(DmXe.get(i).getCopyRightKey());
-                    ChedoInCSDL.add(DmXe.get(i).getChedoInCSDL().toString());
-                    ChedoInDefault.add(DmXe.get(i).getChedoInDefault().toString());
-                    SetDefaultIn.add(DmXe.get(i).getSetDefaultIn().toString());
-                    MutiServices.add(DmXe.get(i).getMutiServices().toString());
-                    TransferAuto.add(DmXe.get(i).getTransferAuto().toString());
-                    TransferTime.add(DmXe.get(i).getTransferTime().toString());
+                    ChedoInCSDL.add(DmXe.get(i).getChedoInCSDL()!=null?DmXe.get(i).getChedoInCSDL().toString():"");
+                    ChedoInDefault.add(DmXe.get(i).getChedoInDefault()!=null?DmXe.get(i).getChedoInDefault().toString():"");
+                    SetDefaultIn.add(DmXe.get(i).getSetDefaultIn()!=null?DmXe.get(i).getSetDefaultIn().toString():"");
+                    MutiServices.add(DmXe.get(i).getMutiServices()!=null?DmXe.get(i).getMutiServices().toString():"");
+                    TransferAuto.add(DmXe.get(i).getTransferAuto()!=null?DmXe.get(i).getTransferAuto().toString():"");
+                    TransferTime.add(DmXe.get(i).getTransferTime()!=null?DmXe.get(i).getTransferTime().toString():"");
                     PGDCode.add(DmXe.get(i).getPGDCode().toString());
                     AutoNext.add(DmXe.get(i).getAutoNext().toString());
                     BackupSQLserver.add(DmXe.get(i).getBackupSQLserver().toString());
