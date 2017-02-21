@@ -13,23 +13,22 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
 
-        android:background="@android:color/holo_orange_dark"
-        android:id="@+id/layout_button">
+
+        android:id="@+id/layout_button"
+        android:background="@drawable/btn_selector">
 
         <TextView
-            android:text="Text View Text View Text View Text View  Text View Text View Text View Text View "
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:id="@+id/txt_button"
             android:gravity="center"
-            tools:text="Text View Text View Text View Text View  Text View Text View Text View Text View "
             android:inputType="textMultiLine"
             android:layout_gravity="fill_vertical|fill_horizontal"
-            android:textColor="@color/colorBackgroundContent"
-            android:textAllCaps="true"
-            android:textStyle="normal|bold"
             android:paddingLeft="10dp"
-            android:paddingRight="10dp" />
+            android:paddingRight="10dp"
+            android:textSize="30sp"
+            android:textColor="@android:color/white"
+            android:textStyle="bold" />
     </LinearLayout>
 
 </LinearLayout>

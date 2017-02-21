@@ -31,4 +31,5 @@ dependencies {
     compile 'com.j256.ormlite:ormlite-android:4.48'
     compile 'com.squareup.retrofit:retrofit:1.9.0'
     compile 'com.squareup.okhttp:okhttp:2.7.2'
+    compile 'br.com.zbra:android-linq:1.0.1'
 }

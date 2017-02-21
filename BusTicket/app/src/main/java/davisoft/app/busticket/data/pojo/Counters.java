@@ -228,6 +228,27 @@ public class Counters implements Serializable
     public String Luot;
     @DatabaseField
     public String Lastday;
+
+        public String getTenCongTy() {
+            return TenCongTy;
+        }
+
+        public void setTenCongTy(String tenCongTy) {
+            TenCongTy = tenCongTy;
+        }
+
+        public String getDiaChi() {
+            return DiaChi;
+        }
+
+        public void setDiaChi(String diaChi) {
+            DiaChi = diaChi;
+        }
+
+        @DatabaseField
+    public String TenCongTy;
+    @DatabaseField
+    public String DiaChi;
     public Counters()
     {
 
@@ -252,7 +273,7 @@ public class Counters implements Serializable
                     String DCPRINT,
                     String MAXE,
                     String Luot,
-                    String Lastday    )
+                    String Lastday,String TenCongTy ,String DiaChi    )
     {
         this.CopyRight=CopyRight;
         this.LogoCopyRight=LogoCopyRight;
@@ -274,6 +295,8 @@ public class Counters implements Serializable
         this.MAXE=MAXE;
         this.Luot=Luot;
         this.Lastday=Lastday;
+        this.TenCongTy=TenCongTy;
+        this.DiaChi=DiaChi;
 
     }
 
@@ -287,7 +310,7 @@ public class Counters implements Serializable
             convertedDate = dateFormat.parse(dateString);
         } catch (ParseException e) {
             // TODO Auto-generated catch block
-            e.printStackTrace();
+            //e.printStackTrace();
         }
         return convertedDate;
     }

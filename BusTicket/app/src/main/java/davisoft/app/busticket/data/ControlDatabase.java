@@ -211,7 +211,9 @@ public class ControlDatabase {
                             Counters.get(i).getDCPRINT().toString(),
                             Counters.get(i).getMAXE().toString(),
                             Counters.get(i).getLuot().toString(),
-                            Counters.get(i).getLastday().toString()
+                            Counters.get(i).getLastday().toString(),
+                            Counters.get(i).getTenCongTy().toString(),
+                            Counters.get(i).getDiaChi().toString()
                     );
                 }
             }
@@ -226,7 +228,7 @@ public class ControlDatabase {
     }
     private static Dao<Counters, Integer> CountersMangasDao;
     private static List<Counters> CountersList;
-    public static void AddCounterseSqlite(Context context, String CopyRight, String LogoCopyRight, String CopyRightKey, String ChedoInCSDL, String ChedoInDefault, String SetDefaultIn, String MutiServices, String TransferAuto, String TransferTime, String PGDCode, String AutoNext, String BackupSQLserver, String TieudeVN, String TieudeENG, String MST, String DT, String DCPRINT, String MAXE, String Luot, String Lastday) {
+    public static void AddCounterseSqlite(Context context, String CopyRight, String LogoCopyRight, String CopyRightKey, String ChedoInCSDL, String ChedoInDefault, String SetDefaultIn, String MutiServices, String TransferAuto, String TransferTime, String PGDCode, String AutoNext, String BackupSQLserver, String TieudeVN, String TieudeENG, String MST, String DT, String DCPRINT, String MAXE, String Luot, String Lastday, String TenCongTy, String DiaChi) {
         try {
 
             CountersMangasDao = getHelper(context).getCountMangasDao();
@@ -255,6 +257,8 @@ public class ControlDatabase {
                 Counters.MAXE = MAXE;
                 Counters.Luot = Luot;
                 Counters.Lastday = Lastday;
+                Counters.TenCongTy = TenCongTy;
+                Counters.DiaChi = DiaChi;
 
                 try {
                     final Dao<Counters, Integer> counters = getHelper(context).getCountMangasDao();
@@ -284,7 +288,8 @@ public class ControlDatabase {
                 updateBuilder.updateColumnValue("MAXE", MAXE);
                 updateBuilder.updateColumnValue("Luot", Luot);
                 updateBuilder.updateColumnValue("Lastday", Lastday);
-
+                updateBuilder.updateColumnValue("TenCongTy", TenCongTy);
+                updateBuilder.updateColumnValue("DiaChi", DiaChi);
                 updateBuilder.where().eq("MAXE", MAXE);
                 updateBuilder.update();
             }
