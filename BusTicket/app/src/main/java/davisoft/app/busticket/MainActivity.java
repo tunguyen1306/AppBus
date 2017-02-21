@@ -838,7 +838,7 @@ public class MainActivity extends AppCompatActivity {
                     ListMAXELoTrinhChoXe.add(DmXe.get(i).getMaXe());
                     ListMATAIXELoTrinhChoXe.add(DmXe.get(i).getMaTaiXe().toString());
                     ListCAM.add(DmXe.get(i).getCam().toString());
-                    ListKICHHOAT.add(DmXe.get(i).getKichHoat().toString()!=null?DmXe.get(i).getKichHoat().toString():"True");
+                    ListKICHHOAT.add(DmXe.get(i).getKichHoat()!=null? DmXe.get(i).getKichHoat().toString():"True");
 
                 }
                 loadLoTrinhChoXe();
