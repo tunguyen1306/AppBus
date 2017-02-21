@@ -81,13 +81,13 @@ public class MainActivity extends AppCompatActivity {
         initData();
         initEvent();
         initUSB();
-        CallDmTaiXe();
-        CallDmTram();
-        CallDmTuyen();
-        CallDmXe();
-        CallCHiTietTuyen();
-        CallLoTrinhChoXe();
-        CallCounters();
+       // CallDmTaiXe();
+       // CallDmTram();
+        //CallDmTuyen();
+       // CallDmXe();
+     //CallCHiTietTuyen();
+      //CallLoTrinhChoXe();
+CallCounters();
     }
 
     private final BroadcastReceiver mUsbReceiver = new BroadcastReceiver() {
@@ -625,7 +625,7 @@ public class MainActivity extends AppCompatActivity {
 
                     MUCDO.add(Integer.toString(DmTuyen.get(i).GETMUCDO()));
 
-                    THOIGIANTOANTRAM.add(DmTuyen.get(i).GETTHOIGIANTOANTRAM()!=null?DmTuyen.get(i).GETTHOIGIANTOANTRAM().toString():"2017/01/01");
+                    THOIGIANTOANTRAM.add(DmTuyen.get(i).GETTHOIGIANTOANTRAM()!=null?DmTuyen.get(i).GETTHOIGIANTOANTRAM().toString():"");
 
                     GIAVE1.add(Double.toString(DmTuyen.get(i).GETGIAVE1()));
 
@@ -728,6 +728,7 @@ public class MainActivity extends AppCompatActivity {
                             DIENGIAIVE6.get(i),
                             CAMVE6.get(i),
                             IDVE6IDHOADON.get(i)
+
                     )
             );
         }
@@ -776,7 +777,7 @@ public class MainActivity extends AppCompatActivity {
 
     private List<DmXe> getAllXe() {
         List<DmXe> items = new ArrayList<>();
-        for (int i = 0; i < ListmaTaiXe.size(); i++) {
+        for (int i = 0; i < ListMaXe.size(); i++) {
             items.add( new DmXe(ListMaXe.get(i),ListSOXE.get(i),ListLOAIXE.get(i),ListMATAIXE.get(i), ListSOGHE.get(i)));
         }
         return items;
@@ -806,8 +807,8 @@ public class MainActivity extends AppCompatActivity {
                     ListIDChiTiet.add(DmXe.get(i).getId().toString());
                     ListIDTUYEN.add(DmXe.get(i).getIdTuyen());
                     ListMATRAM.add(DmXe.get(i).getMaTram());
-                    ListTRAMDAU.add(DmXe.get(i).getTramDau().toString());
-                    ListTRAMCUOI.add(DmXe.get(i).getTramCuoi().toString());
+                    ListTRAMDAU.add(Boolean.toString(DmXe.get(i).getTramDau()!=null?DmXe.get(i).getTramDau():false));
+                    ListTRAMCUOI.add(Boolean.toString(DmXe.get(i).getTramCuoi()!=null?DmXe.get(i).getTramCuoi():false));
 
                 }
                 loadCHiTietTuyen();
@@ -824,8 +825,8 @@ public class MainActivity extends AppCompatActivity {
 
     private List<DmTuyenChiTietTram> getCHiTietTuyen() {
         List<DmTuyenChiTietTram> items = new ArrayList<>();
-        for (int i = 0; i < ListID.size(); i++) {
-            items.add( new DmTuyenChiTietTram(ListMaXe.get(i),ListSOXE.get(i),ListLOAIXE.get(i),ListMATAIXE.get(i), ListSOGHE.get(i)));
+        for (int i = 0; i < ListIDChiTiet.size(); i++) {
+            items.add( new DmTuyenChiTietTram(ListIDChiTiet.get(i),ListIDTUYEN.get(i),ListMATRAM.get(i),ListTRAMDAU.get(i), ListTRAMCUOI.get(i)));
         }
         return items;
     }
@@ -871,7 +872,7 @@ public class MainActivity extends AppCompatActivity {
 
     private List<LoTrinhChoXe> getLoTrinhChoXe() {
         List<LoTrinhChoXe> items = new ArrayList<>();
-        for (int i = 0; i < ListID.size(); i++) {
+        for (int i = 0; i < ListIDLoTrinhChoXe.size(); i++) {
             items.add( new LoTrinhChoXe(ListIDLoTrinhChoXe.get(i),ListIDTUYENLoTrinhChoXe.get(i),ListMAXELoTrinhChoXe.get(i),ListMATAIXELoTrinhChoXe.get(i), ListCAM.get(i), ListKICHHOAT.get(i)));
         }
         return items;
@@ -921,17 +922,17 @@ public class MainActivity extends AppCompatActivity {
                     MutiServices.add(DmXe.get(i).getMutiServices()!=null?DmXe.get(i).getMutiServices().toString():"");
                     TransferAuto.add(DmXe.get(i).getTransferAuto()!=null?DmXe.get(i).getTransferAuto().toString():"");
                     TransferTime.add(DmXe.get(i).getTransferTime()!=null?DmXe.get(i).getTransferTime().toString():"");
-                    PGDCode.add(DmXe.get(i).getPGDCode().toString());
-                    AutoNext.add(DmXe.get(i).getAutoNext().toString());
-                    BackupSQLserver.add(DmXe.get(i).getBackupSQLserver().toString());
-                    TieudeVN.add(DmXe.get(i).getTieudeVN().toString());
-                    TieudeENG.add(DmXe.get(i).getTieudeENG().toString());
-                    MST.add(DmXe.get(i).getMST().toString());
-                    DT.add(DmXe.get(i).getDT().toString());
-                    DCPRINT.add(DmXe.get(i).getDCPRINT().toString());
-                    MAXE.add(DmXe.get(i).getMAXE().toString());
-                    Luot.add(DmXe.get(i).getLuot().toString());
-                    Lastday.add(DmXe.get(i).getLastday().toString());
+                    PGDCode.add(DmXe.get(i).getPGDCode()!=null?DmXe.get(i).getPGDCode():"");
+                    AutoNext.add(Boolean.toString(DmXe.get(i).getAutoNext()!=null?DmXe.get(i).getAutoNext():false));
+                    BackupSQLserver.add(Boolean.toString(DmXe.get(i).getBackupSQLserver()!=null?DmXe.get(i).getBackupSQLserver():false));
+                    TieudeVN.add(DmXe.get(i).getTieudeVN());
+                    TieudeENG.add(DmXe.get(i).getTieudeENG());
+                    MST.add(DmXe.get(i).getMST());
+                    DT.add(DmXe.get(i).getDT());
+                    DCPRINT.add(DmXe.get(i).getDCPRINT());
+                    MAXE.add(DmXe.get(i).getMAXE());
+                    Luot.add(DmXe.get(i).getLuot());
+                    Lastday.add(DmXe.get(i).getLastday());
 
 
                 }
@@ -949,7 +950,7 @@ public class MainActivity extends AppCompatActivity {
 
     private List<Counters> getCounters() {
         List<Counters> items = new ArrayList<>();
-        for (int i = 0; i < ListID.size(); i++) {
+        for (int i = 0; i < MAXE.size(); i++) {
             items.add( new Counters(CopyRight.get(i),LogoCopyRight.get(i),CopyRightKey.get(i),ChedoInCSDL.get(i), ChedoInDefault.get(i), SetDefaultIn.get(i),
                     MutiServices.get(i), TransferAuto.get(i), TransferTime.get(i), PGDCode.get(i),
                     AutoNext.get(i), BackupSQLserver.get(i), TieudeVN.get(i), TieudeENG.get(i),
