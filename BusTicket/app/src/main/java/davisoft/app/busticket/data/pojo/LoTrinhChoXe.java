@@ -7,18 +7,29 @@ import com.j256.ormlite.table.DatabaseTable;
 @DatabaseTable(tableName = "LoTrinhChoXe")
 public class LoTrinhChoXe {
     @DatabaseField
-    private Integer IDLOTRINH;
+    public Integer IDLOTRINH;
     @DatabaseField
-    private String MAXE;
+    public String MAXE;
     @DatabaseField
-    private String IDTUYEN;
+    public String IDTUYEN;
     @DatabaseField
-    private String MATAIXE;
+    public String MATAIXE;
     @DatabaseField
-    private Boolean CAM;
+    public Boolean CAM;
     @DatabaseField
-    private Boolean KICHHOAT;
+    public Boolean KICHHOAT;
 
+    public LoTrinhChoXe(String IDLOTRINH,String MAXE,String IDTUYEN,String MATAIXE,String CAM,String KICHHOAT){
+        this.IDLOTRINH=Integer.parseInt(IDLOTRINH);
+        this.MAXE=MAXE;
+        this.IDTUYEN=IDTUYEN;
+        this.MATAIXE=MATAIXE ;
+        this.CAM=Boolean.parseBoolean(CAM);
+        this.KICHHOAT=Boolean.parseBoolean(KICHHOAT);
+    }
+    public LoTrinhChoXe(){
+
+    }
 
 
     public Integer getIdLoTrinh() {

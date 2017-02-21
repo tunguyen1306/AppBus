@@ -6,21 +6,25 @@ import com.j256.ormlite.table.DatabaseTable;
 @DatabaseTable(tableName = "DmTaiXe")
 public class DmTaiXe {
     @DatabaseField
-    private String MATAIXE;
+    public String MATAIXE;
     @DatabaseField
-    private String TENTAIXE;
+    public String TENTAIXE;
     @DatabaseField
-    private Integer TUOI;
+    public Integer TUOI;
     @DatabaseField
-    private String GIOITINH;
+    public String GIOITINH;
     @DatabaseField
-    private String BANGLAI;
+    public String BANGLAI;
     @DatabaseField
-    private String SDT;
+    public String SDT;
     @DatabaseField
-    private String DIACHINOIO;
+    public String DIACHINOIO;
     @DatabaseField
-    private String EMAIL;
+    public String EMAIL;
+    public DmTaiXe(){
+
+
+    }
 public DmTaiXe(String MATAIXE,String TENTAIXE,String TUOI,String GIOITINH,String BANGLAI,String SDT,String DIACHINOIO,String EMAIL){
     this.MATAIXE=MATAIXE;
     this.TENTAIXE=TENTAIXE;

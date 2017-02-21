@@ -13,76 +13,76 @@ import java.util.Date;
 @DatabaseTable(tableName = "DmTuyen")
 public class DmTuyen {
     @DatabaseField
-    private String IDTUYEN;
+    public String IDTUYEN;
     @DatabaseField
-    private String MATUYEN;
+    public String MATUYEN;
     @DatabaseField
-    private String TENTUYENEND;
+    public String TENTUYENEND;
     @DatabaseField
-    private String TENTUYENVN;
+    public String TENTUYENVN;
     @DatabaseField
-    private String MATRAMDAU;
+    public String MATRAMDAU;
     @DatabaseField
-    private String MATRAMGIUA;
+    public String MATRAMGIUA;
     @DatabaseField
-    private String MATRAMCUOI;
+    public String MATRAMCUOI;
     @DatabaseField
-    private String TONGTRAM;
+    public String TONGTRAM;
     @DatabaseField
-    private Integer MUCDO;
+    public Integer MUCDO;
     @DatabaseField
-    private Date THOIGIANTOANTRAM;
+    public Date THOIGIANTOANTRAM;
     @DatabaseField
-    private double GIAVE1;
+    public double GIAVE1;
     @DatabaseField
-    private String DIENGIAIVE1;
+    public String DIENGIAIVE1;
     @DatabaseField
-    private boolean  CAMVE1;
+    public boolean  CAMVE1;
     @DatabaseField
-    private String IDVE1IDHOADON;
+    public String IDVE1IDHOADON;
     @DatabaseField
-    private double GIAVE2;
+    public double GIAVE2;
     @DatabaseField
-    private String DIENGIAIVE2;
+    public String DIENGIAIVE2;
     @DatabaseField
-    private boolean  CAMVE2;
+    public boolean  CAMVE2;
     @DatabaseField
-    private String IDVE2IDHOADON;
+    public String IDVE2IDHOADON;
     @DatabaseField
-    private double GIAVE3;
+    public double GIAVE3;
     @DatabaseField
-    private String DIENGIAIVE3;
+    public String DIENGIAIVE3;
     @DatabaseField
-    private boolean  CAMVE3;
+    public boolean  CAMVE3;
     @DatabaseField
-    private String IDVE3IDHOADON;
+    public String IDVE3IDHOADON;
     @DatabaseField
-    private double GIAVE4;
+    public double GIAVE4;
     @DatabaseField
-    private String DIENGIAIVE4;
+    public String DIENGIAIVE4;
     @DatabaseField
-    private boolean  CAMVE4;
+    public boolean  CAMVE4;
     @DatabaseField
-    private String IDVE4IDHOADON;
+    public String IDVE4IDHOADON;
     @DatabaseField
-    private double GIAVE5;
+    public double GIAVE5;
     @DatabaseField
-    private String DIENGIAIVE5;
+    public String DIENGIAIVE5;
     @DatabaseField
-    private boolean  CAMVE5;
+    public boolean  CAMVE5;
     @DatabaseField
-    private String IDVE5IDHOADON;
+    public String IDVE5IDHOADON;
     @DatabaseField
-    private double GIAVE6;
+    public double GIAVE6;
     @DatabaseField
-    private String DIENGIAIVE6;
+    public String DIENGIAIVE6;
     @DatabaseField
-    private boolean  CAMVE6;
+    public boolean  CAMVE6;
     @DatabaseField
-    private String IDVE6IDHOADON;
+    public String IDVE6IDHOADON;
 
 
-    public  DmTuyen(String IDTUYEN,String MATUYEN,String TENTUYENEND,String TENTUYENVN,String MATRAMDAU,String MATRAMGIUA,String MATRAMCUOI,String String,String MUCDO,String THOIGIANTOANTRAM,String GIAVE1,String DIENGIAIVE1,String  CAMVE1,String IDVE1IDHOADON,String GIAVE2,String DIENGIAIVE2,String  CAMVE2,String IDVE2IDHOADON,String GIAVE3,String DIENGIAIVE3,String  CAMVE3,String IDVE3IDHOADON,String GIAVE4,String DIENGIAIVE4,String  CAMVE4,String IDVE4IDHOADON,String GIAVE5,String DIENGIAIVE5,String  CAMVE5,String IDVE5IDHOADON,String GIAVE6,String DIENGIAIVE6,String  CAMVE6,String IDVE6IDHOADON)
+    public  DmTuyen(String IDTUYEN,String MATUYEN,String TENTUYENEND,String TENTUYENVN,String MATRAMDAU,String MATRAMGIUA,String MATRAMCUOI,String String,String MUCDO,String THOIGIANTOANTRAM,String GIAVE1,String DIENGIAIVE1,String  CAMVE1,String IDVE1IDHOADON,String GIAVE2,String DIENGIAIVE2,String  CAMVE2,String IDVE2IDHOADON,String GIAVE3,String DIENGIAIVE3,String  CAMVE3,String IDVE3IDHOADON,String GIAVE4,String DIENGIAIVE4,String  CAMVE4,String IDVE4IDHOADON,String GIAVE5,String DIENGIAIVE5,String  CAMVE5,String IDVE5IDHOADON,String GIAVE6,String DIENGIAIVE6,String  CAMVE6,String IDVE6IDHOADON,String TONGTRAM)
     {
         this.IDTUYEN=IDTUYEN;
         this.MATUYEN=MATUYEN;
@@ -123,7 +123,9 @@ public class DmTuyen {
 
 
     }
+public DmTuyen(){
 
+}
 public Date changeToate( String dateString)
 {
     SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy hh:mm:ss aa");

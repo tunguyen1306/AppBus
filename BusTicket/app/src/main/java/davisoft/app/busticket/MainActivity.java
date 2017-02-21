@@ -27,7 +27,12 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.j256.ormlite.android.apptools.OpenHelperManager;
+import com.j256.ormlite.dao.Dao;
+import com.j256.ormlite.stmt.QueryBuilder;
+
 import java.nio.charset.StandardCharsets;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -35,11 +40,15 @@ import java.util.List;
 
 import davisoft.app.busticket.adapter.USBAdapter;
 import davisoft.app.busticket.data.ControlDatabase;
+import davisoft.app.busticket.data.DatabaseHelper;
 import davisoft.app.busticket.data.ResClien;
+import davisoft.app.busticket.data.pojo.Counters;
 import davisoft.app.busticket.data.pojo.DmTaiXe;
 import davisoft.app.busticket.data.pojo.DmTram;
 import davisoft.app.busticket.data.pojo.DmTuyen;
+import davisoft.app.busticket.data.pojo.DmTuyenChiTietTram;
 import davisoft.app.busticket.data.pojo.DmXe;
+import davisoft.app.busticket.data.pojo.LoTrinhChoXe;
 import davisoft.app.busticket.printer.PrintOrder;
 import retrofit.Callback;
 import retrofit.RetrofitError;
@@ -63,6 +72,7 @@ public class MainActivity extends AppCompatActivity {
     private int orientation = Configuration.ORIENTATION_LANDSCAPE;
 
 
+    private DatabaseHelper databaseHelper = null;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -75,6 +85,9 @@ public class MainActivity extends AppCompatActivity {
         CallDmTram();
         CallDmTuyen();
         CallDmXe();
+        CallCHiTietTuyen();
+        CallLoTrinhChoXe();
+        CallCounters();
     }
 
     private final BroadcastReceiver mUsbReceiver = new BroadcastReceiver() {
@@ -736,6 +749,281 @@ public class MainActivity extends AppCompatActivity {
 
     private void loadDataAllXe() {
         ItemAllDmXe = getAllXe();
+    }
+
+
+
+    ////LoadCHiTietTuyen//////
+    List<DmTuyenChiTietTram> ItemAllCHiTietTuyen;
+    List<String> ListIDChiTiet = new ArrayList<>();
+    List<String> ListIDTUYEN = new ArrayList<>();
+    List<String> ListMATRAM = new ArrayList<>();
+    List<String> ListTRAMDAU = new ArrayList<>();
+    List<String> ListTRAMCUOI = new ArrayList<>();
+
+    public void CallCHiTietTuyen() {
+        ResClien restClient = new ResClien();
+        restClient.GetService().GetDMTUYENCHITIETTRAMs(new Callback<List<DmTuyenChiTietTram>>() {
+            @Override
+            public void success(List<DmTuyenChiTietTram> DmXe, Response response) {
+                for (int i = 0; i < DmXe.size(); i++) {
+
+                    ListIDChiTiet.add(DmXe.get(i).getId().toString());
+                    ListIDTUYEN.add(DmXe.get(i).getIdTuyen());
+                    ListMATRAM.add(DmXe.get(i).getMaTram());
+                    ListTRAMDAU.add(DmXe.get(i).getTramDau().toString());
+                    ListTRAMCUOI.add(DmXe.get(i).getTramCuoi().toString());
+
+                }
+                loadCHiTietTuyen();
+            }
+
+            @Override
+            public void failure(RetrofitError error) {
+                Log.d("myLogs", "-------ERROR-------Slide");
+                Log.d("myLogs", Log.getStackTraceString(error));
+            }
+        });
+
+    }
+
+    private List<DmTuyenChiTietTram> getCHiTietTuyen() {
+        List<DmTuyenChiTietTram> items = new ArrayList<>();
+        for (int i = 0; i < ListID.size(); i++) {
+            items.add( new DmTuyenChiTietTram(ListMaXe.get(i),ListSOXE.get(i),ListLOAIXE.get(i),ListMATAIXE.get(i), ListSOGHE.get(i)));
+        }
+        return items;
+    }
+
+    private void loadCHiTietTuyen() {
+        ItemAllCHiTietTuyen = getCHiTietTuyen();
+    }
+
+    ////LoadLoTrinhTuyen//////
+    List<LoTrinhChoXe> ItemAllLoTrinhChoXe;
+    List<String> ListIDLoTrinhChoXe = new ArrayList<>();
+    List<String> ListIDTUYENLoTrinhChoXe = new ArrayList<>();
+    List<String> ListMAXELoTrinhChoXe= new ArrayList<>();
+    List<String> ListMATAIXELoTrinhChoXe = new ArrayList<>();
+    List<String> ListCAM = new ArrayList<>();
+    List<String> ListKICHHOAT = new ArrayList<>();
+    public void CallLoTrinhChoXe() {
+        ResClien restClient = new ResClien();
+        restClient.GetService().GetLOTRINHCHOXEs(new Callback<List<LoTrinhChoXe>>() {
+            @Override
+            public void success(List<LoTrinhChoXe> DmXe, Response response) {
+                for (int i = 0; i < DmXe.size(); i++) {
+
+                    ListIDLoTrinhChoXe.add(DmXe.get(i).getIdLoTrinh().toString());
+                    ListIDTUYENLoTrinhChoXe.add(DmXe.get(i).getIdTuyen());
+                    ListMAXELoTrinhChoXe.add(DmXe.get(i).getMaXe());
+                    ListMATAIXELoTrinhChoXe.add(DmXe.get(i).getMaTaiXe().toString());
+                    ListCAM.add(DmXe.get(i).getCam().toString());
+                    ListKICHHOAT.add(DmXe.get(i).getKichHoat().toString());
+
+                }
+                loadLoTrinhChoXe();
+            }
+
+            @Override
+            public void failure(RetrofitError error) {
+                Log.d("myLogs", "-------ERROR-------Slide");
+                Log.d("myLogs", Log.getStackTraceString(error));
+            }
+        });
+
+    }
+
+    private List<LoTrinhChoXe> getLoTrinhChoXe() {
+        List<LoTrinhChoXe> items = new ArrayList<>();
+        for (int i = 0; i < ListID.size(); i++) {
+            items.add( new LoTrinhChoXe(ListIDLoTrinhChoXe.get(i),ListIDTUYENLoTrinhChoXe.get(i),ListMAXELoTrinhChoXe.get(i),ListMATAIXELoTrinhChoXe.get(i), ListCAM.get(i), ListKICHHOAT.get(i)));
+        }
+        return items;
+    }
+
+    private void loadLoTrinhChoXe() {
+        ItemAllLoTrinhChoXe = getLoTrinhChoXe();
+    }
+
+
+    /////
+    List<Counters> ItemCounters;
+    List<String> CopyRight=new ArrayList<>();
+    List<String> LogoCopyRight=new ArrayList<>();
+    List<String> CopyRightKey=new ArrayList<>();
+    List<String> ChedoInCSDL=new ArrayList<>();
+    List<String> ChedoInDefault=new ArrayList<>();
+    List<String> SetDefaultIn=new ArrayList<>();
+    List<String> MutiServices=new ArrayList<>();
+    List<String> TransferAuto=new ArrayList<>();
+    List<String> TransferTime=new ArrayList<>();
+    List<String> PGDCode=new ArrayList<>();
+    List<String> AutoNext=new ArrayList<>();
+    List<String> BackupSQLserver=new ArrayList<>();
+    List<String> TieudeVN=new ArrayList<>();
+    List<String> TieudeENG=new ArrayList<>();
+    List<String> MST=new ArrayList<>();
+    List<String> DT=new ArrayList<>();
+    List<String> DCPRINT=new ArrayList<>();
+    List<String> MAXE=new ArrayList<>();
+    List<String> Luot=new ArrayList<>();
+    List<String> Lastday=new ArrayList<>();
+
+    public void CallCounters() {
+        ResClien restClient = new ResClien();
+        restClient.GetService().GetCounters(new Callback<List<Counters>>() {
+            @Override
+            public void success(List<Counters> DmXe, Response response) {
+                for (int i = 0; i < DmXe.size(); i++) {
+
+                    CopyRight.add(DmXe.get(i).getCopyRight().toString());
+                    LogoCopyRight.add(DmXe.get(i).getLogoCopyRight());
+                    CopyRightKey.add(DmXe.get(i).getCopyRightKey());
+                    ChedoInCSDL.add(DmXe.get(i).getChedoInCSDL().toString());
+                    ChedoInDefault.add(DmXe.get(i).getChedoInDefault().toString());
+                    SetDefaultIn.add(DmXe.get(i).getSetDefaultIn().toString());
+                    MutiServices.add(DmXe.get(i).getMutiServices().toString());
+                    TransferAuto.add(DmXe.get(i).getTransferAuto().toString());
+                    TransferTime.add(DmXe.get(i).getTransferTime().toString());
+                    PGDCode.add(DmXe.get(i).getPGDCode().toString());
+                    AutoNext.add(DmXe.get(i).getAutoNext().toString());
+                    BackupSQLserver.add(DmXe.get(i).getBackupSQLserver().toString());
+                    TieudeVN.add(DmXe.get(i).getTieudeVN().toString());
+                    TieudeENG.add(DmXe.get(i).getTieudeENG().toString());
+                    MST.add(DmXe.get(i).getMST().toString());
+                    DT.add(DmXe.get(i).getDT().toString());
+                    DCPRINT.add(DmXe.get(i).getDCPRINT().toString());
+                    MAXE.add(DmXe.get(i).getMAXE().toString());
+                    Luot.add(DmXe.get(i).getLuot().toString());
+                    Lastday.add(DmXe.get(i).getLastday().toString());
+
+
+                }
+                loadCounters();
+            }
+
+            @Override
+            public void failure(RetrofitError error) {
+                Log.d("myLogs", "-------ERROR-------Slide");
+                Log.d("myLogs", Log.getStackTraceString(error));
+            }
+        });
+
+    }
+
+    private List<Counters> getCounters() {
+        List<Counters> items = new ArrayList<>();
+        for (int i = 0; i < ListID.size(); i++) {
+            items.add( new Counters(CopyRight.get(i),LogoCopyRight.get(i),CopyRightKey.get(i),ChedoInCSDL.get(i), ChedoInDefault.get(i), SetDefaultIn.get(i),
+                    MutiServices.get(i), TransferAuto.get(i), TransferTime.get(i), PGDCode.get(i),
+                    AutoNext.get(i), BackupSQLserver.get(i), TieudeVN.get(i), TieudeENG.get(i),
+                    MST.get(i), DT.get(i), DCPRINT.get(i), MAXE.get(i),
+                    Luot.get(i), Lastday.get(i)));
+        }
+        return items;
+    }
+
+    private void loadCounters() {
+        ItemCounters = getCounters();
+    }
+    private DatabaseHelper getHelper() {
+        if (databaseHelper == null) {
+            databaseHelper = OpenHelperManager.getHelper(getApplicationContext(), DatabaseHelper.class);
+        }
+        return databaseHelper;
+    }
+
+
+    private Dao<Counters, Integer> CountersMangasDao;
+    private List<Counters> CountersMangasList;
+    public void LoadCountersBySqlite() {
+        try {
+            CountersMangasDao = getHelper().getCountMangasDao();
+            QueryBuilder<Counters, Integer> queryBuilder = CountersMangasDao.queryBuilder();
+            CountersMangasList = queryBuilder.query();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    private Dao<DmTaiXe, Integer> DmTaiXeMangasDao;
+    private List<DmTaiXe> DmTaiXeMangasList;
+    public void LoadDmTaiXeBySqlite() {
+        try {
+            DmTaiXeMangasDao = getHelper().getDmTaiXeMangasDao();
+            QueryBuilder<DmTaiXe, Integer> queryBuilder =DmTaiXeMangasDao.queryBuilder();
+            DmTaiXeMangasList = queryBuilder.query();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    private Dao<DmTram, Integer> DmTramMangasDao;
+    private List<DmTram> DmTramMangasList;
+    public void LoadDmTramBySqlite() {
+        try {
+            DmTramMangasDao = getHelper().getDmTramMangasDao();
+            QueryBuilder<DmTram, Integer> queryBuilder =DmTramMangasDao.queryBuilder();
+            DmTramMangasList = queryBuilder.query();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    private Dao<DmTuyen, Integer> DmTuyenMangasDao;
+    private List<DmTuyen> DmTuyenMangasList;
+    public void LoadDmTuyenBySqlite() {
+        try {
+            DmTuyenMangasDao = getHelper().getDmTuyenMangasDao();
+            QueryBuilder<DmTuyen, Integer> queryBuilder =DmTuyenMangasDao.queryBuilder();
+            DmTuyenMangasList = queryBuilder.query();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    private Dao<DmTuyenChiTietTram, Integer> DmTuyenChiTietTramMangasDao;
+    private List<DmTuyenChiTietTram> DmTuyenChiTietTramMangasList;
+    public void LoadDmTuyenChiTietTramBySqlite() {
+        try {
+            DmTuyenChiTietTramMangasDao = getHelper().getDmTuyenChiTietTramMangasDao();
+            QueryBuilder<DmTuyenChiTietTram, Integer> queryBuilder =DmTuyenChiTietTramMangasDao.queryBuilder();
+            DmTuyenChiTietTramMangasList = queryBuilder.query();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    private Dao<DmXe, Integer> DmXeMangasDao;
+    private List<DmXe> DmXeMangasList;
+    public void LoadDmXeBySqlite() {
+        try {
+            DmXeMangasDao = getHelper().getDmXeMangasDao();
+            QueryBuilder<DmXe, Integer> queryBuilder =DmXeMangasDao.queryBuilder();
+            DmXeMangasList = queryBuilder.query();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    private Dao<LoTrinhChoXe, Integer> LoTrinhChoXeMangasDao;
+    private List<LoTrinhChoXe> LoTrinhChoXeMangasList;
+    public void LoadLoTrinhChoXeBySqlite() {
+        try {
+            LoTrinhChoXeMangasDao = getHelper().getLoTrinhChoXeMangasDao();
+            QueryBuilder<LoTrinhChoXe, Integer> queryBuilder =LoTrinhChoXeMangasDao.queryBuilder();
+            LoTrinhChoXeMangasList = queryBuilder.query();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
     }
 
 

@@ -8,20 +8,27 @@ import com.j256.ormlite.table.DatabaseTable;
 @DatabaseTable(tableName = "DmXe")
 public class DmXe {
     @DatabaseField
-    private String MAXE;
+    public String MAXE;
     @DatabaseField
-    private String SOXE;
+    public String SOXE;
     @DatabaseField
-    private String LOAIXE;
+    public String LOAIXE;
     @DatabaseField
-    private String MATAIXE;
+    public String MATAIXE;
     @DatabaseField
-    private String SOGHE;
+    public String SOGHE;
 
-    public DmXe(String MAXE,String SOXE,String LOAIXE,String MATAIXE,String SOGHE){
+    public DmXe(){
 
     }
+    public DmXe(String MAXE,String SOXE,String LOAIXE,String MATAIXE,String SOGHE){
+        this.MAXE=MAXE;
+        this.SOXE=SOXE;
+        this.LOAIXE=LOAIXE;
+        this.MATAIXE=MATAIXE;
+        this.SOGHE=SOGHE;
 
+    }
     public String getMaXe() {
         return MAXE;
     }

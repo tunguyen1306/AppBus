@@ -7,18 +7,26 @@ import com.j256.ormlite.table.DatabaseTable;
 @DatabaseTable(tableName = "DmTuyenChiTietTram")
 public class DmTuyenChiTietTram {
     @DatabaseField
-    private Integer  ID;
+    public Integer  ID;
     @DatabaseField
-    private String IDTUYEN;
+    public String IDTUYEN;
     @DatabaseField
-    private String MATRAM;
+    public String MATRAM;
     @DatabaseField
-    private Boolean TRAMDAU;
+    public Boolean TRAMDAU;
     @DatabaseField
-    private Boolean TRAMCUOI;
+    public Boolean TRAMCUOI;
 
+public DmTuyenChiTietTram(String ID,String IDTUYEN,String MATRAM,String TRAMDAU,String TRAMCUOI){
+             this.ID=Integer.parseInt(ID);
+            this.IDTUYEN=IDTUYEN;
+            this.MATRAM=MATRAM;
+            this.TRAMDAU=Boolean.parseBoolean(TRAMDAU) ;
+            this.TRAMCUOI=Boolean.parseBoolean(TRAMCUOI);
+}
+    public DmTuyenChiTietTram(){
 
-
+    }
     public Integer getId() {
         return ID;
     }

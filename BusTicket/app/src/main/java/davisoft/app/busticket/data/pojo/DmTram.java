@@ -7,11 +7,14 @@ import com.j256.ormlite.table.DatabaseTable;
 @DatabaseTable(tableName = "DmTram")
 public class DmTram {
     @DatabaseField
-    private Integer ID;
+    public Integer ID;
     @DatabaseField
-    private String MATRAM;
+    public String MATRAM;
     @DatabaseField
-    private String TENTRAM;
+    public String TENTRAM;
+    public DmTram(){
+
+    }
 public DmTram(String ID,String MATRAM,String TENTRAM){
     this.ID=Integer.parseInt(ID);
     this.MATRAM=MATRAM;
