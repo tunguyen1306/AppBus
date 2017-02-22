@@ -212,7 +212,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
 
 
-
+                findViewById(R.id.layout_popup).setVisibility(View.VISIBLE);
                 findViewById(R.id.layout_popup).animate()
                         .translationY(0)
                         .alpha(1.0f)
@@ -220,7 +220,9 @@ public class MainActivity extends AppCompatActivity {
                         .setListener(new AnimatorListenerAdapter() {
                             @Override
                             public void onAnimationEnd(Animator animation) {
-                                super.onAnimationEnd(animation);}
+                                super.onAnimationEnd(animation);
+
+                            }
                         });
 
             }
@@ -238,7 +240,9 @@ public class MainActivity extends AppCompatActivity {
                         .setListener(new AnimatorListenerAdapter() {
                             @Override
                             public void onAnimationEnd(Animator animation) {
-                                super.onAnimationEnd(animation);}
+                                super.onAnimationEnd(animation);
+                                findViewById(R.id.layout_popup).setVisibility(View.GONE);
+                            }
                         });
             }
         });
@@ -379,7 +383,7 @@ public class MainActivity extends AppCompatActivity {
             {
                 gLayout.getChildAt(1).findViewById(R.id.layout_button).setEnabled(false);
                 gLayout.getChildAt(1).findViewById(R.id.layout_button).setBackground(Resources.getSystem().getDrawable(R.drawable.btn_selector_disable));
-                ((TextView)gLayout.getChildAt(1).findViewById(R.id.txt_button)).setText("");
+                ((TextView)gLayout.getChildAt(1).findViewById(R.id.txt_button)).setText("...");
             }else
             {
                 gLayout.getChildAt(1).findViewById(R.id.layout_button).setTag("2;"+DmTuyenLocal.GETIDVE2IDHOADON()+";"+df.format(DmTuyenLocal.GETGIAVE2()).replaceAll(",",".")+";"+DmTuyenLocal.GETDIENGIAIVE2());
@@ -396,7 +400,7 @@ public class MainActivity extends AppCompatActivity {
             {
                 gLayout.getChildAt(2).findViewById(R.id.layout_button).setEnabled(false);
                 gLayout.getChildAt(2).findViewById(R.id.layout_button).setBackground(Resources.getSystem().getDrawable(R.drawable.btn_selector_disable));
-                ((TextView)gLayout.getChildAt(2).findViewById(R.id.txt_button)).setText("");
+                ((TextView)gLayout.getChildAt(2).findViewById(R.id.txt_button)).setText("...");
             }else
             {
                 gLayout.getChildAt(2).findViewById(R.id.layout_button).setTag("3;"+DmTuyenLocal.GETIDVE3IDHOADON()+";"+df.format(DmTuyenLocal.GETGIAVE3()).replaceAll(",",".")+";"+DmTuyenLocal.GETDIENGIAIVE3());
@@ -414,7 +418,7 @@ public class MainActivity extends AppCompatActivity {
             {
                 gLayout.getChildAt(3).findViewById(R.id.layout_button).setEnabled(false);
                 gLayout.getChildAt(3).findViewById(R.id.layout_button).setBackground(Resources.getSystem().getDrawable(R.drawable.btn_selector_disable));
-                ((TextView)gLayout.getChildAt(3).findViewById(R.id.txt_button)).setText("");
+                ((TextView)gLayout.getChildAt(3).findViewById(R.id.txt_button)).setText("...");
             }else
             {
                 gLayout.getChildAt(3).findViewById(R.id.layout_button).setTag("4;"+DmTuyenLocal.GETIDVE4IDHOADON()+";"+df.format(DmTuyenLocal.GETGIAVE4()).replaceAll(",",".")+";"+DmTuyenLocal.GETDIENGIAIVE4());
@@ -432,7 +436,7 @@ public class MainActivity extends AppCompatActivity {
             {
                 gLayout.getChildAt(4).findViewById(R.id.layout_button).setEnabled(false);
                 gLayout.getChildAt(4).findViewById(R.id.layout_button).setBackground(Resources.getSystem().getDrawable(R.drawable.btn_selector_disable));
-                ((TextView)gLayout.getChildAt(4).findViewById(R.id.txt_button)).setText("");
+                ((TextView)gLayout.getChildAt(4).findViewById(R.id.txt_button)).setText("...");
             }else
             {
                 gLayout.getChildAt(4).findViewById(R.id.layout_button).setTag("5;"+DmTuyenLocal.GETIDVE5IDHOADON()+";"+df.format(DmTuyenLocal.GETGIAVE5()).replaceAll(",",".")+";"+DmTuyenLocal.GETDIENGIAIVE5());
@@ -451,7 +455,7 @@ public class MainActivity extends AppCompatActivity {
             {
                 gLayout.getChildAt(5).findViewById(R.id.layout_button).setEnabled(false);
                 gLayout.getChildAt(5).findViewById(R.id.layout_button).setBackground(Resources.getSystem().getDrawable(R.drawable.btn_selector_disable));
-                ((TextView)gLayout.getChildAt(5).findViewById(R.id.txt_button)).setText("");
+                ((TextView)gLayout.getChildAt(5).findViewById(R.id.txt_button)).setText("...");
             }else
             {
                 gLayout.getChildAt(5).findViewById(R.id.layout_button).setTag("6;"+DmTuyenLocal.GETIDVE6IDHOADON()+";"+df.format(DmTuyenLocal.GETGIAVE6()).replaceAll(",",".")+";"+DmTuyenLocal.GETDIENGIAIVE6());
@@ -623,6 +627,7 @@ public class MainActivity extends AppCompatActivity {
                 ((TextView)findViewById(R.id.txtTitle3)).setText("Mã Tuyến: "+DmTuyenLocal.GETMATUYEN()+" - "+DmTuyenLocal.GETTENTUYENVN()+" ("+TenTuyen+")");
                 ((TextView)findViewById(R.id.txtTitle4)).setText(getChiTietTramByTuyen(DmTuyenLocal));
                 resetTicket();
+
                 findViewById(R.id.layout_popup_loading).animate()
                         .alpha(0f)
                         .setDuration(200)
@@ -942,51 +947,59 @@ public class MainActivity extends AppCompatActivity {
                     lParams.columnSpec = colSpec;
                     view.setLayoutParams(lParams);
                     gridLayout.addView(view, lParams);
-                    view.findViewById(R.id.layout_button).setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            // resetLayout();
-                            // testPrinter();
 
-                            if (v.isEnabled() &&  v.getTag()!=null)
-                            {
-                                final Integer index=Integer.valueOf(v.getTag().toString().split(";")[0]);
-                                final String hdID=v.getTag().toString().split(";")[1];
-                                final String sotien=v.getTag().toString().split(";")[2];
-                                final String dienGiai=v.getTag().toString().replaceAll(index+";"+hdID+";"+sotien+";","");
-                                hoaDonID=hdID;
-                                updateHoaDonByID(index,sotien,dienGiai);
-                            }
-
-                        }
-                    });
-                    view.findViewById(R.id.txt_button).setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            // resetLayout();
-                            // testPrinter();
-
-                            if (  ((View)v.getParent()).isEnabled() &&    ((View)v.getParent()).getTag()!=null)
-                            {
-
-
-                                final Integer index=Integer.valueOf(((View)v.getParent()).getTag().toString().split(";")[0]);
-                                final String hdID=((View)v.getParent()).getTag().toString().split(";")[1];
-                                final String sotien=((View)v.getParent()).getTag().toString().split(";")[2];
-                                final String dienGiai=((View)v.getParent()).getTag().toString().replaceAll(index+";"+hdID+";"+sotien+";","");
-                                hoaDonID=hdID;
-                                updateHoaDonByID(index,sotien,dienGiai);
-
-                            }
-
-                        }
-                    });
                 } else {
                     break;
                 }
 
             }
         }
+        for (int i=0;i<gridLayout.getChildCount();i++)
+        {
+            View view=gridLayout.getChildAt(i);
+            view.findViewById(R.id.layout_button).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    // resetLayout();
+                    // testPrinter();
+
+                    if (v.isEnabled() &&  v.getTag()!=null)
+                    {
+                        final Integer index=Integer.valueOf(v.getTag().toString().split(";")[0]);
+                        final String hdID=v.getTag().toString().split(";")[1];
+                        final String sotien=v.getTag().toString().split(";")[2];
+                        final String dienGiai=v.getTag().toString().replaceAll(index+";"+hdID+";"+sotien+";","");
+                        hoaDonID=hdID;
+                        updateHoaDonByID(index,sotien,dienGiai);
+                    }
+
+                }
+            });
+            view.findViewById(R.id.txt_button).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    // resetLayout();
+                    // testPrinter();
+
+                    if (  ((View)v.getParent()).isEnabled() &&    ((View)v.getParent()).getTag()!=null)
+                    {
+
+
+                        final Integer index=Integer.valueOf(((View)v.getParent()).getTag().toString().split(";")[0]);
+                        final String hdID=((View)v.getParent()).getTag().toString().split(";")[1];
+                        final String sotien=((View)v.getParent()).getTag().toString().split(";")[2];
+                        final String dienGiai=((View)v.getParent()).getTag().toString().replaceAll(index+";"+hdID+";"+sotien+";","");
+                        hoaDonID=hdID;
+                        updateHoaDonByID(index,sotien,dienGiai);
+
+                    }
+
+                }
+            });
+
+        }
+
+
         gridLayout.requestLayout();
         new Thread(new Runnable() {
             @Override
@@ -1010,8 +1023,24 @@ public class MainActivity extends AppCompatActivity {
                                 // gridLayout.getChildAt(i).findViewById(R.id.button_text).setLayoutParams(lParam);
 
                                  gridLayout.getChildAt(i).findViewById(R.id.txt_button).setVisibility(View.VISIBLE);
-                                resetTicket();
+                                 resetTicket();
+                                gridLayout.getChildAt(i).findViewById(R.id.layout_button).setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+                                        if (v.isEnabled() &&  v.getTag()!=null)
+                                        {
+                                            final Integer index=Integer.valueOf(v.getTag().toString().split(";")[0]);
+                                            final String hdID=v.getTag().toString().split(";")[1];
+                                            final String sotien=v.getTag().toString().split(";")[2];
+                                            final String dienGiai=v.getTag().toString().replaceAll(index+";"+hdID+";"+sotien+";","");
+                                            hoaDonID=hdID;
+                                            updateHoaDonByID(index,sotien,dienGiai);
+                                        }
+                                    }
+                                });
                             }
+
+
                         }
                     });
 

@@ -160,7 +160,7 @@
 
         android:id="@+id/layout_popup"
         android:alpha="1"
-        android:visibility="visible">
+        android:visibility="gone">
 
         <LinearLayout
             android:orientation="vertical"
