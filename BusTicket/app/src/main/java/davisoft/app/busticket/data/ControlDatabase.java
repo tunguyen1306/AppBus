@@ -17,6 +17,8 @@ import java.util.Date;
 import java.util.List;
 
 import davisoft.app.busticket.data.pojo.Counters;
+import davisoft.app.busticket.data.pojo.DichVu;
+import davisoft.app.busticket.data.pojo.DmHoaDon;
 import davisoft.app.busticket.data.pojo.DmTaiXe;
 import davisoft.app.busticket.data.pojo.DmTram;
 import davisoft.app.busticket.data.pojo.DmTuyen;
@@ -678,6 +680,286 @@ public class ControlDatabase {
             e.printStackTrace();
         }
     }
+
+
+
+
+    //////////DICHVU//////////
+    public static void AddDichVu(final Context context) {
+        ResClien restClient = new ResClien();
+        restClient.GetService().GetDICHVUs(new Callback<List<DichVu>>() {
+            @Override
+            public void success(List<DichVu> DichVu, Response response) {
+                for (int i = 0; i < DichVu.size(); i++) {
+                    String getID = String.valueOf(DichVu.get(i).getID());
+                    String isPHUCVU = String.valueOf(DichVu.get(i).isPHUCVU());
+                    String isContro = String.valueOf(DichVu.get(i).isContro());
+                    String isDoc = String.valueOf(DichVu.get(i).isDoc());
+                    String isDATCHO = String.valueOf(DichVu.get(i).isDATCHO());
+
+
+                    AddDichVuSqlite(context,getID,
+                            DichVu.get(i).getNGAY(),
+                            DichVu.get(i).getSQMS(),
+                            DichVu.get(i).getGIOLAYSO(),
+                            DichVu.get(i).getDichvu1(),
+                            DichVu.get(i).getGIAVE(),
+                            DichVu.get(i).getMATUYEN(),
+                            DichVu.get(i).getTENTUYEN(),
+                            DichVu.get(i).getMATRAMDAU(),
+                            DichVu.get(i).getMATRAMCUOI(),
+                            DichVu.get(i).getLOTRINH(),
+                            DichVu.get(i).getBienSoXe(),
+                            DichVu.get(i).getTRANGTHAI(),
+                            isPHUCVU,
+                            DichVu.get(i).getGHICHU(),
+                            isContro,
+                            isDoc,
+                            isDATCHO,
+                            DichVu.get(i).getGIO_GOC(),
+                            DichVu.get(i).getBINH_CHON(),
+                            DichVu.get(i).getGIO_BINHCHON(),
+                            DichVu.get(i).getNGONNGU(),
+                            DichVu.get(i).getDIEMGIAODICH(),
+                            DichVu.get(i).getMANV(),
+                            DichVu.get(i).getQUAYCHUYEN(),
+                            DichVu.get(i).getQUAYTHAMCHIEU(),
+                            DichVu.get(i).getSODIENTHOAI(),
+                            DichVu.get(i).getQUAY(),
+                            DichVu.get(i).getGIOPHUCVU(),
+                            DichVu.get(i).getMAXE(),
+                            DichVu.get(i).getMATAIXE(),
+                            DichVu.get(i).getMATRAM(),
+                            DichVu.get(i).getIDTUYEN(),
+                            DichVu.get(i).getKYHIEUVE(),
+                            DichVu.get(i).getMAUSO(),
+                            DichVu.get(i).getMATRAMGIUA());
+                }
+            }
+
+            @Override
+            public void failure(RetrofitError error) {
+                Log.d("myLogs", "-------ERROR-------Slide");
+                Log.d("myLogs", Log.getStackTraceString(error));
+            }
+        });
+
+    }
+    private static Dao<DichVu, Integer> DichVuMangasDao;
+    private static List<DichVu> DichVuMangasList;
+    public static void AddDichVuSqlite(Context context,String ID,
+                                       String NGAY,
+                                       String SQMS,
+                                       String GIOLAYSO,
+                                       String dichvu1,
+                                       String GIAVE,
+                                       String MATUYEN,
+                                       String TENTUYEN,
+                                       String MATRAMDAU,
+                                       String MATRAMCUOI,
+                                       String LOTRINH,
+                                       String BienSoXe,
+                                       String TRANGTHAI,
+                                       String PHUCVU,
+                                       String GHICHU,
+                                       String Contro,
+                                       String Doc,
+                                       String DATCHO,
+                                       String GIO_GOC,
+                                       String BINH_CHON,
+                                       String GIO_BINHCHON,
+                                       String NGONNGU,
+                                       String DIEMGIAODICH,
+                                       String MANV,
+                                       String QUAYCHUYEN,
+                                       String QUAYTHAMCHIEU,
+                                       String SODIENTHOAI,
+                                       String QUAY,
+                                       String GIOPHUCVU,
+                                       String MAXE,
+                                       String MATAIXE,
+                                       String MATRAM,
+                                       String IDTUYEN,
+                                       String KYHIEUVE,
+                                       String MAUSO,
+                                       String MATRAMGIUA) {
+        try {
+
+            DichVuMangasDao = getHelper(context).getDichVuMangasDao();
+            QueryBuilder<DichVu, Integer> queryBuilder = DichVuMangasDao.queryBuilder();
+            queryBuilder.where().eq("IDTUYEN", IDTUYEN);
+            DichVuMangasList = queryBuilder.query();
+            if (DmTaiXeMangasList.size() <= 0) {
+                final DichVu DichVu = new DichVu();
+                DichVu.ID=Integer.parseInt(ID) ;
+                DichVu.NGAY=NGAY;
+                DichVu.SQMS=SQMS;
+                DichVu.GIOLAYSO=GIOLAYSO;
+                DichVu.dichvu1=dichvu1;
+                DichVu.GIAVE=GIAVE;
+                DichVu.MATUYEN=MATUYEN;
+                DichVu.TENTUYEN=TENTUYEN;
+                DichVu.MATRAMDAU=MATRAMDAU;
+                DichVu.MATRAMCUOI=MATRAMCUOI;
+                DichVu.LOTRINH=LOTRINH;
+                DichVu.BienSoXe=BienSoXe;
+                DichVu.TRANGTHAI=TRANGTHAI;
+                DichVu.PHUCVU=Boolean.parseBoolean(PHUCVU);
+                DichVu.GHICHU=GHICHU;
+                DichVu.Contro=Boolean.parseBoolean(Contro);
+                DichVu.Doc=Boolean.parseBoolean(Doc);
+                DichVu.DATCHO=Boolean.parseBoolean(DATCHO);
+                DichVu.GIO_GOC=GIO_GOC;
+                DichVu.BINH_CHON=BINH_CHON;
+                DichVu.GIO_BINHCHON=GIO_BINHCHON;
+                DichVu.NGONNGU=NGONNGU;
+                DichVu.DIEMGIAODICH=DIEMGIAODICH;
+                DichVu.MANV=MANV;
+                DichVu.QUAYCHUYEN=QUAYCHUYEN;
+                DichVu.QUAYTHAMCHIEU=QUAYTHAMCHIEU;
+                DichVu.SODIENTHOAI=SODIENTHOAI;
+                DichVu.QUAY=QUAY;
+                DichVu.GIOPHUCVU=GIOPHUCVU;
+                DichVu.MAXE=MAXE;
+                DichVu.MATAIXE=MATAIXE;
+                DichVu.MATRAM=MATRAM;
+                DichVu.IDTUYEN=IDTUYEN;
+                DichVu.KYHIEUVE=KYHIEUVE;
+                DichVu.MAUSO=MAUSO;
+                DichVu.MATRAMGIUA=MATRAMGIUA;
+
+                try {
+                    final Dao<DichVu, Integer> dichVu = getHelper(context).getDichVuMangasDao();
+                    dichVu.create(DichVu);
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            } else {
+                UpdateBuilder<DichVu, Integer> updateBuilder = DichVuMangasDao.updateBuilder();
+                updateBuilder.updateColumnValue("ID", ID );
+                updateBuilder.updateColumnValue("NGAY", NGAY);
+                updateBuilder.updateColumnValue("SQMS", SQMS);
+                updateBuilder.updateColumnValue("GIOLAYSO", GIOLAYSO);
+                updateBuilder.updateColumnValue("dichvu1", dichvu1);
+                updateBuilder.updateColumnValue("GIAVE", GIAVE);
+                updateBuilder.updateColumnValue("MATUYEN", MATUYEN);
+                updateBuilder.updateColumnValue("TENTUYEN", TENTUYEN);
+                updateBuilder.updateColumnValue("MATRAMDAU", MATRAMDAU);
+                updateBuilder.updateColumnValue("MATRAMCUOI", MATRAMCUOI);
+                updateBuilder.updateColumnValue("LOTRINH", LOTRINH);
+                updateBuilder.updateColumnValue("BienSoXe", BienSoXe);
+                updateBuilder.updateColumnValue("TRANGTHAI", TRANGTHAI);
+                updateBuilder.updateColumnValue("PHUCVU", Boolean.parseBoolean(PHUCVU));
+                updateBuilder.updateColumnValue("GHICHU", GHICHU);
+                updateBuilder.updateColumnValue("Contro", Boolean.parseBoolean(Contro));
+                updateBuilder.updateColumnValue("Doc", Boolean.parseBoolean(Doc));
+                updateBuilder.updateColumnValue("DATCHO", Boolean.parseBoolean(DATCHO));
+                updateBuilder.updateColumnValue("GIO_GOC", GIO_GOC);
+                updateBuilder.updateColumnValue("BINH_CHON", BINH_CHON);
+                updateBuilder.updateColumnValue("GIO_BINHCHON", GIO_BINHCHON);
+                updateBuilder.updateColumnValue("NGONNGU", NGONNGU);
+                updateBuilder.updateColumnValue("DIEMGIAODICH", DIEMGIAODICH);
+                updateBuilder.updateColumnValue("MANV", MANV);
+                updateBuilder.updateColumnValue("QUAYCHUYEN", QUAYCHUYEN);
+                updateBuilder.updateColumnValue("QUAYTHAMCHIEU", QUAYTHAMCHIEU);
+                updateBuilder.updateColumnValue("SODIENTHOAI", SODIENTHOAI);
+                updateBuilder.updateColumnValue("QUAY", QUAY);
+                updateBuilder.updateColumnValue("GIOPHUCVU", GIOPHUCVU);
+                updateBuilder.updateColumnValue("MAXE", MAXE);
+                updateBuilder.updateColumnValue("MATAIXE", MATAIXE);
+                updateBuilder.updateColumnValue("MATRAM", MATRAM);
+                updateBuilder.updateColumnValue("IDTUYEN", IDTUYEN);
+                updateBuilder.updateColumnValue("KYHIEUVE", KYHIEUVE);
+                updateBuilder.updateColumnValue("MAUSO", MAUSO);
+                updateBuilder.updateColumnValue("MATRAMGIUA", MATRAMGIUA);
+                 updateBuilder.where().eq("ID", ID);
+                updateBuilder.update();
+            }
+
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+
+
+    //////////DmHoaDon//////////
+    public static void AddDmHoaDon(final Context context) {
+        ResClien restClient = new ResClien();
+        restClient.GetService().GetDMHOADONs(new Callback<List<DmHoaDon>>() {
+            @Override
+            public void success(List<DmHoaDon> DmHoaDon, Response response) {
+                for (int i = 0; i < DmHoaDon.size(); i++) {
+                    String getTONGSOVEPHATHANH = String.valueOf(DmHoaDon.get(i).getTONGSOVEPHATHANH());
+                    String getSOVEHIENTAI = String.valueOf(DmHoaDon.get(i).getSOVEHIENTAI());
+                    String getIDVE = String.valueOf(DmHoaDon.get(i).getIDVE());
+
+                    AddDmHoaDonSqlite(context,DmHoaDon.get(i).getIDHOADON().toString(),
+                            DmHoaDon.get(i).getMAXE(),DmHoaDon.get(i).getKYHIEUVE(),
+                            DmHoaDon.get(i).getMAUSO().toString(),getTONGSOVEPHATHANH,
+                            getSOVEHIENTAI,getIDVE);
+                }
+            }
+
+            @Override
+            public void failure(RetrofitError error) {
+                Log.d("myLogs", "-------ERROR-------Slide");
+                Log.d("myLogs", Log.getStackTraceString(error));
+            }
+        });
+
+    }
+    private static Dao<DmHoaDon, Integer> DmHoaDonMangasDao;
+    private static List<DmHoaDon> DmHoaDonMangasList;
+    public static void AddDmHoaDonSqlite(Context context,String IDHOADON,
+                                         String MAXE,
+                                         String KYHIEUVE,
+                                         String MAUSO,
+                                         String TONGSOVEPHATHANH,
+                                         String SOVEHIENTAI,
+                                         String IDVE) {
+        try {
+
+            DmHoaDonMangasDao = getHelper(context).getDmHoaDonMangasDao();
+            QueryBuilder<DmHoaDon, Integer> queryBuilder = DmHoaDonMangasDao.queryBuilder();
+            queryBuilder.where().eq("IDHOADON", IDHOADON);
+            DmHoaDonMangasList = queryBuilder.query();
+            if (DmTaiXeMangasList.size() <= 0) {
+                final DmHoaDon DmHoaDon = new DmHoaDon();
+                DmHoaDon.IDHOADON =IDHOADON ;
+                DmHoaDon.MAXE = MAXE;
+                DmHoaDon.KYHIEUVE = KYHIEUVE;
+                DmHoaDon.MAUSO = MAUSO;
+                DmHoaDon.TONGSOVEPHATHANH = Integer.parseInt(TONGSOVEPHATHANH);
+                DmHoaDon.SOVEHIENTAI = Integer.parseInt(SOVEHIENTAI) ;
+                DmHoaDon.IDVE = Integer.parseInt(IDVE) ;
+
+                try {
+                    final Dao<DmHoaDon, Integer> dmHoaDon = getHelper(context).getDmHoaDonMangasDao();
+                    dmHoaDon.create(DmHoaDon);
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            } else {
+                UpdateBuilder<DmHoaDon, Integer> updateBuilder = DmHoaDonMangasDao.updateBuilder();
+                updateBuilder.updateColumnValue("IDHOADON", IDHOADON);
+                updateBuilder.updateColumnValue("MAXE", MAXE);
+                updateBuilder.updateColumnValue("KYHIEUVE", KYHIEUVE);
+                updateBuilder.updateColumnValue("TONGSOVEPHATHANH", TONGSOVEPHATHANH);
+                updateBuilder.updateColumnValue("SOVEHIENTAI", SOVEHIENTAI);
+                updateBuilder.updateColumnValue("IDVE", IDVE);
+                updateBuilder.where().eq("IDHOADON", IDHOADON);
+                updateBuilder.update();
+            }
+
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
 
 
 

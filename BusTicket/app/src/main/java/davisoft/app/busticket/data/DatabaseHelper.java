@@ -12,6 +12,8 @@ import com.j256.ormlite.table.TableUtils;
 import java.sql.SQLException;
 
 import davisoft.app.busticket.data.pojo.Counters;
+import davisoft.app.busticket.data.pojo.DichVu;
+import davisoft.app.busticket.data.pojo.DmHoaDon;
 import davisoft.app.busticket.data.pojo.DmTaiXe;
 import davisoft.app.busticket.data.pojo.DmTram;
 import davisoft.app.busticket.data.pojo.DmTuyen;
@@ -33,6 +35,8 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
     private Dao<DmTuyenChiTietTram, Integer> DmTuyenChiTietTramMangasesDao;
     private Dao<DmXe, Integer> DmXeMangasesDao;
     private Dao<LoTrinhChoXe, Integer> LoTrinhChoXeMangasesDao;
+    private Dao<DmHoaDon, Integer>DmHoaDonMangasesDao;
+    private Dao<DichVu, Integer>DichVuMangasesDao;
     public DatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
@@ -49,6 +53,8 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
             TableUtils.createTable(connectionSource, DmTuyenChiTietTram.class);
             TableUtils.createTable(connectionSource, DmXe.class);
             TableUtils.createTable(connectionSource, LoTrinhChoXe.class);
+            TableUtils.createTable(connectionSource, DichVu.class);
+            TableUtils.createTable(connectionSource, DmHoaDon.class);
 
         } catch (SQLException e) {
             Log.e(DatabaseHelper.class.getName(), "Unable to create datbases", e);
@@ -70,7 +76,8 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
             TableUtils.dropTable(connectionSource, DmTuyenChiTietTram.class,true);
             TableUtils.dropTable(connectionSource, DmXe.class,true);
             TableUtils.dropTable(connectionSource, LoTrinhChoXe.class,true);
-
+            TableUtils.dropTable(connectionSource, DichVu.class,true);
+            TableUtils.dropTable(connectionSource, DmHoaDon.class,true);
             onCreate(database, connectionSource);
 
         } catch (SQLException e) {
@@ -121,9 +128,19 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
         return LoTrinhChoXeMangasesDao;
     }
 
+    public Dao<DichVu, Integer> getDichVuMangasDao() throws SQLException {
+        if (DichVuMangasesDao == null) {
+            DichVuMangasesDao = getDao(DichVu.class);
+        }
+        return DichVuMangasesDao;
+    }
 
-
-
+    public Dao<DmHoaDon, Integer> getDmHoaDonMangasDao() throws SQLException {
+        if (DmHoaDonMangasesDao == null) {
+            DmHoaDonMangasesDao = getDao(DmHoaDon.class);
+        }
+        return DmHoaDonMangasesDao;
+    }
 }
 
 

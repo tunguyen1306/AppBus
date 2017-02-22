@@ -5,6 +5,8 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
 import android.content.Context;
+import android.text.format.Time;
+import android.util.Log;
 
 import davisoft.app.busticket.adapter.USBAdapter;
 import davisoft.app.busticket.data.pojo.Counters;
@@ -119,8 +121,18 @@ public class PrintOrder {
         return p.finalCommandSet();
 
     }
-    public String buildData(Counters info,String mave, String soTien, String tuyen,String bsx)
+    public String buildData(Counters info,String mave, String soTien,String dienGiai, String tuyen,String bsx,String mauSo,String kyHieu)
     {
+        Time today = new Time(Time.getCurrentTimezone());
+        today.setToNow();
+        String strAMPM="AM";
+        int AMPM= Calendar.getInstance().get(Calendar.AM_PM);
+        if (AMPM==Calendar.PM)
+        {
+            strAMPM="PM";
+        }
+        Log.i("DataTest",info.getMST());
+        Log.i("DataTest",info.getDT());
         PrinterOptions p=new PrinterOptions();
 
         p.resetAll();
@@ -139,9 +151,9 @@ public class PrintOrder {
         p.newLine();
         p.alignLeft();
 
-        p.setText("\t\t\tMau so: 01VEDB1/011");
+        p.setText("\t\t\tMau so: "+mauSo);
         p.alignLeft();
-        p.setText("\t\t\tKy hieu: AA/13T");
+        p.setText("\t\t\tKy hieu: "+kyHieu);
         p.newLine();
         p.alignLeft();
         p.setText("\t\t\tSo ve: "+mave);
@@ -149,7 +161,7 @@ public class PrintOrder {
         p.alignCenter();
         p.double_height_width_on();
 
-        p.setText("Gia "+soTien);
+        p.setText(dienGiai.replaceAll("\\P{Print}", ""));
 
 
         p.double_height_width_off();
@@ -160,8 +172,8 @@ public class PrintOrder {
         p.setText("(da bao gom bao hiem hanh khach)");
         p.newLine();
         p.alignLeft();
-        p.setText("Ngay: "+new SimpleDateFormat("dd/MM/yyyy").format(Calendar.getInstance()));
-        p.setText("\t\tGio: "+new SimpleDateFormat("hh:mm:ss a").format(Calendar.getInstance()));
+        p.setText("Ngay: "+String.format("%02d", today.monthDay) + "/" + String.format("%02d", (today.month + 1)) + "/" + today.year );
+        p.setText("\t\tGio: "+today.format("%k:%M:%S ")+strAMPM);
         p.newLine();
 
         p.alignCenter();

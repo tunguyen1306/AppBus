@@ -4,6 +4,8 @@ package davisoft.app.busticket.data;
 import java.util.List;
 
 import davisoft.app.busticket.data.pojo.Counters;
+import davisoft.app.busticket.data.pojo.DichVu;
+import davisoft.app.busticket.data.pojo.DmHoaDon;
 import davisoft.app.busticket.data.pojo.DmTaiXe;
 import davisoft.app.busticket.data.pojo.DmTram;
 import davisoft.app.busticket.data.pojo.DmTuyen;
@@ -33,4 +35,10 @@ public interface ServiceConnect {
     void GetLOTRINHCHOXEs(Callback<List<LoTrinhChoXe>> items);
     @GET("/Counters/")
     void GetCounters(Callback<List<Counters>> items);
+    @GET("/DICHVUs/")
+    void GetDICHVUs(Callback<List<DichVu>> items);
+    @GET("/DMHOADONs/")
+    void GetDMHOADONs(Callback<List<DmHoaDon>> items);
+    @GET("/DMHOADONs/CountView/")
+    void CountView(@Query("id")int id,Callback<List<DmHoaDon>> items);
 }
