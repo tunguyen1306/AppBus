@@ -40,5 +40,5 @@ public interface ServiceConnect {
     @GET("/DMHOADONs/")
     void GetDMHOADONs(Callback<List<DmHoaDon>> items);
     @GET("/DMHOADONs/CountView/")
-    void CountView(@Query("id")int id,Callback<List<DmHoaDon>> items);
+    void CountView(@Query("id")String id,Callback<List<DmHoaDon>> items);
 }

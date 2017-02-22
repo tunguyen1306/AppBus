@@ -1,6 +1,7 @@
 package davisoft.app.busticket.printer;
 
 import java.io.IOException;
+import java.text.Normalizer;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
@@ -125,12 +126,7 @@ public class PrintOrder {
     {
         Time today = new Time(Time.getCurrentTimezone());
         today.setToNow();
-        String strAMPM="AM";
-        int AMPM= Calendar.getInstance().get(Calendar.AM_PM);
-        if (AMPM==Calendar.PM)
-        {
-            strAMPM="PM";
-        }
+
         Log.i("DataTest",info.getMST());
         Log.i("DataTest",info.getDT());
         PrinterOptions p=new PrinterOptions();
@@ -141,43 +137,45 @@ public class PrintOrder {
         p.feedBack((byte)2);
         p.color(0);
         p.alignCenter();
-        p.setText(info.getTenCongTy().replaceAll("\\P{Print}", "").toUpperCase());
+        p.setText(Normalizer.normalize(info.getTenCongTy(), Normalizer.Form.NFD).replaceAll("\\p{InCombiningDiacriticalMarks}+", "").replaceAll("Đ","D").replaceAll("đ","d").toUpperCase());
         p.newLine();
         p.alignCenter();
-        p.setText("DC:"+info.getDiaChi().replaceAll("\\P{Print}", ""));
+        p.setText("DC:"+Normalizer.normalize(info.getDiaChi(), Normalizer.Form.NFD).replaceAll("\\p{InCombiningDiacriticalMarks}+", "").replaceAll("Đ","D").replaceAll("đ","d"));
         p.newLine();
         p.alignCenter();
-        p.setText("MST : "+info.getMST().replaceAll("\\P{Print}", "")+"  -  DT: "+info.getDT().replaceAll("\\P{Print}", "")+"");
+        p.setText("MST : "+info.getMST()+"  -  DT: "+info.getDT()+"");
         p.newLine();
         p.alignLeft();
 
-        p.setText("\t\t\tMau so: "+mauSo);
-        p.alignLeft();
-        p.setText("\t\t\tKy hieu: "+kyHieu);
+        p.setText("\t\t\t       Mau so: "+mauSo);
         p.newLine();
         p.alignLeft();
-        p.setText("\t\t\tSo ve: "+mave);
+        p.setText("\t\t\t       Ky hieu: "+kyHieu);
+        p.newLine();
+        p.alignLeft();
+        p.setText("\t\t\t       So ve: "+mave);
         p.newLine();
         p.alignCenter();
         p.double_height_width_on();
 
-        p.setText(dienGiai.replaceAll("\\P{Print}", ""));
+        p.setText(Normalizer.normalize(dienGiai, Normalizer.Form.NFD).replaceAll("\\p{InCombiningDiacriticalMarks}+", "").replaceAll("Đ","D").replaceAll("đ","d"));
 
 
         p.double_height_width_off();
         p.newLine();
         p.alignCenter();
         p.setText("Lien:Giao cho hanh khach");
+        p.newLine();
         p.alignCenter();
         p.setText("(da bao gom bao hiem hanh khach)");
         p.newLine();
         p.alignLeft();
         p.setText("Ngay: "+String.format("%02d", today.monthDay) + "/" + String.format("%02d", (today.month + 1)) + "/" + today.year );
-        p.setText("\t\tGio: "+today.format("%k:%M:%S ")+strAMPM);
+        p.setText("  Gio: "+today.format("%l:%M:%S %P"));
         p.newLine();
 
         p.alignCenter();
-        p.setText("Tuyen: "+tuyen);
+        p.setText("Tuyen: "+Normalizer.normalize(tuyen, Normalizer.Form.NFD).replaceAll("\\p{InCombiningDiacriticalMarks}+", "").replaceAll("Đ","D").replaceAll("đ","d"));
 
         p.newLine();
 
@@ -193,17 +191,17 @@ public class PrintOrder {
 
         p.alignCenter();
         p.setText("Vui long giu ve de kiem soat");
+        p.newLine();
         p.alignCenter();
-        p.setText("In tai "+info.getTenCongTy().replaceAll("\\P{Print}", "").toUpperCase());
-
-
+        p.setText("In tai "+ Normalizer.normalize(info.getTenCongTy(), Normalizer.Form.NFD).replaceAll("\\p{InCombiningDiacriticalMarks}+", "").replaceAll("Đ","D").replaceAll("đ","d").toUpperCase());
+        p.newLine();
         p.alignCenter();
         p.setText("Lien giao cho hanh khach");
 
 
         p.newLine();
         p.alignCenter();
-        p.setText("MST : "+info.getMST().replaceAll("\\P{Print}", "")+"  -  DT: "+info.getDT().replaceAll("\\P{Print}", "")+"");
+        p.setText("MST : "+info.getMST()+"  -  DT: "+info.getDT()+"");
         p.newLine();
 
         p.feed((byte)3);

@@ -102,7 +102,7 @@ public class MainActivity extends AppCompatActivity {
             public void run() {
                 try {
 
-                    Thread.sleep(200);
+
                     runOnUiThread(new Runnable() {
 
                         @Override
@@ -162,7 +162,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void print(final String soTien,final String dienGiai) {
-      //  Toast.makeText(getApplicationContext(),"Printer",Toast.LENGTH_LONG).show();
+       Toast.makeText(getApplicationContext(),"Printing...",Toast.LENGTH_LONG).show();
         final String s = new PrintOrder().buildData(CountersLocal,MaVe,soTien,dienGiai,TenTuyen,BienSoXe,mauSo,kyHieu);
         Log.i("Printer/Info",s);
         if (mDevice != null && mUsbManager.hasPermission(mDevice)) {
@@ -274,7 +274,7 @@ public class MainActivity extends AppCompatActivity {
 
 
             ResClien resClient = new ResClien();
-            resClient.GetService().CountView(Integer.valueOf(hoaDonID) , new Callback<List<DmHoaDon>>() {
+            resClient.GetService().CountView(hoaDonID, new Callback<List<DmHoaDon>>() {
                 @Override
                 public void success(List<DmHoaDon> advertDtos, Response response) {
                     for (int i = 0; i < advertDtos.size(); i++) {
@@ -357,7 +357,8 @@ public class MainActivity extends AppCompatActivity {
         return false;
     }
     private void resetTicket()
-    {   DecimalFormat df = new DecimalFormat("#,###");
+    {
+        DecimalFormat df = new DecimalFormat("#,###");
         if (DmTuyenLocal!=null)
         {
             GridLayout gLayout= ((GridLayout) findViewById(R.id.grid_layout_tk));
@@ -741,10 +742,11 @@ public class MainActivity extends AppCompatActivity {
     {
         ((GridView)findViewById(R.id.gv_Tuyen)).setAdapter(new GridViewTuyenAdapter(getApplicationContext(),R.layout.tuyen_item,ItemAllDmTuyen));
     }
+
     public void updateGridView()
     {
 
-
+        ((GridView)findViewById(R.id.gv_Tuyen)).requestLayout();
         Log.d("W-I-GV", ((GridView)findViewById(R.id.gv_Tuyen)).getWidth() + " - " + ((GridView)findViewById(R.id.gv_Tuyen)).getHeight());
         Log.d("W-I-GV1", MainActivity.convertPixelsToDp(((GridView)findViewById(R.id.gv_Tuyen)).getWidth() ,getApplicationContext()) + " - " +MainActivity.convertPixelsToDp( ((GridView)findViewById(R.id.gv_Tuyen)).getHeight(),getApplicationContext()));
     }
@@ -805,31 +807,35 @@ public class MainActivity extends AppCompatActivity {
     private void init() {
         Time today = new Time(Time.getCurrentTimezone());
         today.setToNow();
-        String strAMPM="AM";
-        int AMPM= Calendar.getInstance().get(Calendar.AM_PM);
-        if (AMPM==Calendar.PM)
-        {
-            strAMPM="PM";
-        }
-        ((TextView) findViewById(R.id.txt_TimeNow)).setText("Ngày: "+String.format("%02d", today.monthDay) + "/" + String.format("%02d", (today.month + 1)) + "/" + today.year + "    -   Giờ: " + today.format("%k:%M:%S ")+strAMPM);             // Day of the month (1-31)
+
+        ((TextView) findViewById(R.id.txt_TimeNow)).setText("Ngày: "+String.format("%02d", today.monthDay) + "/" + String.format("%02d", (today.month + 1)) + "/" + today.year + "    -   Giờ: " + today.format("%l:%M:%S %P"));             // Day of the month (1-31)
+
+      //  Toast.makeText(context,getResources().getDisplayMetrics().densityDpi+"",Toast.LENGTH_LONG).show();
+
         switch (getResources().getDisplayMetrics().densityDpi) {
             case DisplayMetrics.DENSITY_LOW:
                 // ...
+                Log.d("Screen Size/W/S","DENSITY_LOW");
                 break;
             case DisplayMetrics.DENSITY_MEDIUM:
                 // ...
+                Log.d("Screen Size/W/S","DENSITY_MEDIUM");
                 break;
             case DisplayMetrics.DENSITY_HIGH:
                 // ...
+                Log.d("Screen Size/W/S","DENSITY_HIGH");
                 break;
             case DisplayMetrics.DENSITY_XHIGH:
                 // ...
+                Log.d("Screen Size/W/S","DENSITY_XHIGH");
                 break;
             case DisplayMetrics.DENSITY_XXHIGH:
                 // ...
+                Log.d("Screen Size/W/S","DENSITY_XXHIGH");
                 break;
             case DisplayMetrics.DENSITY_XXXHIGH:
                 // ...
+                Log.d("Screen Size/W/S","DENSITY_XXXHIGH");
                 break;
         }
         orientation = getResources().getConfiguration().orientation;
@@ -868,7 +874,7 @@ public class MainActivity extends AppCompatActivity {
                             }
                                 Time today = new Time(Time.getCurrentTimezone());
                                 today.setToNow();
-                                ((TextView) findViewById(R.id.txt_TimeNow)).setText("Ngày: "+String.format("%02d", today.monthDay) + "/" + String.format("%02d", (today.month + 1)) + "/" + today.year + "    -   Giờ: " + today.format("%k:%M:%S ")+strAMPM);             // Day of the month (1-31)
+                                ((TextView) findViewById(R.id.txt_TimeNow)).setText("Ngày: "+String.format("%02d", today.monthDay) + "/" + String.format("%02d", (today.month + 1)) + "/" + today.year + "    -   Giờ: " + today.format("%l:%M:%S %P"));             // Day of the month (1-31)
 }
                         });
                     }
@@ -975,27 +981,6 @@ public class MainActivity extends AppCompatActivity {
 
                 }
             });
-            view.findViewById(R.id.txt_button).setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    // resetLayout();
-                    // testPrinter();
-
-                    if (  ((View)v.getParent()).isEnabled() &&    ((View)v.getParent()).getTag()!=null)
-                    {
-
-
-                        final Integer index=Integer.valueOf(((View)v.getParent()).getTag().toString().split(";")[0]);
-                        final String hdID=((View)v.getParent()).getTag().toString().split(";")[1];
-                        final String sotien=((View)v.getParent()).getTag().toString().split(";")[2];
-                        final String dienGiai=((View)v.getParent()).getTag().toString().replaceAll(index+";"+hdID+";"+sotien+";","");
-                        hoaDonID=hdID;
-                        updateHoaDonByID(index,sotien,dienGiai);
-
-                    }
-
-                }
-            });
 
         }
 
@@ -1006,7 +991,7 @@ public class MainActivity extends AppCompatActivity {
             public void run() {
                 try {
 
-                    Thread.sleep(200);
+
                     runOnUiThread(new Runnable() {
 
                         @Override
@@ -1024,15 +1009,15 @@ public class MainActivity extends AppCompatActivity {
 
                                  gridLayout.getChildAt(i).findViewById(R.id.txt_button).setVisibility(View.VISIBLE);
                                  resetTicket();
-                                gridLayout.getChildAt(i).findViewById(R.id.layout_button).setOnClickListener(new View.OnClickListener() {
+                                gridLayout.getChildAt(i).findViewById(R.id.txt_button).setOnClickListener(new View.OnClickListener() {
                                     @Override
                                     public void onClick(View v) {
-                                        if (v.isEnabled() &&  v.getTag()!=null)
+                                        if (((View)v.getParent()).isEnabled() &&  ((View)v.getParent()).getTag()!=null)
                                         {
-                                            final Integer index=Integer.valueOf(v.getTag().toString().split(";")[0]);
-                                            final String hdID=v.getTag().toString().split(";")[1];
-                                            final String sotien=v.getTag().toString().split(";")[2];
-                                            final String dienGiai=v.getTag().toString().replaceAll(index+";"+hdID+";"+sotien+";","");
+                                            final Integer index=Integer.valueOf(((View)v.getParent()).getTag().toString().split(";")[0]);
+                                            final String hdID=((View)v.getParent()).getTag().toString().split(";")[1];
+                                            final String sotien=((View)v.getParent()).getTag().toString().split(";")[2];
+                                            final String dienGiai=((View)v.getParent()).getTag().toString().replaceAll(index+";"+hdID+";"+sotien+";","");
                                             hoaDonID=hdID;
                                             updateHoaDonByID(index,sotien,dienGiai);
                                         }
@@ -1114,6 +1099,21 @@ public class MainActivity extends AppCompatActivity {
 
 
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     ////LoadDMTAIXE///////
     List<DmTaiXe> ItemAllDmTaiXe;
