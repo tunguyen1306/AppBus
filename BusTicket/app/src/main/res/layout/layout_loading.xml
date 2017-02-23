@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_margin="50dp">
+
+
+
+    <ImageView
+        android:layout_width="250dp"
+        android:layout_height="250dp"
+        app:srcCompat="@drawable/bus_background"
+        android:id="@+id/imageView3"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentBottom="false" />
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/imageView3"
+        android:layout_alignParentStart="true"
+        android:gravity="center">   <ProgressBar
+        style="@android:style/Widget.Material.Light.ProgressBar.Large"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/progressBar3" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:inputType="textPersonName"
+            android:text="Loading...."
+            android:id="@+id/editText"
+            android:paddingLeft="10dp"
+            android:fontFamily="casual"
+            android:textStyle="normal|bold"
+            android:textSize="24sp"
+            android:textColor="@color/colorPrimary"
+            android:gravity="center_vertical" /></LinearLayout>
+
+    <LinearLayout
+        android:orientation="vertical"
+
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/imageView3"
+        >  <TextView
+        android:layout_width="match_parent"
+        android:inputType="textPersonName"
+        android:text="BUS TICKET"
+        android:textAllCaps="true"
+        android:textSize="40sp"
+        android:textStyle="bold"
+        android:textColor="@color/colorPrimary"
+        android:fontFamily="casual"
+        android:gravity="center"
+        android:drawableBottom="@color/colorAccent"
+        android:paddingBottom="2dp"
+        android:layout_height="match_parent"
+        android:layout_gravity="bottom"
+        android:id="@+id/txtAppTitle" /></LinearLayout>
+</RelativeLayout>

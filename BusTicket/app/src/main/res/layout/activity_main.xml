@@ -159,7 +159,8 @@
         android:background="@color/cardview_shadow_start_color"
 
         android:id="@+id/layout_popup"
-        android:alpha="1">
+        android:alpha="1"
+        android:visibility="gone">
 
         <LinearLayout
             android:orientation="vertical"
@@ -191,69 +192,17 @@
         android:animateLayoutChanges="true"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/colorBackgroundContent"
+        android:background="@android:color/holo_blue_light"
 
         android:id="@+id/layout_popup_loading"
         android:alpha="1"
         android:visibility="visible"
         android:layout_alignParentTop="true"
         android:layout_alignParentStart="true">
-
-        <LinearLayout
-            android:orientation="vertical"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@android:color/transparent"
+        <include layout="@layout/layout_loading"
             android:id="@+id/layout_popup_content_loading"
-            android:layout_gravity="center">
-
-            <EditText
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:inputType="textPersonName"
-                android:text="BUS TICKET"
-                android:id="@+id/editText2"
-                android:textAllCaps="true"
-                android:textSize="40sp"
-                android:textStyle="bold"
-                android:textColor="@color/colorPrimaryDark"
-                android:fontFamily="casual"
-                android:gravity="center" />
-
-            <ImageView
-                app:srcCompat="@drawable/bus_background"
-                android:id="@+id/imageView"
-                android:layout_gravity="center_horizontal"
-                android:layout_width="300dp"
-                android:layout_height="300dp" />
-
-            <LinearLayout
-                android:orientation="horizontal"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:gravity="center">
-
-                <ProgressBar
-                    style="@android:style/Widget.Material.Light.ProgressBar.Large"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/progressBar3" />
-
-                <EditText
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:inputType="textPersonName"
-                    android:text="Loading...."
-                    android:id="@+id/editText"
-                    android:paddingLeft="10dp"
-                    android:fontFamily="casual"
-                    android:textStyle="normal|bold"
-                    android:textSize="24sp"
-                    android:textColor="?attr/colorPrimaryDark" />
-            </LinearLayout>
-
-        </LinearLayout>
-
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"></include>
     </FrameLayout>
 
 </RelativeLayout>

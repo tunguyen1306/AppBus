@@ -101,19 +101,19 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void run() {
                 try {
-
-
-                    runOnUiThread(new Runnable() {
-
-                        @Override
-                        public void run() {
-                            resetLayout();
-                        }
-                    });
+                    Thread.sleep(100);
 
                 } catch (Exception e) {
 
                 }
+
+                runOnUiThread(new Runnable() {
+
+                    @Override
+                    public void run() {
+                        resetLayout();
+                    }
+                });
 
             }
         }).start();
@@ -362,10 +362,22 @@ public class MainActivity extends AppCompatActivity {
         if (DmTuyenLocal!=null)
         {
             GridLayout gLayout= ((GridLayout) findViewById(R.id.grid_layout_tk));
+            gLayout.getChildAt(0).findViewById(R.id.layout_button).setEnabled(true);
+            gLayout.getChildAt(0).findViewById(R.id.layout_button).setBackgroundResource(R.drawable.btn_selector);
+            gLayout.getChildAt(1).findViewById(R.id.layout_button).setEnabled(true);
+            gLayout.getChildAt(1).findViewById(R.id.layout_button).setBackgroundResource(R.drawable.btn_selector);
+            gLayout.getChildAt(2).findViewById(R.id.layout_button).setEnabled(true);
+            gLayout.getChildAt(2).findViewById(R.id.layout_button).setBackgroundResource(R.drawable.btn_selector);
+            gLayout.getChildAt(3).findViewById(R.id.layout_button).setEnabled(true);
+            gLayout.getChildAt(3).findViewById(R.id.layout_button).setBackgroundResource(R.drawable.btn_selector);
+            gLayout.getChildAt(4).findViewById(R.id.layout_button).setEnabled(true);
+            gLayout.getChildAt(4).findViewById(R.id.layout_button).setBackgroundResource(R.drawable.btn_selector);
+            gLayout.getChildAt(5).findViewById(R.id.layout_button).setEnabled(true);
+            gLayout.getChildAt(5).findViewById(R.id.layout_button).setBackgroundResource(R.drawable.btn_selector);
             if (DmTuyenLocal.GETCAMVE1())
             {
                 gLayout.getChildAt(0).findViewById(R.id.layout_button).setEnabled(false);
-                gLayout.getChildAt(0).findViewById(R.id.layout_button).setBackground(Resources.getSystem().getDrawable(R.drawable.btn_selector_disable));
+                gLayout.getChildAt(0).findViewById(R.id.layout_button).setBackgroundResource(R.drawable.btn_selector_disable);
                 ((TextView)gLayout.getChildAt(0).findViewById(R.id.txt_button)).setText("...");
             }else
             {
@@ -383,7 +395,8 @@ public class MainActivity extends AppCompatActivity {
             if (DmTuyenLocal.GETCAMVE2())
             {
                 gLayout.getChildAt(1).findViewById(R.id.layout_button).setEnabled(false);
-                gLayout.getChildAt(1).findViewById(R.id.layout_button).setBackground(Resources.getSystem().getDrawable(R.drawable.btn_selector_disable));
+                gLayout.getChildAt(1).findViewById(R.id.layout_button).setBackgroundResource(R.drawable.btn_selector_disable);
+
                 ((TextView)gLayout.getChildAt(1).findViewById(R.id.txt_button)).setText("...");
             }else
             {
@@ -400,7 +413,7 @@ public class MainActivity extends AppCompatActivity {
             if (DmTuyenLocal.GETCAMVE3())
             {
                 gLayout.getChildAt(2).findViewById(R.id.layout_button).setEnabled(false);
-                gLayout.getChildAt(2).findViewById(R.id.layout_button).setBackground(Resources.getSystem().getDrawable(R.drawable.btn_selector_disable));
+                gLayout.getChildAt(2).findViewById(R.id.layout_button).setBackgroundResource(R.drawable.btn_selector_disable);
                 ((TextView)gLayout.getChildAt(2).findViewById(R.id.txt_button)).setText("...");
             }else
             {
@@ -418,7 +431,7 @@ public class MainActivity extends AppCompatActivity {
             if (DmTuyenLocal.GETCAMVE4())
             {
                 gLayout.getChildAt(3).findViewById(R.id.layout_button).setEnabled(false);
-                gLayout.getChildAt(3).findViewById(R.id.layout_button).setBackground(Resources.getSystem().getDrawable(R.drawable.btn_selector_disable));
+                gLayout.getChildAt(3).findViewById(R.id.layout_button).setBackgroundResource(R.drawable.btn_selector_disable);
                 ((TextView)gLayout.getChildAt(3).findViewById(R.id.txt_button)).setText("...");
             }else
             {
@@ -436,7 +449,7 @@ public class MainActivity extends AppCompatActivity {
             if (DmTuyenLocal.GETCAMVE5())
             {
                 gLayout.getChildAt(4).findViewById(R.id.layout_button).setEnabled(false);
-                gLayout.getChildAt(4).findViewById(R.id.layout_button).setBackground(Resources.getSystem().getDrawable(R.drawable.btn_selector_disable));
+                gLayout.getChildAt(4).findViewById(R.id.layout_button).setBackgroundResource(R.drawable.btn_selector_disable);
                 ((TextView)gLayout.getChildAt(4).findViewById(R.id.txt_button)).setText("...");
             }else
             {
@@ -455,7 +468,7 @@ public class MainActivity extends AppCompatActivity {
             if (DmTuyenLocal.GETCAMVE6())
             {
                 gLayout.getChildAt(5).findViewById(R.id.layout_button).setEnabled(false);
-                gLayout.getChildAt(5).findViewById(R.id.layout_button).setBackground(Resources.getSystem().getDrawable(R.drawable.btn_selector_disable));
+                gLayout.getChildAt(5).findViewById(R.id.layout_button).setBackgroundResource(R.drawable.btn_selector_disable);
                 ((TextView)gLayout.getChildAt(5).findViewById(R.id.txt_button)).setText("...");
             }else
             {
@@ -621,14 +634,12 @@ public class MainActivity extends AppCompatActivity {
             else
             {
 
-
                 ((TextView)findViewById(R.id.txtTitle1)).setText(CountersLocal.getTenCongTy());
                 // ((TextView)findViewById(R.id.txtTitle2)).setText("");
                 TenTuyen=getTramDauGiuaCuoi(DmTuyenLocal);
                 ((TextView)findViewById(R.id.txtTitle3)).setText("Mã Tuyến: "+DmTuyenLocal.GETMATUYEN()+" - "+DmTuyenLocal.GETTENTUYENVN()+" ("+TenTuyen+")");
                 ((TextView)findViewById(R.id.txtTitle4)).setText(getChiTietTramByTuyen(DmTuyenLocal));
-                resetTicket();
-
+                resetLayout();
                 findViewById(R.id.layout_popup_loading).animate()
                         .alpha(0f)
                         .setDuration(200)
@@ -990,48 +1001,46 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void run() {
                 try {
-
-
-                    runOnUiThread(new Runnable() {
-
-                        @Override
-                        public void run() {
-                            int countView = gridLayout.getChildCount();
-                            for (int i = 0; i < countView; i++) {
-                                Log.d("W-I-G", gridLayout.getChildAt(i).getWidth() + " - " + gridLayout.getChildAt(i).getHeight());    LinearLayout.LayoutParams lParam = (LinearLayout.LayoutParams) gridLayout.getChildAt(i).findViewById(R.id.layout_button).getLayoutParams();
-                                lParam.width = gridLayout.getChildAt(i).getWidth()-(int)MainActivity.convertDpToPixel(10,getApplicationContext());
-                                lParam.height = gridLayout.getChildAt(i).getHeight()-(int)MainActivity.convertDpToPixel(10,getApplicationContext());
-                                gridLayout.getChildAt(i).findViewById(R.id.layout_button).setLayoutParams(lParam);
-                                gridLayout.getChildAt(i).requestLayout();
-                                //lParam.width=  gridLayout.getChildAt(i).findViewById(R.id.button_text).getLayoutParams().width;
-                                // lParam.height=  gridLayout.getChildAt(i).findViewById(R.id.button_text).getLayoutParams().height;
-                                // gridLayout.getChildAt(i).findViewById(R.id.button_text).setLayoutParams(lParam);
-
-                                 gridLayout.getChildAt(i).findViewById(R.id.txt_button).setVisibility(View.VISIBLE);
-                                 resetTicket();
-                                gridLayout.getChildAt(i).findViewById(R.id.txt_button).setOnClickListener(new View.OnClickListener() {
-                                    @Override
-                                    public void onClick(View v) {
-                                        if (((View)v.getParent()).isEnabled() &&  ((View)v.getParent()).getTag()!=null)
-                                        {
-                                            final Integer index=Integer.valueOf(((View)v.getParent()).getTag().toString().split(";")[0]);
-                                            final String hdID=((View)v.getParent()).getTag().toString().split(";")[1];
-                                            final String sotien=((View)v.getParent()).getTag().toString().split(";")[2];
-                                            final String dienGiai=((View)v.getParent()).getTag().toString().replaceAll(index+";"+hdID+";"+sotien+";","");
-                                            hoaDonID=hdID;
-                                            updateHoaDonByID(index,sotien,dienGiai);
-                                        }
-                                    }
-                                });
-                            }
-
-
-                        }
-                    });
-
+                    Thread.sleep(100);
                 } catch (Exception e) {
 
                 }
+                runOnUiThread(new Runnable() {
+
+                    @Override
+                    public void run() {
+                        int countView = gridLayout.getChildCount();
+                        for (int i = 0; i < countView; i++) {
+                            Log.d("W-I-G", gridLayout.getChildAt(i).getWidth() + " - " + gridLayout.getChildAt(i).getHeight());    LinearLayout.LayoutParams lParam = (LinearLayout.LayoutParams) gridLayout.getChildAt(i).findViewById(R.id.layout_button).getLayoutParams();
+                            lParam.width = gridLayout.getChildAt(i).getWidth()-(int)MainActivity.convertDpToPixel(10,getApplicationContext());
+                            lParam.height = gridLayout.getChildAt(i).getHeight()-(int)MainActivity.convertDpToPixel(10,getApplicationContext());
+                            gridLayout.getChildAt(i).findViewById(R.id.layout_button).setLayoutParams(lParam);
+                            gridLayout.getChildAt(i).requestLayout();
+                            //lParam.width=  gridLayout.getChildAt(i).findViewById(R.id.button_text).getLayoutParams().width;
+                            // lParam.height=  gridLayout.getChildAt(i).findViewById(R.id.button_text).getLayoutParams().height;
+                            // gridLayout.getChildAt(i).findViewById(R.id.button_text).setLayoutParams(lParam);
+
+                            gridLayout.getChildAt(i).findViewById(R.id.txt_button).setVisibility(View.VISIBLE);
+                            resetTicket();
+                            gridLayout.getChildAt(i).findViewById(R.id.txt_button).setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    if (((View)v.getParent()).isEnabled() &&  ((View)v.getParent()).getTag()!=null)
+                                    {
+                                        final Integer index=Integer.valueOf(((View)v.getParent()).getTag().toString().split(";")[0]);
+                                        final String hdID=((View)v.getParent()).getTag().toString().split(";")[1];
+                                        final String sotien=((View)v.getParent()).getTag().toString().split(";")[2];
+                                        final String dienGiai=((View)v.getParent()).getTag().toString().replaceAll(index+";"+hdID+";"+sotien+";","");
+                                        hoaDonID=hdID;
+                                        updateHoaDonByID(index,sotien,dienGiai);
+                                    }
+                                }
+                            });
+                        }
+
+
+                    }
+                });
 
             }
         }).start();
