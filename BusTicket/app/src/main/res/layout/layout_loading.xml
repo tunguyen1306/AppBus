@@ -55,7 +55,7 @@
         android:textAllCaps="true"
         android:textSize="40sp"
         android:textStyle="bold"
-        android:textColor="@color/colorPrimary"
+        android:textColor="@android:color/background_light"
         android:fontFamily="casual"
         android:gravity="center"
         android:drawableBottom="@color/colorAccent"

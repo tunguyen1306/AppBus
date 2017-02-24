@@ -206,7 +206,14 @@ public class MainActivity extends AppCompatActivity {
 
     private void initEvent() {
 
+
+        findViewById(R.id.layout_popup).setTranslationY(findViewById(R.id.layout_popup).getHeight());
         findViewById(R.id.layout_popup).setAlpha(0f);
+        findViewById(R.id.layout_popup).setVisibility(View.GONE);
+        findViewById(R.id.layout_popup_yesno).setAlpha(0f);
+        findViewById(R.id.layout_popup_yesno).setVisibility(View.GONE);
+        findViewById(R.id.layout_popup_loading).setAlpha(1f);
+        findViewById(R.id.layout_popup_loading).setVisibility(View.VISIBLE);
         findViewById(R.id.button_list).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -227,14 +234,12 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
-
-
-        findViewById(R.id.layout_popup).setOnClickListener(new View.OnClickListener() {
+       /* findViewById(R.id.btnDongTuyen).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                v.animate()
-                        .translationY(v.getHeight())
+                findViewById(R.id.layout_popup).animate()
+                        .translationY( findViewById(R.id.layout_popup).getHeight())
                         .alpha(0.0f)
                         .setDuration(300)
                         .setListener(new AnimatorListenerAdapter() {
@@ -246,7 +251,32 @@ public class MainActivity extends AppCompatActivity {
                         });
             }
         });
+*/
 
+        findViewById(R.id.layout_popup).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                v.animate()
+                        .translationY( findViewById(R.id.layout_popup).getHeight())
+                        .alpha(0.0f)
+                        .setDuration(300)
+                        .setListener(new AnimatorListenerAdapter() {
+                            @Override
+                            public void onAnimationEnd(Animator animation) {
+                                super.onAnimationEnd(animation);
+                                findViewById(R.id.layout_popup).setVisibility(View.GONE);
+                            }
+                        });
+            }
+        });
+        findViewById(R.id.layout_popup_yesno).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+              hideDialogYesNo();
+            }
+        });
 
     }
 
@@ -657,6 +687,37 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    private void showDialogYesNo(String title,String content,View.OnClickListener yesClick,View.OnClickListener noClick)
+    {
+        findViewById(R.id.layout_popup_content_yesno).findViewById(R.id.btnYes).setOnClickListener(yesClick);
+        findViewById(R.id.layout_popup_content_yesno).findViewById(R.id.btnNo).setOnClickListener(noClick);
+        ( (TextView)(findViewById(R.id.layout_popup_content_yesno).findViewById(R.id.txtTitleYesNo))).setText(title);
+        ( (TextView)(findViewById(R.id.layout_popup_content_yesno).findViewById(R.id.txtContentYesNo))).setText(content);
+        findViewById(R.id.layout_popup_yesno).setVisibility(View.VISIBLE);
+        findViewById(R.id.layout_popup_yesno).animate()
+                .alpha(1.0f)
+                .setDuration(100)
+                .setListener(new AnimatorListenerAdapter() {
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        super.onAnimationEnd(animation);
+
+                    }
+                });
+    }
+    private void hideDialogYesNo()
+    {
+        findViewById(R.id.layout_popup_yesno).animate()
+                .alpha(0.0f)
+                .setDuration(100)
+                .setListener(new AnimatorListenerAdapter() {
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        super.onAnimationEnd(animation);
+                        findViewById(R.id.layout_popup_yesno).setVisibility(View.GONE);
+                    }
+                });
+    }
     public class GridViewTuyenAdapter extends ArrayAdapter<DmTuyen> {
         public GridViewTuyenAdapter(Context context, int resource, List<DmTuyen> objects) {
             super(context, resource, objects);
@@ -719,27 +780,32 @@ public class MainActivity extends AppCompatActivity {
                     if (v.isEnabled())
                     {
                         final DmTuyen dmTuyen=  (DmTuyen)v.getTag();
-                        DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
+
+
+                        showDialogYesNo("Thông báo", "       Bạn có muốn chọn tuyến " + dmTuyen.GETMATUYEN() + " ?       ", new View.OnClickListener() {
                             @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                switch (which){
-                                    case DialogInterface.BUTTON_POSITIVE:
-                                        //Yes button clicked
-                                        chooseTuyen(dmTuyen);
-                                        break;
-
-                                    case DialogInterface.BUTTON_NEGATIVE:
-                                        //No button clicked
-                                        break;
-                                }
+                            public void onClick(View v) {
+                                chooseTuyen(dmTuyen);
+                                findViewById(R.id.layout_popup).animate()
+                                        .translationY( findViewById(R.id.layout_popup).getHeight())
+                                        .alpha(0.0f)
+                                        .setDuration(300)
+                                        .setListener(new AnimatorListenerAdapter() {
+                                            @Override
+                                            public void onAnimationEnd(Animator animation) {
+                                                super.onAnimationEnd(animation);
+                                                findViewById(R.id.layout_popup).setVisibility(View.GONE);
+                                            }
+                                        });
+                                hideDialogYesNo();
                             }
-                        };
-                        AlertDialog.Builder builder = new AlertDialog.Builder(context);
-                        builder.setTitle("Thông báo");
-                        builder.setMessage("Bạn có muốn chọn tuyến "+dmTuyen.GETMATUYEN()+"?").setPositiveButton("Có", dialogClickListener)
-                                .setNegativeButton("Không", dialogClickListener).show();
+                        }, new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                hideDialogYesNo();
+                            }
+                        });
 
-                        hideSystemUI();
 
 
                     }
