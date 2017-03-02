@@ -12,7 +12,9 @@ import davisoft.app.busticket.data.pojo.DmTuyen;
 import davisoft.app.busticket.data.pojo.DmTuyenChiTietTram;
 import davisoft.app.busticket.data.pojo.DmXe;
 import davisoft.app.busticket.data.pojo.LoTrinhChoXe;
+import davisoft.app.busticket.data.pojo.TrackingGps;
 import retrofit.Callback;
+import retrofit.http.Body;
 import retrofit.http.GET;
 import retrofit.http.Query;
 
@@ -41,4 +43,7 @@ public interface ServiceConnect {
     void GetDMHOADONs(Callback<List<DmHoaDon>> items);
     @GET("/DMHOADONs/CountView/")
     void CountView(@Query("id")String id,Callback<List<DmHoaDon>> items);
+
+    @GET("/TrackingGPs/")
+    void PostTrackingGP(@Body TrackingGps item, Callback<List<TrackingGps>> items);
 }

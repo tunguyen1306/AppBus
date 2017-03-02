@@ -25,6 +25,7 @@ import davisoft.app.busticket.data.pojo.DmTuyen;
 import davisoft.app.busticket.data.pojo.DmTuyenChiTietTram;
 import davisoft.app.busticket.data.pojo.DmXe;
 import davisoft.app.busticket.data.pojo.LoTrinhChoXe;
+import davisoft.app.busticket.data.pojo.TrackingGps;
 import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
@@ -962,6 +963,23 @@ public class ControlDatabase {
 
 
 
+    //////////DmHoaDon//////////
+    public static void AddtrackingGPS(final Context context,TrackingGps trackingGps) {
 
+        ResClien restClient = new ResClien();
+        restClient.GetService().PostTrackingGP(trackingGps,new Callback<List<TrackingGps>>() {
+            @Override
+            public void success(List<TrackingGps> TrackingGps, Response response) {
+
+            }
+
+            @Override
+            public void failure(RetrofitError error) {
+                Log.d("myLogs", "-------ERROR-------Slide");
+                Log.d("myLogs", Log.getStackTraceString(error));
+            }
+        });
+
+    }
 
 }
