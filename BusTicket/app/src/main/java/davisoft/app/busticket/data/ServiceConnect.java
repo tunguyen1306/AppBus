@@ -16,6 +16,7 @@ import davisoft.app.busticket.data.pojo.TrackingGps;
 import retrofit.Callback;
 import retrofit.http.Body;
 import retrofit.http.GET;
+import retrofit.http.POST;
 import retrofit.http.Query;
 
 /**
@@ -44,6 +45,6 @@ public interface ServiceConnect {
     @GET("/DMHOADONs/CountView/")
     void CountView(@Query("id")String id,Callback<List<DmHoaDon>> items);
 
-    @GET("/TrackingGPs/")
+    @POST("/TrackingGPs/")
     void PostTrackingGP(@Body TrackingGps item, Callback<List<TrackingGps>> items);
 }

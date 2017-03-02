@@ -48,12 +48,15 @@ import com.j256.ormlite.stmt.QueryBuilder;
 import java.nio.charset.StandardCharsets;
 import java.sql.SQLException;
 import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.concurrent.LinkedBlockingQueue;
 import davisoft.app.busticket.adapter.GPSTracker;
 import davisoft.app.busticket.adapter.USBAdapter;
@@ -69,6 +72,7 @@ import davisoft.app.busticket.data.pojo.DmTuyen;
 import davisoft.app.busticket.data.pojo.DmTuyenChiTietTram;
 import davisoft.app.busticket.data.pojo.DmXe;
 import davisoft.app.busticket.data.pojo.LoTrinhChoXe;
+import davisoft.app.busticket.data.pojo.TrackingGps;
 import davisoft.app.busticket.printer.PrintOrder;
 import fr.quentinklein.slt.LocationTracker;
 import fr.quentinklein.slt.TrackerSettings;
@@ -119,7 +123,7 @@ public class MainActivity extends AppCompatActivity {
 
     PowerManager.WakeLock wakeLock;
 
-    Location currentlocation;
+    Location currentlocation=null;
     Location oldLocation;
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -166,45 +170,65 @@ public class MainActivity extends AppCompatActivity {
                 Toast.makeText(context,
                         "Provider: " + location.getProvider()+" - Location:"+location.getLatitude()+";"+location.getLongitude()+" - Serinumber:"+getSerinumber()+" - AndroidID:"+getAndroidId(), Toast.LENGTH_SHORT)
                         .show();
-                boolean first=false;
-                if (oldLocation==null){
-                    first=true;
-                    oldLocation=location;
-                }
-
-                else
-                    oldLocation=location;
                 currentlocation=location;
-
-                double min=Double.MAX_VALUE;
-                DmTram cuurent=null;
-                List<String> listDistance=new ArrayList<>();
-                for (int i=0;i<ListTrambyTuyen.size();i++)
+                if (DmTuyenLocal!=null)
                 {
-                    DmTram dmTram= ListTrambyTuyen.get(i);
-                    double distance= SphericalUtil.computeDistanceBetween(new LatLng(location.getLatitude(),location.getLongitude()),new LatLng(dmTram.getLAT(),dmTram.getLNG()));
-                    if (min>distance)
+                    TrackingGps tracking=new TrackingGps();
+                    tracking.setDeviceId(getAndroidId());
+                    tracking.setMaXe(MainActivity.MaXe);
+                    tracking.setLat(location.getLatitude()+"");
+                    tracking.setLng(location.getLongitude()+"");
+                    tracking.setMaTuyen(DmTuyenLocal.GETMATUYEN());
+                    Calendar c = Calendar.getInstance();
+                    SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+                    String formattedDate = df.format(c.getTime());
+                    SimpleDateFormat simpleDateFormat =
+                            new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+
+
+                    tracking.setTime( formattedDate);
+                    //tracking.setTime( new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").format(GregorianCalendar.getInstance()));
+                    ControlDatabase.AddtrackingGPS(context,tracking);
+                    boolean first=false;
+                    if (oldLocation==null){
+                        first=true;
+                    }
+                    else
+                        oldLocation=currentlocation;
+
+
+                    /*
+                    double min=Double.MAX_VALUE;
+                    DmTram cuurent=null;
+                    List<String> listDistance=new ArrayList<>();
+                    for (int i=0;i<ListTrambyTuyen.size();i++)
                     {
-                        min=distance;
-                        cuurent=dmTram;
-                    }
-                    listDistance.add(dmTram.getId()+"_"+distance);
+                        DmTram dmTram= ListTrambyTuyen.get(i);
+                        double distance= SphericalUtil.computeDistanceBetween(new LatLng(location.getLatitude(),location.getLongitude()),new LatLng(dmTram.getLAT(),dmTram.getLNG()));
+                        if (min>distance)
+                        {
+                            min=distance;
+                            cuurent=dmTram;
+                        }
+                        listDistance.add(dmTram.getId()+"_"+distance);
 
+                    }
+
+
+                    Collections.sort(listDistance, new Comparator<String>() {
+                        @Override
+                        public int compare(String o1, String o2) {
+                            Double d1=Double.valueOf(o1.split("_")[1]);
+                            Double d2=Double.valueOf(o2.split("_")[1]);
+                            return d1.compareTo(d2);
+                        }
+                    });
+                    if (cuurent!=null && min<20 && Integer.valueOf(listDistance.get(0).split("_")[0])==cuurent.getId())
+                    {
+
+                    }*/
                 }
 
-
-                Collections.sort(listDistance, new Comparator<String>() {
-                    @Override
-                    public int compare(String o1, String o2) {
-                        Double d1=Double.valueOf(o1.split("_")[1]);
-                        Double d2=Double.valueOf(o2.split("_")[1]);
-                        return d1.compareTo(d2);
-                    }
-                });
-                if (cuurent!=null && min<20 && Integer.valueOf(listDistance.get(0).split("_")[0])==cuurent.getId())
-                {
-
-                }
 
                 // update
 
@@ -562,9 +586,9 @@ public class MainActivity extends AppCompatActivity {
             gLayout.getChildAt(2).findViewById(R.id.layout_button).setEnabled(true);
             gLayout.getChildAt(2).findViewById(R.id.layout_button).setBackgroundResource(R.drawable.btn_selector);
             gLayout.getChildAt(3).findViewById(R.id.layout_button).setEnabled(true);
-           gLayout.getChildAt(3).findViewById(R.id.layout_button).setBackgroundResource(R.drawable.btn_selector);
+            gLayout.getChildAt(3).findViewById(R.id.layout_button).setBackgroundResource(R.drawable.btn_selector);
             gLayout.getChildAt(4).findViewById(R.id.layout_button).setEnabled(true);
-           gLayout.getChildAt(4).findViewById(R.id.layout_button).setBackgroundResource(R.drawable.btn_selector);
+            gLayout.getChildAt(4).findViewById(R.id.layout_button).setBackgroundResource(R.drawable.btn_selector);
             gLayout.getChildAt(5).findViewById(R.id.layout_button).setEnabled(true);
             gLayout.getChildAt(5).findViewById(R.id.layout_button).setBackgroundResource(R.drawable.btn_selector);
             if (DmTuyenLocal.GETCAMVE1())
@@ -865,6 +889,28 @@ public class MainActivity extends AppCompatActivity {
                 initGridViewTuyen();
                 initListViewTuyen();
 
+                if (oldLocation==null && currentlocation!=null)
+                {
+                    TrackingGps tracking=new TrackingGps();
+                    tracking.setDeviceId(getAndroidId());
+                    tracking.setMaXe(MainActivity.MaXe);
+                    tracking.setLat(currentlocation.getLatitude()+"");
+                    tracking.setLng(currentlocation.getLongitude()+"");
+                    tracking.setMaTuyen(DmTuyenLocal.GETMATUYEN());
+
+                    Calendar c = Calendar.getInstance();
+                    SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+                    String formattedDate = df.format(c.getTime());
+                    SimpleDateFormat simpleDateFormat =
+                            new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+
+
+                    tracking.setTime( formattedDate);
+                    ControlDatabase.AddtrackingGPS(context,tracking);
+
+                }
+
+
             }
         }
     }
@@ -1040,6 +1086,7 @@ public class MainActivity extends AppCompatActivity {
     }
     private void chooseTuyen(DmTuyen dmTuyen)
     {
+        oldLocation=null;
         DmTuyenLocal=dmTuyen;
         IDTuyen=dmTuyen.GETIDTUYEN();
         CuurentLuot=(Integer.valueOf(CuurentLuot)+1)+"";
@@ -1094,7 +1141,6 @@ public class MainActivity extends AppCompatActivity {
     {
         Time today = new Time(Time.getCurrentTimezone());
         today.setToNow();
-
         ((TextView) findViewById(R.id.txt_TimeNow)).setText("Ngày: "+String.format("%02d", today.monthDay) + "/" + String.format("%02d", (today.month + 1)) + "/" + today.year + "    -   Giờ: " + today.format("%l:%M:%S %P"));             // Day of the month (1-31)
 
       //  Toast.makeText(context,getResources().getDisplayMetrics().densityDpi+"",Toast.LENGTH_LONG).show();
