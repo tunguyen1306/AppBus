@@ -11,9 +11,6 @@ import android.content.IntentFilter;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.graphics.drawable.ColorDrawable;
-import android.hardware.Sensor;
-import android.hardware.SensorManager;
-import android.hardware.usb.UsbConfiguration;
 import android.hardware.usb.UsbConstants;
 import android.hardware.usb.UsbDevice;
 import android.hardware.usb.UsbDeviceConnection;
@@ -21,8 +18,6 @@ import android.hardware.usb.UsbEndpoint;
 import android.hardware.usb.UsbInterface;
 import android.hardware.usb.UsbManager;
 import android.location.Location;
-import android.location.LocationListener;
-import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.PowerManager;
@@ -37,7 +32,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ArrayAdapter;
 import android.widget.GridView;
@@ -46,27 +40,21 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.maps.model.LatLng;
+import com.google.maps.android.SphericalUtil;
 import com.j256.ormlite.android.apptools.OpenHelperManager;
 import com.j256.ormlite.dao.Dao;
-import com.j256.ormlite.field.types.StringBytesType;
 import com.j256.ormlite.stmt.QueryBuilder;
-
 import java.nio.charset.StandardCharsets;
 import java.sql.SQLException;
 import java.text.DecimalFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Queue;
 import java.util.concurrent.LinkedBlockingQueue;
-
 import davisoft.app.busticket.adapter.GPSTracker;
 import davisoft.app.busticket.adapter.USBAdapter;
 import davisoft.app.busticket.data.ControlDatabase;
@@ -131,6 +119,8 @@ public class MainActivity extends AppCompatActivity {
 
     PowerManager.WakeLock wakeLock;
 
+    Location currentlocation;
+    Location oldLocation;
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
@@ -166,8 +156,8 @@ public class MainActivity extends AppCompatActivity {
                 new TrackerSettings()
                         .setUseGPS(true)
                         .setUseNetwork(true)
-                        .setUsePassive(true)
-                        .setTimeBetweenUpdates(2 * 1000)
+                        .setUsePassive(false)
+                        .setTimeBetweenUpdates(5 * 1000)
                         .setMetersBetweenUpdates(1);
 
         tracker = new LocationTracker(context,settings) {
@@ -176,6 +166,48 @@ public class MainActivity extends AppCompatActivity {
                 Toast.makeText(context,
                         "Provider: " + location.getProvider()+" - Location:"+location.getLatitude()+";"+location.getLongitude()+" - Serinumber:"+getSerinumber()+" - AndroidID:"+getAndroidId(), Toast.LENGTH_SHORT)
                         .show();
+                boolean first=false;
+                if (oldLocation==null){
+                    first=true;
+                    oldLocation=location;
+                }
+
+                else
+                    oldLocation=location;
+                currentlocation=location;
+
+                double min=Double.MAX_VALUE;
+                DmTram cuurent=null;
+                List<String> listDistance=new ArrayList<>();
+                for (int i=0;i<ListTrambyTuyen.size();i++)
+                {
+                    DmTram dmTram= ListTrambyTuyen.get(i);
+                    double distance= SphericalUtil.computeDistanceBetween(new LatLng(location.getLatitude(),location.getLongitude()),new LatLng(dmTram.getLAT(),dmTram.getLNG()));
+                    if (min>distance)
+                    {
+                        min=distance;
+                        cuurent=dmTram;
+                    }
+                    listDistance.add(dmTram.getId()+"_"+distance);
+
+                }
+
+
+                Collections.sort(listDistance, new Comparator<String>() {
+                    @Override
+                    public int compare(String o1, String o2) {
+                        Double d1=Double.valueOf(o1.split("_")[1]);
+                        Double d2=Double.valueOf(o2.split("_")[1]);
+                        return d1.compareTo(d2);
+                    }
+                });
+                if (cuurent!=null && min<20 && Integer.valueOf(listDistance.get(0).split("_")[0])==cuurent.getId())
+                {
+
+                }
+
+                // update
+
             }
 
             @Override

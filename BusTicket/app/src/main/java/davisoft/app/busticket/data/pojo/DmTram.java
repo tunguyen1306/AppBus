@@ -15,6 +15,8 @@ public class DmTram implements Serializable {
     public String MATRAM;
     @DatabaseField
     public String TENTRAM;
+    public double LAT;
+    public double LNG;
     public DmTram(){
 
     }
@@ -45,5 +47,21 @@ public DmTram(String ID,String MATRAM,String TENTRAM){
 
     public void setTenTram(String tenTram) {
         this.TENTRAM = tenTram;
+    }
+
+    public double getLAT() {
+        return LAT;
+    }
+
+    public void setLAT(double LAT) {
+        this.LAT = LAT;
+    }
+
+    public double getLNG() {
+        return LNG;
+    }
+
+    public void setLNG(double LNG) {
+        this.LNG = LNG;
     }
 }
