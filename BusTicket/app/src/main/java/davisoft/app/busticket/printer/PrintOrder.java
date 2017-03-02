@@ -133,11 +133,11 @@ public class PrintOrder {
 
         p.resetAll();
         p.initialize();
-        p.select_code_tab((byte)16); // WCP1252
+        p.select_code_tab((byte)27); // VN
         p.feedBack((byte)2);
         p.color(0);
         p.alignCenter();
-        p.setText(Normalizer.normalize(info.getTenCongTy(), Normalizer.Form.NFD).replaceAll("\\p{InCombiningDiacriticalMarks}+", "").replaceAll("Đ","D").replaceAll("đ","d").toUpperCase());
+        p.setText(info.getTenCongTy().toUpperCase());
         p.newLine();
         p.alignCenter();
         p.setText("DC:"+Normalizer.normalize(info.getDiaChi(), Normalizer.Form.NFD).replaceAll("\\p{InCombiningDiacriticalMarks}+", "").replaceAll("Đ","D").replaceAll("đ","d"));
@@ -147,13 +147,13 @@ public class PrintOrder {
 
         p.newLine();
         p.alignLeft();
-        p.setText("\t\t\t       Mau so: "+mauSo);
+        p.setText("\t\t\t    Mau so: "+mauSo);
         p.newLine();
         p.alignLeft();
-        p.setText("\t\t\t       Ky hieu: "+kyHieu);
+        p.setText("\t\t\t    Ky hieu: "+kyHieu);
         p.newLine();
         p.alignLeft();
-        p.setText("\t\t\t       So ve: "+mave);
+        p.setText("\t\t\t    So ve: "+mave);
 
         p.newLine();
         p.alignCenter();
@@ -170,7 +170,7 @@ public class PrintOrder {
         p.newLine();
         p.alignLeft();
         p.setText("Ngay: "+String.format("%02d", today.monthDay) + "/" + String.format("%02d", (today.month + 1)) + "/" + today.year );
-        p.setText("  Gio: "+today.format("%l:%M:%S %P"));
+        p.setText("            Gio: "+today.format("%l:%M:%S %P"));
         p.newLine();
 
         p.alignCenter();

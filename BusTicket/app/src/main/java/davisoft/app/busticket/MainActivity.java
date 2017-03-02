@@ -322,7 +322,8 @@ public class MainActivity extends AppCompatActivity {
         IntentFilter filter = new IntentFilter(ACTION_USB_PERMISSION);
         context.registerReceiver(mUsbReceiver, filter);
         for (UsbDevice usb : mUsbManager.getDeviceList().values()) {
-            if (usb.getVendorId() == 1155 && usb.getProductId() == 22339) {
+
+            if (usb.getVendorId() == 8137 && usb.getProductId() == 8214) {
                 mDevice = usb;
                 break;
             }
@@ -341,62 +342,77 @@ public class MainActivity extends AppCompatActivity {
         if (!runQueue)
         {
             runQueue=true;
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
+            if (mDevice != null && mUsbManager.hasPermission(mDevice)) {
+
+                final UsbInterface intf = mDevice.getInterface(0);
+                for (int i = 0; i < intf.getEndpointCount(); i++) {
+                    UsbEndpoint ep = intf.getEndpoint(i);
+                    if (ep.getType() == UsbConstants.USB_ENDPOINT_XFER_BULK) {
+                        if (ep.getDirection() == UsbConstants.USB_DIR_OUT) {
+
+                                 //   Toast.makeText(context,"GetConnectTion",Toast.LENGTH_LONG).show();
 
 
-                    if (mDevice != null && mUsbManager.hasPermission(mDevice)) {
 
-                        final UsbInterface intf = mDevice.getInterface(0);
-                        for (int i = 0; i < intf.getEndpointCount(); i++) {
-                            UsbEndpoint ep = intf.getEndpoint(i);
-                            if (ep.getType() == UsbConstants.USB_ENDPOINT_XFER_BULK) {
-                                if (ep.getDirection() == UsbConstants.USB_DIR_OUT) {
-                                    final UsbEndpoint mEndpointBulkOut = ep;
-                                    connection = mUsbManager.openDevice(mDevice);
-                                    if (connection != null) {
-                                        Log.e("Connection:", " connected");
-                                        Toast.makeText(context, "Device connected", Toast.LENGTH_SHORT).show();
-                                    }
-                                    boolean forceClaim = true;
-                                    connection.claimInterface(intf, forceClaim);
-                                    while (!printWaiting.isEmpty())
-                                    {
-                                        String data= printWaiting.remove();
-                                        Log.i("Thread:", "in run thread");
-                                        byte[] array = data.getBytes(StandardCharsets.ISO_8859_1);
-                                        Integer b = connection.bulkTransfer(mEndpointBulkOut, array, array.length, 10000);
-                                        Log.i("Return Status", "b-->" + b);
-
-                                    }
-                                    connection.releaseInterface(intf);
-                                    runQueue=false;
-                                    break;
+                            try {
+                                final UsbEndpoint mEndpointBulkOut = ep;
+                                connection = mUsbManager.openDevice(mDevice);
+                                if (connection != null) {
+                                    Log.e("Connection:", " connected");
+                                    Toast.makeText(context, "Device connected", Toast.LENGTH_SHORT).show();
                                 }
+                                boolean forceClaim = true;
+                                connection.claimInterface(intf, forceClaim);
+                                new Thread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        while (!printWaiting.isEmpty())
+                                        {
+                                            String data= printWaiting.remove();
+                                            Log.i("Thread:", "in run thread");
+
+                                            byte[] array = data.getBytes();
+
+                                            Integer b = connection.bulkTransfer(mEndpointBulkOut, array, array.length, 10000);
+
+                                            Log.i("Return Status", "b-->" + b);
+                                            runQueue=false;
+                                        }
+                                    }
+                                }).start();
+
+                                connection.releaseInterface(intf);
+
+                            }catch (Exception e)
+                            {
+                                final String sss=e.getMessage();
+
+                                        Toast.makeText(context,"Error:"+sss,Toast.LENGTH_LONG).show();
+
                             }
+
+                            break;
+
                         }
                     }
-                    else {
-                        initUSB();
-                        runQueue=false;
-                        try {
-                            Thread.sleep(500);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-                        queuePrint();
-                    }
-
-
                 }
-            }).start();
+            }
+            else {
+                initUSB();
+                runQueue=false;
+                try {
+                    Thread.sleep(500);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                queuePrint();
+            }
         }
 
     }
     private void print(final String soTien,final String dienGiai)
     {
-        Toast.makeText(getApplicationContext(),"Printing...",Toast.LENGTH_LONG).show();
+
         final String s = new PrintOrder().buildData(CountersLocal,MaVe,soTien,dienGiai,TenTuyen,BienSoXe,mauSo,kyHieu);
         printWaiting.add(s);
         queuePrint();
