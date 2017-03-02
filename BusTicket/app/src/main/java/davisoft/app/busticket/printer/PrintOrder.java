@@ -144,9 +144,9 @@ public class PrintOrder {
         p.newLine();
         p.alignCenter();
         p.setText("MST : "+info.getMST()+"  -  DT: "+info.getDT()+"");
+
         p.newLine();
         p.alignLeft();
-
         p.setText("\t\t\t       Mau so: "+mauSo);
         p.newLine();
         p.alignLeft();
@@ -154,14 +154,13 @@ public class PrintOrder {
         p.newLine();
         p.alignLeft();
         p.setText("\t\t\t       So ve: "+mave);
+
         p.newLine();
         p.alignCenter();
         p.double_height_width_on();
-
         p.setText(Normalizer.normalize(dienGiai, Normalizer.Form.NFD).replaceAll("\\p{InCombiningDiacriticalMarks}+", "").replaceAll("Đ","D").replaceAll("đ","d"));
-
-
         p.double_height_width_off();
+
         p.newLine();
         p.alignCenter();
         p.setText("Lien:Giao cho hanh khach");

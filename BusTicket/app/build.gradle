@@ -18,6 +18,11 @@ android {
         }
     }
 }
+repositories {
+    maven {
+        url "https://jitpack.io"
+    }
+}
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
@@ -32,4 +37,8 @@ dependencies {
     compile 'com.squareup.retrofit:retrofit:1.9.0'
     compile 'com.squareup.okhttp:okhttp:2.7.2'
     compile 'br.com.zbra:android-linq:1.0.1'
+    compile 'com.android.support:design:25.1.0'
+    compile 'com.github.quentin7b:android-location-tracker:3.2'
+    compile 'com.google.android.gms:play-services-maps:9.6.1'
+    compile 'com.google.maps.android:android-maps-utils:0.5+'
 }

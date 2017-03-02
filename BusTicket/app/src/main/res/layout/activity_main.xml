@@ -15,13 +15,13 @@
         android:layout_alignParentTop="true"
 
         android:id="@+id/container"
-        android:background="@android:color/background_light">
+        android:background="@android:color/background_light"
+        android:paddingBottom="70dp">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical"
-            android:paddingBottom="70dp"
             android:weightSum="1"
             android:id="@+id/layout_content"
             android:layout_alignParentLeft="true"
@@ -36,7 +36,8 @@
                 android:paddingTop="@dimen/activity_vertical_margin"
                 android:paddingLeft="@dimen/activity_horizontal_margin"
                 android:paddingRight="@dimen/activity_horizontal_margin"
-                android:background="@color/backgroundMain">
+                android:background="@color/defaultPrimaryColor"
+                android:paddingBottom="@dimen/activity_vertical_margin">
 
                 <TextView
                     android:id="@+id/txtTitle1"
@@ -45,9 +46,9 @@
                     android:layout_marginBottom="5dp"
                     android:gravity="center"
                     android:text="CÔNG TY TNHH XE BUÝT BECAMEX TOKYU"
-                    android:textSize="18sp"
+                    android:textSize="30sp"
                     android:textStyle="bold"
-                    android:textColor="@android:color/background_light" />
+                    android:textColor="@color/textPrimaryColor" />
 
                 <TextView
                     android:id="@+id/txtTitle2"
@@ -56,9 +57,9 @@
                     android:layout_marginBottom="5dp"
                     android:gravity="center"
                     android:text="Hệ Thống Lấy Vé Xe Buýt Tự Động"
-                    android:textSize="18sp"
+                    android:textSize="26sp"
                     android:textStyle="bold"
-                    android:textColor="@android:color/background_light" />
+                    android:textColor="@color/lightPrimaryColor" />
 
                 <TextView
                     android:id="@+id/txtTitle3"
@@ -67,8 +68,8 @@
                     android:layout_marginBottom="5dp"
                     android:gravity="center"
                     android:text="Mã Tuyến: 62 - C.Đước LA - BX Q.8 TPHCM"
-                    android:textSize="18sp"
-                    android:textColor="@android:color/background_light" />
+                    android:textSize="26sp"
+                    android:textColor="@color/lightPrimaryColor" />
 
 
 
@@ -90,24 +91,52 @@
                     android:text="BX cầu nổi Long An - cần đước - chợ trạm - cần giuộc - chợ trạm - tân kim - cầu ông thìn - BX quận 8 TPHCM"
                     android:textAllCaps="true"
                     tools:text="BX cầu nổi Long An - cần đước - chợ trạm - cần giuộc - chợ trạm - tân kim - cầu ông thìn - BX quận 8 TPHCM"
-                    android:textColor="@android:color/holo_red_dark"
-                    android:textSize="14sp" />
+                    android:textColor="@color/accentColor"
+                    android:textSize="24sp" />
             </LinearLayout>
 
 
-            <android.support.v7.widget.GridLayout
-                android:id="@+id/grid_layout_tk"
+            <LinearLayout
+                android:orientation="horizontal"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                app:columnCount="3"
-                app:rowCount="2"
-                android:background="@android:color/transparent"
-                android:layout_marginLeft="20dp"
-                android:layout_marginBottom="10dp"
-                android:layout_marginRight="10dp"
-                android:layout_marginTop="20dp">
+                android:layout_height="match_parent">
 
-            </android.support.v7.widget.GridLayout>
+                <android.support.v7.widget.GridLayout
+                    android:id="@+id/grid_layout_tk"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    app:columnCount="3"
+                    app:rowCount="2"
+                    android:background="@android:color/transparent"
+                    android:layout_marginLeft="20dp"
+                    android:layout_marginBottom="10dp"
+                    android:layout_marginRight="10dp"
+                    android:layout_marginTop="20dp"
+                    android:layout_weight="1"
+                    >
+
+                </android.support.v7.widget.GridLayout>
+
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="3"
+                    android:background="@color/dividerColor">
+
+                    <ListView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:id="@+id/list_TramByTuyen"
+                        android:dividerHeight="1dp"
+                        android:divider="@color/cardview_light_background"
+                        android:background="@color/cardview_light_background"
+                        android:layout_marginLeft="1dp"
+                        android:layout_marginRight="5dp"
+                        android:paddingBottom="5dp"
+                        android:paddingTop="5dp" />
+                </LinearLayout>
+            </LinearLayout>
 
         </LinearLayout>
 
@@ -123,7 +152,7 @@
         android:paddingLeft="5dp"
         android:paddingRight="5dp"
         android:paddingTop="5dp"
-        android:background="@color/backgroundMain"
+        android:background="@color/defaultPrimaryColor"
         android:layout_alignParentBottom="true"
         android:gravity="center">
 
@@ -145,10 +174,10 @@
             android:gravity="center"
             android:text="TextView"
             android:textSize="24dp"
-            android:textColorHint="@color/colorPrimary"
-            android:textColorHighlight="@color/colorAccent"
+            android:textColorHint="@color/darkPrimaryColor"
+            android:textColorHighlight="@color/accentColor"
             android:textAllCaps="true"
-            android:textColor="@android:color/background_light"
+            android:textColor="@color/textPrimaryColor"
             android:textStyle="bold"
             android:layout_weight="1" />
 
@@ -222,7 +251,7 @@
 
         android:id="@+id/layout_popup_loading"
         android:alpha="1"
-        android:visibility="visible"
+        android:visibility="gone"
         android:layout_alignParentTop="true"
         android:layout_alignParentStart="true">
         <include layout="@layout/layout_loading"

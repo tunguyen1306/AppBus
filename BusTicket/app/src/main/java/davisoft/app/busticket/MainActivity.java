@@ -11,6 +11,8 @@ import android.content.IntentFilter;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.graphics.drawable.ColorDrawable;
+import android.hardware.Sensor;
+import android.hardware.SensorManager;
 import android.hardware.usb.UsbConfiguration;
 import android.hardware.usb.UsbConstants;
 import android.hardware.usb.UsbDevice;
@@ -18,7 +20,14 @@ import android.hardware.usb.UsbDeviceConnection;
 import android.hardware.usb.UsbEndpoint;
 import android.hardware.usb.UsbInterface;
 import android.hardware.usb.UsbManager;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.PowerManager;
+import android.provider.Settings;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayout;
@@ -33,11 +42,13 @@ import android.view.WindowManager;
 import android.widget.ArrayAdapter;
 import android.widget.GridView;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.j256.ormlite.android.apptools.OpenHelperManager;
 import com.j256.ormlite.dao.Dao;
+import com.j256.ormlite.field.types.StringBytesType;
 import com.j256.ormlite.stmt.QueryBuilder;
 
 import java.nio.charset.StandardCharsets;
@@ -46,10 +57,17 @@ import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Queue;
+import java.util.concurrent.LinkedBlockingQueue;
 
+import davisoft.app.busticket.adapter.GPSTracker;
 import davisoft.app.busticket.adapter.USBAdapter;
 import davisoft.app.busticket.data.ControlDatabase;
 import davisoft.app.busticket.data.DatabaseHelper;
@@ -64,12 +82,32 @@ import davisoft.app.busticket.data.pojo.DmTuyenChiTietTram;
 import davisoft.app.busticket.data.pojo.DmXe;
 import davisoft.app.busticket.data.pojo.LoTrinhChoXe;
 import davisoft.app.busticket.printer.PrintOrder;
+import fr.quentinklein.slt.LocationTracker;
+import fr.quentinklein.slt.TrackerSettings;
 import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 
 public class MainActivity extends AppCompatActivity {
 
+    private final BroadcastReceiver mUsbReceiver = new BroadcastReceiver() {
+        public void onReceive(Context context, Intent intent) {
+            String action = intent.getAction();
+            if (ACTION_USB_PERMISSION.equals(action)) {
+                synchronized (this) {
+                    mDevice = (UsbDevice) intent.getParcelableExtra(UsbManager.EXTRA_DEVICE);
+
+                    if (intent.getBooleanExtra(UsbManager.EXTRA_PERMISSION_GRANTED, false)) {
+                        if (mDevice != null) {
+                            //call method to set up device communication
+                        }
+                    } else {
+                        Log.d(TAG, "permission denied for device " + mDevice);
+                    }
+                }
+            }
+        }
+    };
 
     private UsbManager mUsbManager;
     private UsbDevice mDevice;
@@ -79,17 +117,23 @@ public class MainActivity extends AppCompatActivity {
     private static final String ACTION_USB_PERMISSION =
             "davisoft.app.busticket.USB_PERMISSION";
 
-
     final Context context = this;
+
     public static List<Integer> dataTickets = new ArrayList<Integer>();
-    public List<DmTaiXe> dmTaixe = new ArrayList<>();
+
     private int orientation = Configuration.ORIENTATION_LANDSCAPE;
 
     public static  String MaXe="V1251";
 
+    GPSTracker gpsTracker=null;
+
     private DatabaseHelper databaseHelper = null;
+
+    PowerManager.WakeLock wakeLock;
+
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState)
+    {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         init();
@@ -112,36 +156,111 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void run() {
                         resetLayout();
+
                     }
                 });
 
             }
         }).start();
+        TrackerSettings settings =
+                new TrackerSettings()
+                        .setUseGPS(true)
+                        .setUseNetwork(true)
+                        .setUsePassive(true)
+                        .setTimeBetweenUpdates(2 * 1000)
+                        .setMetersBetweenUpdates(1);
 
-    }
-
-
-
-    private final BroadcastReceiver mUsbReceiver = new BroadcastReceiver() {
-        public void onReceive(Context context, Intent intent) {
-            String action = intent.getAction();
-            if (ACTION_USB_PERMISSION.equals(action)) {
-                synchronized (this) {
-                    mDevice = (UsbDevice) intent.getParcelableExtra(UsbManager.EXTRA_DEVICE);
-
-                    if (intent.getBooleanExtra(UsbManager.EXTRA_PERMISSION_GRANTED, false)) {
-                        if (mDevice != null) {
-                            //call method to set up device communication
-                        }
-                    } else {
-                        Log.d(TAG, "permission denied for device " + mDevice);
-                    }
-                }
+        tracker = new LocationTracker(context,settings) {
+            @Override
+            public void onLocationFound(@NonNull Location location) {
+                Toast.makeText(context,
+                        "Provider: " + location.getProvider()+" - Location:"+location.getLatitude()+";"+location.getLongitude()+" - Serinumber:"+getSerinumber()+" - AndroidID:"+getAndroidId(), Toast.LENGTH_SHORT)
+                        .show();
             }
-        }
-    };
 
-    private void initUSB() {
+            @Override
+            public void onTimeout() {
+                Toast.makeText(context,
+                        "onTimeout: Serinumber:"+getSerinumber()+" - AndroidID:"+getAndroidId(), Toast.LENGTH_SHORT)
+                        .show();
+            }
+        };
+        tracker.startListening();
+        PowerManager powerManager = (PowerManager) getSystemService(POWER_SERVICE);
+        wakeLock = powerManager.newWakeLock(PowerManager.SCREEN_DIM_WAKE_LOCK,
+                "MyWakelockTag");
+        wakeLock.acquire();
+    }
+    LocationTracker tracker;
+    @Override
+    protected void onPause()
+    {
+        if(tracker != null) {
+            tracker.stopListening();
+
+        }
+        if(wakeLock != null) {
+            wakeLock.release();
+        }
+
+        super.onPause();
+       // gpsTracker.stopUsingGPS();
+    }
+    @Override
+    protected void onResume()
+    {
+        if(tracker != null) {
+            tracker.startListening();
+        }
+        if(wakeLock != null) {
+            wakeLock.acquire();
+        }
+
+        super.onResume();
+      //  gpsTracker.initLocation();
+    }
+    public String getSerinumber()
+    {
+        String id=Build.SERIAL;
+        return  id;
+    }
+    public String getAndroidId()
+    {
+        String android_id = Settings.Secure.getString(context.getContentResolver(),
+                Settings.Secure.ANDROID_ID);
+        return  android_id;
+    }
+    public void showSettingsAlert()
+    {
+        AlertDialog.Builder alertDialog = new AlertDialog.Builder(context);
+
+        // Setting Dialog Title
+        alertDialog.setTitle("GPS is settings");
+
+        // Setting Dialog Message
+        alertDialog.setMessage("GPS is not enabled. Do you want to go to settings menu?");
+
+        // On pressing the Settings button.
+        alertDialog.setPositiveButton("Settings", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                context.startActivity(intent);
+            }
+        });
+
+        // On pressing the cancel button
+        alertDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+
+        // Showing Alert Message
+        alertDialog.show();
+    }
+    LinkedBlockingQueue<String> printWaiting=new LinkedBlockingQueue<String>();
+    private void initUSB()
+    {
         mUsbManager = (UsbManager) context.getSystemService(Context.USB_SERVICE);
         mPermissionIntent = PendingIntent.getBroadcast(context, 0, new Intent(ACTION_USB_PERMISSION), 0);
         IntentFilter filter = new IntentFilter(ACTION_USB_PERMISSION);
@@ -160,51 +279,74 @@ public class MainActivity extends AppCompatActivity {
 
 
     }
+    boolean runQueue=false;
+    private  void queuePrint()
+    {
+        if (!runQueue)
+        {
+            runQueue=true;
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
 
-    private void print(final String soTien,final String dienGiai) {
-       Toast.makeText(getApplicationContext(),"Printing...",Toast.LENGTH_LONG).show();
-        final String s = new PrintOrder().buildData(CountersLocal,MaVe,soTien,dienGiai,TenTuyen,BienSoXe,mauSo,kyHieu);
-        Log.i("Printer/Info",s);
-        if (mDevice != null && mUsbManager.hasPermission(mDevice)) {
 
-            final UsbInterface intf = mDevice.getInterface(0);
-            for (int i = 0; i < intf.getEndpointCount(); i++) {
-                UsbEndpoint ep = intf.getEndpoint(i);
-                if (ep.getType() == UsbConstants.USB_ENDPOINT_XFER_BULK) {
-                    if (ep.getDirection() == UsbConstants.USB_DIR_OUT) {
-                        final UsbEndpoint mEndpointBulkOut = ep;
-                        connection = mUsbManager.openDevice(mDevice);
-                        if (connection != null) {
-                            Log.e("Connection:", " connected");
-                            Toast.makeText(context, "Device connected", Toast.LENGTH_SHORT).show();
-                        }
-                        boolean forceClaim = true;
-                        connection.claimInterface(intf, forceClaim);
-                        new Thread(new Runnable() {
-                            @Override
-                            public void run() {
-                                // TODO Auto-generated method stub
-                                Log.i("Thread:", "in run thread");
+                    if (mDevice != null && mUsbManager.hasPermission(mDevice)) {
 
-                                byte[] array = s.getBytes(StandardCharsets.ISO_8859_1);
-                                Integer b = connection.bulkTransfer(mEndpointBulkOut, array, array.length, 10000);
-                                Log.i("Return Status", "b-->" + b);
+                        final UsbInterface intf = mDevice.getInterface(0);
+                        for (int i = 0; i < intf.getEndpointCount(); i++) {
+                            UsbEndpoint ep = intf.getEndpoint(i);
+                            if (ep.getType() == UsbConstants.USB_ENDPOINT_XFER_BULK) {
+                                if (ep.getDirection() == UsbConstants.USB_DIR_OUT) {
+                                    final UsbEndpoint mEndpointBulkOut = ep;
+                                    connection = mUsbManager.openDevice(mDevice);
+                                    if (connection != null) {
+                                        Log.e("Connection:", " connected");
+                                        Toast.makeText(context, "Device connected", Toast.LENGTH_SHORT).show();
+                                    }
+                                    boolean forceClaim = true;
+                                    connection.claimInterface(intf, forceClaim);
+                                    while (!printWaiting.isEmpty())
+                                    {
+                                        String data= printWaiting.remove();
+                                        Log.i("Thread:", "in run thread");
+                                        byte[] array = data.getBytes(StandardCharsets.ISO_8859_1);
+                                        Integer b = connection.bulkTransfer(mEndpointBulkOut, array, array.length, 10000);
+                                        Log.i("Return Status", "b-->" + b);
 
+                                    }
+                                    connection.releaseInterface(intf);
+                                    runQueue=false;
+                                    break;
+                                }
                             }
-                        }).start();
-                        connection.releaseInterface(intf);
-
-                        break;
+                        }
                     }
-                }
-            }
-        }
-        else {
-            initUSB();
-        }
-    }
+                    else {
+                        initUSB();
+                        runQueue=false;
+                        try {
+                            Thread.sleep(500);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                        queuePrint();
+                    }
 
-    private void initEvent() {
+
+                }
+            }).start();
+        }
+
+    }
+    private void print(final String soTien,final String dienGiai)
+    {
+        Toast.makeText(getApplicationContext(),"Printing...",Toast.LENGTH_LONG).show();
+        final String s = new PrintOrder().buildData(CountersLocal,MaVe,soTien,dienGiai,TenTuyen,BienSoXe,mauSo,kyHieu);
+        printWaiting.add(s);
+        queuePrint();
+    }
+    private void initEvent()
+    {
 
 
         findViewById(R.id.layout_popup).setTranslationY(findViewById(R.id.layout_popup).getHeight());
@@ -232,26 +374,9 @@ public class MainActivity extends AppCompatActivity {
                             }
                         });
 
-            }
-        });
-       /* findViewById(R.id.btnDongTuyen).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
 
-                findViewById(R.id.layout_popup).animate()
-                        .translationY( findViewById(R.id.layout_popup).getHeight())
-                        .alpha(0.0f)
-                        .setDuration(300)
-                        .setListener(new AnimatorListenerAdapter() {
-                            @Override
-                            public void onAnimationEnd(Animator animation) {
-                                super.onAnimationEnd(animation);
-                                findViewById(R.id.layout_popup).setVisibility(View.GONE);
-                            }
-                        });
             }
         });
-*/
 
         findViewById(R.id.layout_popup).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -279,7 +404,6 @@ public class MainActivity extends AppCompatActivity {
         });
 
     }
-
     HashMap<String,Boolean> hasSyncRest=new HashMap<String,Boolean>();
     String CuurentLuot="1";
     String MaTaiXe="";
@@ -296,94 +420,101 @@ public class MainActivity extends AppCompatActivity {
     DmTuyen DmTuyenLocal=null;
     List<DmTuyen> ListTuyenByMaXe=new ArrayList<>();
     List<LoTrinhChoXe> ListLoTrinhByMaXe=new ArrayList<>();
+    List<DmTram> ListTrambyTuyen=new ArrayList<>();
+    List<DmHoaDon> ListDmHoaDonLocal=new ArrayList<>();
     private boolean updateHoaDonByID(final Integer index,final String sotien,final String dienGiai)
     {   mauSo="";
         kyHieu="";
-        if (hoaDonID.trim().length()>0)
+        String hoaDonIDClone=hoaDonID.trim();
+        if (hoaDonIDClone.length()>0)
         {
-
-
-            ResClien resClient = new ResClien();
-            resClient.GetService().CountView(hoaDonID, new Callback<List<DmHoaDon>>() {
-                @Override
-                public void success(List<DmHoaDon> advertDtos, Response response) {
-                    for (int i = 0; i < advertDtos.size(); i++) {
-                        String getTONGSOVEPHATHANH = String.valueOf(advertDtos.get(i).getTONGSOVEPHATHANH());
-                        String getSOVEHIENTAI = String.valueOf(advertDtos.get(i).getSOVEHIENTAI());
-                        String getIDVE = String.valueOf(advertDtos.get(i).getIDVE());
-                        IDHOADON.add(advertDtos.get(i).getIDHOADON().toString());
-                        MAXEHoaDon.add(advertDtos.get(i).getMAXE().toString());
-                        KYHIEUVE.add(advertDtos.get(i).getKYHIEUVE().toString());
-                        MAUSO.add(advertDtos.get(i).getMAUSO().toString());
-                        TONGSOVEPHATHANH.add(getTONGSOVEPHATHANH);
-                        SOVEHIENTAI.add(getSOVEHIENTAI);
-                        IDVE.add(getIDVE);
-
-
-                    }
-                    loadDataDmHoaDon();
-                    for (int i=0;i<ItemAllDmHoaDon.size();i++)
+            for (DmHoaDon item:ListDmHoaDonLocal)
+            {
+                if(item.getIDHOADON().toLowerCase().trim().equals(hoaDonIDClone.toLowerCase()))
+                {
+                    kyHieu=item.getKYHIEUVE();
+                    mauSo=item.getMAUSO();
+                    item.setSOVEHIENTAI(item.getSOVEHIENTAI()+1);
+                    MaVe=String.format("%07d",item.getSOVEHIENTAI());
+                    print(sotien,dienGiai);
+                    try
                     {
-                        if(ItemAllDmHoaDon.get(i).getIDHOADON().trim().equals(hoaDonID.trim()))
-                        {
+                        ResClien resClient = new ResClien();
+                        resClient.GetService().CountView(hoaDonIDClone, new Callback<List<DmHoaDon>>() {
+                            @Override
+                            public void success(List<DmHoaDon> advertDtos, Response response) {
+                                DichVu dv=new DichVu();
+                                dv.setSQMS(MaVe);
+                                dv.setMATUYEN(DmTuyenLocal.GETMATUYEN());
+                                dv.setTENTUYEN(DmTuyenLocal.GETTENTUYENVN());
+                                dv.setLOTRINH(TenTuyen);
+                                dv.setBienSoXe(BienSoXe);
+                                dv.setDichvu1("dv"+index);
+                                dv.setMATAIXE(MaTaiXe);
+                                dv.setMAXE(MainActivity.MaXe);
+                                dv.setMATRAM("");
+                                dv.setIDTUYEN(IDTuyen);
+                                dv.setKYHIEUVE(kyHieu);
+                                dv.setMAUSO(mauSo);
+                                dv.setMATRAMDAU(DmTuyenLocal.GETMATRAMDAU());
+                                dv.setMATRAMGIUA(DmTuyenLocal.GETMATRAMGIUA());
+                                dv.setMATRAMCUOI(DmTuyenLocal.GETMATRAMCUOI());
+                                dv.setNGONNGU("VN");
+                                dv.setNGAY(Calendar.getInstance().get(Calendar.DAY_OF_MONTH)+"/"+Calendar.getInstance().get(Calendar.MONTH)+"/"+Calendar.getInstance().get(Calendar.YEAR));
+                                dv.setGIAVE(sotien);
+                                dv.setGIO_GOC(Calendar.getInstance().get(Calendar.HOUR)+":"+Calendar.getInstance().get(Calendar.MINUTE)+"/"+Calendar.getInstance().get(Calendar.SECOND));
+                                dv.setGIOLAYSO(Calendar.getInstance().get(Calendar.HOUR)+":"+Calendar.getInstance().get(Calendar.MINUTE)+"/"+Calendar.getInstance().get(Calendar.SECOND));
+                                dv.setBINH_CHON("N");
+                                dv.setContro(false);
+                                dv.setDATCHO(false);
+                                dv.setPHUCVU(false);
+                                dv.setDoc(false);
+                                ItemAllDichVu.add(dv);
+                                for (int i = 0; i < advertDtos.size(); i++) {
+                                    String getTONGSOVEPHATHANH = String.valueOf(advertDtos.get(i).getTONGSOVEPHATHANH());
+                                    String getSOVEHIENTAI = String.valueOf(advertDtos.get(i).getSOVEHIENTAI());
+                                    String getIDVE = String.valueOf(advertDtos.get(i).getIDVE());
+                                    IDHOADON.add(advertDtos.get(i).getIDHOADON().toString());
+                                    MAXEHoaDon.add(advertDtos.get(i).getMAXE().toString());
+                                    KYHIEUVE.add(advertDtos.get(i).getKYHIEUVE().toString());
+                                    MAUSO.add(advertDtos.get(i).getMAUSO().toString());
+                                    TONGSOVEPHATHANH.add(getTONGSOVEPHATHANH);
+                                    SOVEHIENTAI.add(getSOVEHIENTAI);
+                                    IDVE.add(getIDVE);
+                                    for (DmHoaDon item:ItemAllDmHoaDon){
+                                        if (item.getIDHOADON().equals(advertDtos.get(i).getIDHOADON().trim().toString()))
+                                        {
+                                            if (Integer.valueOf(getSOVEHIENTAI)>item.getSOVEHIENTAI())
+                                            {
+                                                item.setSOVEHIENTAI(Integer.valueOf(getSOVEHIENTAI));
+                                            }
+                                            break;
+                                        }
 
+                                    }
 
+                                }
+                            }
+                            @Override
+                            public void failure(RetrofitError error) {
 
-                            kyHieu=ItemAllDmHoaDon.get(i).getKYHIEUVE();
-                            mauSo=ItemAllDmHoaDon.get(i).getMAUSO();
-                            MaVe=String.format("%07d",ItemAllDmHoaDon.get(i).getSOVEHIENTAI()+1);
-                            ItemAllDmHoaDon.get(i).setSOVEHIENTAI(Integer.valueOf(MaVe));
+                            }
+                        });
+                    }catch (Exception e)
+                    {
 
-                            DichVu dv=new DichVu();
-
-
-                            dv.setSQMS(MaVe);
-                            dv.setMATUYEN(DmTuyenLocal.GETMATUYEN());
-                            dv.setTENTUYEN(DmTuyenLocal.GETTENTUYENVN());
-                            dv.setLOTRINH(TenTuyen);
-                            dv.setBienSoXe(BienSoXe);
-                            dv.setDichvu1("dv"+index);
-                            dv.setMATAIXE(MaTaiXe);
-                            dv.setMAXE(MainActivity.MaXe);
-                            dv.setMATRAM("");
-                            dv.setIDTUYEN(IDTuyen);
-                            dv.setKYHIEUVE(kyHieu);
-                            dv.setMAUSO(mauSo);
-                            dv.setMATRAMDAU(DmTuyenLocal.GETMATRAMDAU());
-                            dv.setMATRAMGIUA(DmTuyenLocal.GETMATRAMGIUA());
-                            dv.setMATRAMCUOI(DmTuyenLocal.GETMATRAMCUOI());
-                            dv.setNGONNGU("VN");
-                            dv.setNGAY(Calendar.getInstance().get(Calendar.DAY_OF_MONTH)+"/"+Calendar.getInstance().get(Calendar.MONTH)+"/"+Calendar.getInstance().get(Calendar.YEAR));
-                            dv.setGIAVE(sotien);
-                            dv.setGIO_GOC(Calendar.getInstance().get(Calendar.HOUR)+":"+Calendar.getInstance().get(Calendar.MINUTE)+"/"+Calendar.getInstance().get(Calendar.SECOND));
-                            dv.setGIOLAYSO(Calendar.getInstance().get(Calendar.HOUR)+":"+Calendar.getInstance().get(Calendar.MINUTE)+"/"+Calendar.getInstance().get(Calendar.SECOND));
-
-
-                            dv.setBINH_CHON("N");
-                            dv.setContro(false);
-                            dv.setDATCHO(false);
-                            dv.setPHUCVU(false);
-                            dv.setDoc(false);
-                            ItemAllDichVu.add(dv);
-                            print(sotien,dienGiai);
-                            break;
-                        }
                     }
-                    hoaDonID="";
 
+
+                    break;
                 }
-
-                @Override
-                public void failure(RetrofitError error) {
-
-                }
-            });
-
-
+            }
             //get couunt hoa don
             // insert danh sach dich vu
         }
-
+        hoaDonID="";
+        mauSo="";
+        kyHieu="";
         return false;
     }
     private void resetTicket()
@@ -399,9 +530,9 @@ public class MainActivity extends AppCompatActivity {
             gLayout.getChildAt(2).findViewById(R.id.layout_button).setEnabled(true);
             gLayout.getChildAt(2).findViewById(R.id.layout_button).setBackgroundResource(R.drawable.btn_selector);
             gLayout.getChildAt(3).findViewById(R.id.layout_button).setEnabled(true);
-            gLayout.getChildAt(3).findViewById(R.id.layout_button).setBackgroundResource(R.drawable.btn_selector);
+           gLayout.getChildAt(3).findViewById(R.id.layout_button).setBackgroundResource(R.drawable.btn_selector);
             gLayout.getChildAt(4).findViewById(R.id.layout_button).setEnabled(true);
-            gLayout.getChildAt(4).findViewById(R.id.layout_button).setBackgroundResource(R.drawable.btn_selector);
+           gLayout.getChildAt(4).findViewById(R.id.layout_button).setBackgroundResource(R.drawable.btn_selector);
             gLayout.getChildAt(5).findViewById(R.id.layout_button).setEnabled(true);
             gLayout.getChildAt(5).findViewById(R.id.layout_button).setBackgroundResource(R.drawable.btn_selector);
             if (DmTuyenLocal.GETCAMVE1())
@@ -541,13 +672,23 @@ public class MainActivity extends AppCompatActivity {
     }
     private String getChiTietTramByTuyen(DmTuyen tuyen)
     {
+        ListTrambyTuyen.clear();
         String TramChiTiet="";
-        for (DmTuyenChiTietTram dmtuyenchitiet : ItemAllCHiTietTuyen) {
+        Collections.sort(ItemAllCHiTietTuyen, new Comparator<DmTuyenChiTietTram>() {
+            @Override
+            public int compare(DmTuyenChiTietTram o1, DmTuyenChiTietTram o2) {
+                return o1.getId()-o2.getId();
+            }
+        });
+        for (int i=0;i<ItemAllCHiTietTuyen.size();i++)
+        {
+            DmTuyenChiTietTram dmtuyenchitiet=ItemAllCHiTietTuyen.get(i);
             if (dmtuyenchitiet.getIdTuyen().trim().equals(tuyen.GETIDTUYEN().trim()))
             {
                 for (DmTram dmtram : ItemAllDmTram) {
                     if(dmtram.getMaTram().trim().equals(dmtuyenchitiet.getMaTram().trim()))
                     {
+                        ListTrambyTuyen.add(dmtram);
                         if (  TramChiTiet.length()>0)
                         {
                             TramChiTiet+=" - "+dmtram.getTenTram();
@@ -555,12 +696,14 @@ public class MainActivity extends AppCompatActivity {
                         {
                             TramChiTiet+=dmtram.getTenTram();
                         }
+                        break;
                     }
                 }
 
 
             }
         }
+
         return TramChiTiet;
     }
     private void checkAllDataReady()
@@ -644,6 +787,13 @@ public class MainActivity extends AppCompatActivity {
                             }
                         }
                     }
+                    for (DmHoaDon item:ItemAllDmHoaDon)
+                    {
+                        if(item.getMAXE().trim().toLowerCase().equals(MainActivity.MaXe.trim().toLowerCase()))
+                        {
+                            ListDmHoaDonLocal.add(item);
+                        }
+                    }
 
 
                     break;
@@ -681,12 +831,11 @@ public class MainActivity extends AppCompatActivity {
                             }
                         });
                 initGridViewTuyen();
-
+                initListViewTuyen();
 
             }
         }
     }
-
     private void showDialogYesNo(String title,String content,View.OnClickListener yesClick,View.OnClickListener noClick)
     {
         findViewById(R.id.layout_popup_content_yesno).findViewById(R.id.btnYes).setOnClickListener(yesClick);
@@ -718,7 +867,8 @@ public class MainActivity extends AppCompatActivity {
                     }
                 });
     }
-    public class GridViewTuyenAdapter extends ArrayAdapter<DmTuyen> {
+    public class GridViewTuyenAdapter extends ArrayAdapter<DmTuyen>
+    {
         public GridViewTuyenAdapter(Context context, int resource, List<DmTuyen> objects) {
             super(context, resource, objects);
         }
@@ -814,12 +964,41 @@ public class MainActivity extends AppCompatActivity {
             return v;
         }
     }
+    public class ListTramAdapter extends ArrayAdapter<DmTram>
+    {
 
-    public void initGridViewTuyen()
+        public ListTramAdapter(Context context, int textViewResourceId) {
+            super(context, textViewResourceId);
+        }
+
+        public ListTramAdapter(Context context, int resource, List<DmTram> items) {
+            super(context, resource, items);
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+
+            View v = convertView;
+            if(null == v) {
+                LayoutInflater inflater = (LayoutInflater)getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                v = inflater.inflate(R.layout.tram_item, null);
+            }
+
+            DmTram dmTram = getItem(position);
+            TextView txtView = (TextView) v.findViewById(R.id.txtView);
+            txtView.setText(dmTram.getTenTram());
+            return v;
+        }
+
+    }
+    private void initGridViewTuyen()
     {
         ((GridView)findViewById(R.id.gv_Tuyen)).setAdapter(new GridViewTuyenAdapter(getApplicationContext(),R.layout.tuyen_item,ItemAllDmTuyen));
     }
-
+    private void  initListViewTuyen()
+    {
+        ((ListView)findViewById(R.id.list_TramByTuyen)).setAdapter(new ListTramAdapter(getApplicationContext(),R.layout.tram_item,ListTrambyTuyen));
+    }
     public void updateGridView()
     {
 
@@ -827,7 +1006,6 @@ public class MainActivity extends AppCompatActivity {
         Log.d("W-I-GV", ((GridView)findViewById(R.id.gv_Tuyen)).getWidth() + " - " + ((GridView)findViewById(R.id.gv_Tuyen)).getHeight());
         Log.d("W-I-GV1", MainActivity.convertPixelsToDp(((GridView)findViewById(R.id.gv_Tuyen)).getWidth() ,getApplicationContext()) + " - " +MainActivity.convertPixelsToDp( ((GridView)findViewById(R.id.gv_Tuyen)).getHeight(),getApplicationContext()));
     }
-
     private void chooseTuyen(DmTuyen dmTuyen)
     {
         DmTuyenLocal=dmTuyen;
@@ -845,8 +1023,8 @@ public class MainActivity extends AppCompatActivity {
                         super.onAnimationEnd(animation);}
                 });
     }
-
-    private void initData() {
+    private void initData()
+    {
 
         hasSyncRest=new HashMap<String,Boolean>();
         CuurentLuot="1";
@@ -861,7 +1039,7 @@ public class MainActivity extends AppCompatActivity {
         DmTuyenLocal=null;
         ListTuyenByMaXe=new ArrayList<>();
         ListLoTrinhByMaXe=new ArrayList<>();
-
+        ListDmHoaDonLocal=new ArrayList<>();
 
         CallDmTaiXe();
         CallDmTram();
@@ -880,8 +1058,8 @@ public class MainActivity extends AppCompatActivity {
         MainActivity.dataTickets.add(5);
         MainActivity.dataTickets.add(6);
     }
-
-    private void init() {
+    private void init()
+    {
         Time today = new Time(Time.getCurrentTimezone());
         today.setToNow();
 
@@ -963,9 +1141,11 @@ public class MainActivity extends AppCompatActivity {
             }
         }).start();
         hideSystemUI();
-    }
+       // gpsTracker=new GPSTracker(this);
 
-    private void hideSystemUI() {
+    }
+    private void hideSystemUI()
+    {
         // Set the IMMERSIVE flag.
         // Set the content to appear under the system bars so that the content
         // doesn't resize when the system bars hide and show.
@@ -976,9 +1156,10 @@ public class MainActivity extends AppCompatActivity {
                         | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION // hide nav bar
                         | View.SYSTEM_UI_FLAG_FULLSCREEN // hide status bar
                         | View.SYSTEM_UI_FLAG_IMMERSIVE);
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
     }
-
-    private void resetLayout() {
+    public void resetLayout()
+    {
         if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
             changeColumnCount(((GridLayout) findViewById(R.id.grid_layout_tk)));
             updateGridView();
@@ -989,8 +1170,8 @@ public class MainActivity extends AppCompatActivity {
         }
 
     }
-
-    private void changeColumnCount(final GridLayout gridLayout) {
+    private void changeColumnCount(final GridLayout gridLayout)
+    {
         DisplayMetrics metrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(metrics);
 
@@ -1113,28 +1294,29 @@ public class MainActivity extends AppCompatActivity {
 
 
     }
-
-    public static float convertDpToPixel(float dp, Context context){
+    public static float convertDpToPixel(float dp, Context context)
+    {
         Resources resources = context.getResources();
         DisplayMetrics metrics = resources.getDisplayMetrics();
         float px = dp * ((float)metrics.densityDpi / DisplayMetrics.DENSITY_DEFAULT);
         return px;
     }
-
-    public static float convertPixelsToDp(float px, Context context){
+    public static float convertPixelsToDp(float px, Context context)
+    {
         Resources resources = context.getResources();
         DisplayMetrics metrics = resources.getDisplayMetrics();
         float dp = px / ((float)metrics.densityDpi / DisplayMetrics.DENSITY_DEFAULT);
         return dp;
     }
     @Override
-    protected void onStart() {
+    protected void onStart()
+    {
         super.onStart();
 
     }
-
     @Override
-    public void onWindowFocusChanged(boolean hasFocus) {
+    public void onWindowFocusChanged(boolean hasFocus)
+    {
         super.onWindowFocusChanged(hasFocus);
         if (hasFocus) {
             getWindow().getDecorView().setSystemUiVisibility(
@@ -1146,9 +1328,9 @@ public class MainActivity extends AppCompatActivity {
                             | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
         }
     }
-
     @Override
-    public void onConfigurationChanged(Configuration newConfig) {
+    public void onConfigurationChanged(Configuration newConfig)
+    {
         orientation = newConfig.orientation;
         super.onConfigurationChanged(newConfig);
         new Thread(new Runnable() {

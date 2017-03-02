@@ -3,15 +3,19 @@
     <color name="colorPrimary">#3f51b5</color>
     <color name="colorPrimaryDark">#ead69d</color>
     <color name="colorAccent">#ff4081</color>
-    <color name="colorBackground">#6ab344</color>
-    <color name="colorTimeThread">#fafcf8</color>
     <color name="colorBackgroundContent">#d8dfe2</color>
     <color name="colorText1">#f7fbf5</color>
-    <color name="colorText2">#F7FBF5</color>
-    <color name="colorText3">#F7FBF5</color>
-    <color name="colorText4">#ff4081</color>
+    <color name="backgroundMain">#34b67a</color>
 
-    <color name="colorBackgroundButton">#7ad4df</color>
-    <color name="backgroundMain">#34B67A</color>
+
+    <color name="darkPrimaryColor">#1976D2</color>
+    <color name="defaultPrimaryColor">#2196f3</color>
+    <color name="lightPrimaryColor">#bbdefb</color>
+    <color name="textPrimaryColor">#ffffff</color>
+    <color name="accentColor">#ff5722</color>
+    <color name="primaryTextColor">#212121</color>
+    <color name="secondaryTextColor">#757575</color>
+    <color name="dividerColor">#BDBDBD</color>
+
 </resources>
 
