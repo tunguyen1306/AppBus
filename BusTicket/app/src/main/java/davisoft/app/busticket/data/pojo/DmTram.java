@@ -20,7 +20,13 @@ public class DmTram implements Serializable {
     public DmTram(){
 
     }
-public DmTram(String ID,String MATRAM,String TENTRAM){
+
+    @Override
+    public DmTram clone() throws CloneNotSupportedException {
+        return (DmTram) super.clone();
+    }
+
+    public DmTram(String ID, String MATRAM, String TENTRAM){
     this.ID=Integer.parseInt(ID);
     this.MATRAM=MATRAM;
     this.TENTRAM=TENTRAM;

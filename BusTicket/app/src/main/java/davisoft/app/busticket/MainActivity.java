@@ -197,36 +197,8 @@ public class MainActivity extends AppCompatActivity {
                         oldLocation=currentlocation;
 
 
-                    /*
-                    double min=Double.MAX_VALUE;
-                    DmTram cuurent=null;
-                    List<String> listDistance=new ArrayList<>();
-                    for (int i=0;i<ListTrambyTuyen.size();i++)
-                    {
-                        DmTram dmTram= ListTrambyTuyen.get(i);
-                        double distance= SphericalUtil.computeDistanceBetween(new LatLng(location.getLatitude(),location.getLongitude()),new LatLng(dmTram.getLAT(),dmTram.getLNG()));
-                        if (min>distance)
-                        {
-                            min=distance;
-                            cuurent=dmTram;
-                        }
-                        listDistance.add(dmTram.getId()+"_"+distance);
-
-                    }
 
 
-                    Collections.sort(listDistance, new Comparator<String>() {
-                        @Override
-                        public int compare(String o1, String o2) {
-                            Double d1=Double.valueOf(o1.split("_")[1]);
-                            Double d2=Double.valueOf(o2.split("_")[1]);
-                            return d1.compareTo(d2);
-                        }
-                    });
-                    if (cuurent!=null && min<20 && Integer.valueOf(listDistance.get(0).split("_")[0])==cuurent.getId())
-                    {
-
-                    }*/
                 }
 
 
