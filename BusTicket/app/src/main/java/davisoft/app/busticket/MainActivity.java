@@ -313,72 +313,79 @@ public class MainActivity extends AppCompatActivity {
     {
         if (!runQueue)
         {
-            runQueue=true;
-            if (mDevice != null && mUsbManager.hasPermission(mDevice)) {
+            try {
+                runQueue=true;
+                if (mDevice != null && mUsbManager.hasPermission(mDevice)) {
 
-                final UsbInterface intf = mDevice.getInterface(0);
-                for (int i = 0; i < intf.getEndpointCount(); i++) {
-                    UsbEndpoint ep = intf.getEndpoint(i);
-                    if (ep.getType() == UsbConstants.USB_ENDPOINT_XFER_BULK) {
-                        if (ep.getDirection() == UsbConstants.USB_DIR_OUT) {
+                    final UsbInterface intf = mDevice.getInterface(0);
+                    for (int i = 0; i < intf.getEndpointCount(); i++) {
+                        UsbEndpoint ep = intf.getEndpoint(i);
+                        if (ep.getType() == UsbConstants.USB_ENDPOINT_XFER_BULK) {
+                            if (ep.getDirection() == UsbConstants.USB_DIR_OUT) {
 
-                                 //   Toast.makeText(context,"GetConnectTion",Toast.LENGTH_LONG).show();
+                                //   Toast.makeText(context,"GetConnectTion",Toast.LENGTH_LONG).show();
 
 
 
-                            try {
-                                final UsbEndpoint mEndpointBulkOut = ep;
-                                connection = mUsbManager.openDevice(mDevice);
-                                if (connection != null) {
-                                    Log.e("Connection:", " connected");
-                                    Toast.makeText(context, "Device connected", Toast.LENGTH_SHORT).show();
-                                }
-                                boolean forceClaim = true;
-                                connection.claimInterface(intf, forceClaim);
-                                new Thread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        while (!printWaiting.isEmpty())
-                                        {
-                                            String data= printWaiting.remove();
-                                            Log.i("Thread:", "in run thread");
-
-                                            byte[] array = data.getBytes();
-
-                                            Integer b = connection.bulkTransfer(mEndpointBulkOut, array, array.length, 10000);
-
-                                            Log.i("Return Status", "b-->" + b);
-                                            runQueue=false;
-                                        }
+                                try {
+                                    final UsbEndpoint mEndpointBulkOut = ep;
+                                    connection = mUsbManager.openDevice(mDevice);
+                                    if (connection != null) {
+                                        Log.e("Connection:", " connected");
+                                        Toast.makeText(context, "Device connected", Toast.LENGTH_SHORT).show();
                                     }
-                                }).start();
+                                    boolean forceClaim = true;
+                                    connection.claimInterface(intf, forceClaim);
+                                    new Thread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            while (!printWaiting.isEmpty())
+                                            {
+                                                String data= printWaiting.remove();
+                                                Log.i("Thread:", "in run thread");
 
-                                connection.releaseInterface(intf);
+                                                byte[] array = data.getBytes();
 
-                            }catch (Exception e)
-                            {
-                                final String sss=e.getMessage();
+                                                Integer b = connection.bulkTransfer(mEndpointBulkOut, array, array.length, 10000);
 
-                                        Toast.makeText(context,"Error:"+sss,Toast.LENGTH_LONG).show();
+                                                Log.i("Return Status", "b-->" + b);
+                                                runQueue=false;
+                                            }
+                                        }
+                                    }).start();
+
+                                    connection.releaseInterface(intf);
+
+                                }catch (Exception e)
+                                {
+                                    final String sss=e.getMessage();
+
+                                    Toast.makeText(context,"Error:"+sss,Toast.LENGTH_LONG).show();
+
+                                }
+
+                                break;
 
                             }
-
-                            break;
-
                         }
                     }
                 }
-            }
-            else {
-                initUSB();
-                runQueue=false;
-                try {
-                    Thread.sleep(500);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
+                else {
+                    initUSB();
+                    runQueue=false;
+                    try {
+                        Thread.sleep(500);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    queuePrint();
                 }
-                queuePrint();
             }
+            catch (Exception e)
+            {
+                runQueue=false;
+            }
+
         }
 
     }

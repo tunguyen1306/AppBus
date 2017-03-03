@@ -17,6 +17,7 @@ public class DmTram implements Serializable {
     public String TENTRAM;
     public double LAT;
     public double LNG;
+
     public DmTram(){
 
     }
