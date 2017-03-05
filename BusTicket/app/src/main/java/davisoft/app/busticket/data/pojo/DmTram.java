@@ -18,6 +18,24 @@ public class DmTram implements Serializable {
     public double LAT;
     public double LNG;
 
+    public String getLatLng() {
+        return LatLng;
+    }
+
+    public void setLatLng(String latLng) {
+        LatLng = latLng;
+    }
+
+    public String LatLng;
+    public String getFileTram() {
+        return FileTram;
+    }
+
+    public void setFileTram(String fileTram) {
+        FileTram = fileTram;
+    }
+
+    public String FileTram;
     public DmTram(){
 
     }
@@ -27,10 +45,11 @@ public class DmTram implements Serializable {
         return (DmTram) super.clone();
     }
 
-    public DmTram(String ID, String MATRAM, String TENTRAM){
+    public DmTram(String ID, String MATRAM, String TENTRAM,String FileTram,String LatLng){
     this.ID=Integer.parseInt(ID);
     this.MATRAM=MATRAM;
     this.TENTRAM=TENTRAM;
+    this.FileTram=FileTram; this.LatLng=LatLng;
 }
     public Integer getId() {
         return ID;

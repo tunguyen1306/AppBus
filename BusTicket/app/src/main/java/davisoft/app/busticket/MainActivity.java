@@ -1517,8 +1517,8 @@ public class MainActivity extends AppCompatActivity {
     List<String> ListID = new ArrayList<>();
     List<String> ListMaTram = new ArrayList<>();
     List<String> ListTenTram = new ArrayList<>();
-
-
+    List<String> ListFileTram = new ArrayList<>();
+    List<String> ListLatLng = new ArrayList<>();
     public void CallDmTram() {
         final StackTraceElement[] ste = Thread.currentThread().getStackTrace();
         hasSyncRest.put(ste[2].getMethodName(),false);
@@ -1530,6 +1530,8 @@ public class MainActivity extends AppCompatActivity {
                     String tmpStr10 = Integer.toString(DmTram.get(i).getId());
                     ListMaTram.add(DmTram.get(i).getMaTram());
                     ListTenTram.add(DmTram.get(i).getTenTram());
+                    ListFileTram.add(DmTram.get(i).getFileTram());
+                    ListLatLng.add(DmTram.get(i).getLatLng());
                     ListID.add(tmpStr10);
 
                 }
@@ -1554,7 +1556,9 @@ public class MainActivity extends AppCompatActivity {
                     new DmTram(
                             ListID.get(i),
                             ListMaTram.get(i),
-                            ListTenTram.get(i))
+                            ListTenTram.get(i),
+                            ListFileTram.get(i),
+                            ListLatLng.get(i))
             );
         }
         return items;

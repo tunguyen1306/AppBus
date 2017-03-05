@@ -312,7 +312,7 @@ public class ControlDatabase {
             public void success(List<DmTram> DmTram, Response response) {
                 for (int i = 0; i < DmTram.size(); i++) {
 
-                    AddDmTramSqlite(context, DmTram.get(i).getId().toString(), DmTram.get(i).getMaTram(), DmTram.get(i).getTenTram());
+                    AddDmTramSqlite(context, DmTram.get(i).getId().toString(), DmTram.get(i).getMaTram(), DmTram.get(i).getTenTram(),DmTram.get(i).getFileTram(),DmTram.get(i).getLatLng());
                 }
             }
 
@@ -326,7 +326,7 @@ public class ControlDatabase {
     }
     private static Dao<DmTram, Integer> DmTramMangasDao;
     private static List<DmTram> DmTramMangasList;
-    public static void AddDmTramSqlite(Context context,String ID,String MATRAM,String TENTRAM) {
+    public static void AddDmTramSqlite(Context context,String ID,String MATRAM,String TENTRAM,String FileTram,String LatLng) {
         try {
 
             DmTramMangasDao = getHelper(context).getDmTramMangasDao();
@@ -338,7 +338,8 @@ public class ControlDatabase {
                 DmTram.ID = Integer.parseInt( ID);
                 DmTram.MATRAM = MATRAM;
                 DmTram.TENTRAM = TENTRAM;
-
+                DmTram.FileTram=FileTram;
+                DmTram.LatLng=LatLng;
                 try {
                     final Dao<DmTram, Integer> dmTram = getHelper(context).getDmTramMangasDao();
                     dmTram.create(DmTram);
@@ -350,6 +351,7 @@ public class ControlDatabase {
                 updateBuilder.updateColumnValue("ID", ID);
                 updateBuilder.updateColumnValue("MATRAM", MATRAM);
                 updateBuilder.updateColumnValue("TENTRAM", TENTRAM);
+                updateBuilder.updateColumnValue("FileTram", FileTram); updateBuilder.updateColumnValue("LatLng", LatLng);
                 updateBuilder.where().eq("ID", ID);
                 updateBuilder.update();
             }
