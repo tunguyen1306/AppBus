@@ -40,12 +40,11 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.maps.model.LatLng;
-import com.google.maps.android.SphericalUtil;
+
 import com.j256.ormlite.android.apptools.OpenHelperManager;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.stmt.QueryBuilder;
-import java.nio.charset.StandardCharsets;
+
 import java.sql.SQLException;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
@@ -53,13 +52,13 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.GregorianCalendar;
+
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
+
 import java.util.concurrent.LinkedBlockingQueue;
 import davisoft.app.busticket.adapter.GPSTracker;
-import davisoft.app.busticket.adapter.USBAdapter;
+
 import davisoft.app.busticket.data.ControlDatabase;
 import davisoft.app.busticket.data.DatabaseHelper;
 import davisoft.app.busticket.data.ResClien;
