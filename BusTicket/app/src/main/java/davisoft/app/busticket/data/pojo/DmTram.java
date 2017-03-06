@@ -45,11 +45,21 @@ public class DmTram implements Serializable {
         return (DmTram) super.clone();
     }
 
-    public DmTram(String ID, String MATRAM, String TENTRAM,String FileTram,String LatLng){
+    public DmTram(String ID, String MATRAM, String TENTRAM,String FILETRAM,String LATLNG){
     this.ID=Integer.parseInt(ID);
     this.MATRAM=MATRAM;
     this.TENTRAM=TENTRAM;
-    this.FileTram=FileTram; this.LatLng=LatLng;
+     if (FILETRAM!=null)
+        this.FileTram=FILETRAM.indexOf(".wav")>-1?FILETRAM:FILETRAM+".wav";
+        else
+        this.FileTram="";
+    this.LatLng=LATLNG;
+    if (this.LatLng!=null && this.LatLng.trim().length()>0)
+    {
+        setLAT(Double.valueOf(this.getLatLng().split(";")[0]));
+        setLNG(Double.valueOf(this.getLatLng().split(";")[1]));
+    }
+
 }
     public Integer getId() {
         return ID;

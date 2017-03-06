@@ -11,6 +11,7 @@ import android.content.IntentFilter;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
 import android.hardware.usb.UsbConstants;
 import android.hardware.usb.UsbDevice;
 import android.hardware.usb.UsbDeviceConnection;
@@ -73,6 +74,7 @@ import davisoft.app.busticket.data.pojo.DmXe;
 import davisoft.app.busticket.data.pojo.LoTrinhChoXe;
 import davisoft.app.busticket.data.pojo.TrackingGps;
 import davisoft.app.busticket.printer.PrintOrder;
+import davisoft.app.busticket.util.Helper;
 import fr.quentinklein.slt.LocationTracker;
 import fr.quentinklein.slt.TrackerSettings;
 import retrofit.Callback;
@@ -80,6 +82,78 @@ import retrofit.RetrofitError;
 import retrofit.client.Response;
 
 public class MainActivity extends AppCompatActivity {
+
+
+    private void  testLocation()
+    {
+        final String[] data= Helper.testTram39.split("\\|");
+       new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    for (int i=0;i<data.length;i++)
+                    {
+
+                        Location location = new Location("gps");//provider name is unecessary
+                        location.setLatitude(  Double.valueOf(data[i].split(";")[0]));//your coords of course
+                        location.setLongitude(  Double.valueOf(data[i].split(";")[1]));
+
+
+
+                        if (DmTuyenLocal!=null)
+                        {
+                            TrackingGps tracking=new TrackingGps();
+                            tracking.setDeviceId(getAndroidId());
+                            tracking.setMaXe(MainActivity.MaXe);
+                            tracking.setLat(location.getLatitude()+"");
+                            tracking.setLng(location.getLongitude()+"");
+                            tracking.setMaTuyen(DmTuyenLocal.GETMATUYEN());
+                            Calendar c = Calendar.getInstance();
+                            SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+                            String formattedDate = df.format(c.getTime());
+                            SimpleDateFormat simpleDateFormat =
+                                    new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+
+                            tracking.setTime( formattedDate);
+                            //tracking.setTime( new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").format(GregorianCalendar.getInstance()));
+                            ControlDatabase.AddtrackingGPS(context,tracking);
+                            boolean first=false;
+                            if (currentlocation==null){
+                                first=true;
+                            }
+                            else
+                                oldLocation=currentlocation;
+                            currentlocation=location;
+
+                            Helper.getNextTram(context,oldLocation,currentlocation,ListTrambyTuyen);
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    updateListView();
+
+                                }
+                            });
+
+
+                        }
+
+                            Thread.sleep(2000);
+
+
+                    }
+
+
+
+
+
+                }catch (Exception e)
+                {
+                        e.printStackTrace();
+                }
+
+            }
+        }).start();
+    }
 
     private final BroadcastReceiver mUsbReceiver = new BroadcastReceiver() {
         public void onReceive(Context context, Intent intent) {
@@ -166,10 +240,10 @@ public class MainActivity extends AppCompatActivity {
         tracker = new LocationTracker(context,settings) {
             @Override
             public void onLocationFound(@NonNull Location location) {
-                Toast.makeText(context,
+               /* Toast.makeText(context,
                         "Provider: " + location.getProvider()+" - Location:"+location.getLatitude()+";"+location.getLongitude()+" - Serinumber:"+getSerinumber()+" - AndroidID:"+getAndroidId(), Toast.LENGTH_SHORT)
                         .show();
-                currentlocation=location;
+                /*currentlocation=location;
                 if (DmTuyenLocal!=null)
                 {
                     TrackingGps tracking=new TrackingGps();
@@ -198,7 +272,7 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-                }
+                }*/
 
 
                 // update
@@ -904,6 +978,8 @@ public class MainActivity extends AppCompatActivity {
 
                 }
 
+                testLocation();
+
 
             }
         }
@@ -1058,7 +1134,17 @@ public class MainActivity extends AppCompatActivity {
 
             DmTram dmTram = getItem(position);
             TextView txtView = (TextView) v.findViewById(R.id.txtView);
+            txtView.setBackground(Resources.getSystem().getDrawable(android.R.color.white));
+            if (Helper.currentTram!=null && Helper.currentTram.getId()==dmTram.getId())
+            {
+                txtView.setBackground(Resources.getSystem().getDrawable(android.R.color.holo_blue_dark));
+            }
+            if (Helper.nextTram!=null&& Helper.nextTram.getId()==dmTram.getId())
+            {
+                txtView.setBackground(Resources.getSystem().getDrawable(android.R.color.holo_green_dark));
+            }
             txtView.setText(dmTram.getTenTram());
+            v.setTag(dmTram);
             return v;
         }
 
@@ -1069,6 +1155,7 @@ public class MainActivity extends AppCompatActivity {
     }
     private void  initListViewTuyen()
     {
+
         ((ListView)findViewById(R.id.list_TramByTuyen)).setAdapter(new ListTramAdapter(getApplicationContext(),R.layout.tram_item,ListTrambyTuyen));
     }
     public void updateGridView()
@@ -1077,6 +1164,57 @@ public class MainActivity extends AppCompatActivity {
         ((GridView)findViewById(R.id.gv_Tuyen)).requestLayout();
         Log.d("W-I-GV", ((GridView)findViewById(R.id.gv_Tuyen)).getWidth() + " - " + ((GridView)findViewById(R.id.gv_Tuyen)).getHeight());
         Log.d("W-I-GV1", MainActivity.convertPixelsToDp(((GridView)findViewById(R.id.gv_Tuyen)).getWidth() ,getApplicationContext()) + " - " +MainActivity.convertPixelsToDp( ((GridView)findViewById(R.id.gv_Tuyen)).getHeight(),getApplicationContext()));
+    }
+
+    public void updateListView()
+    {
+
+
+
+        int c = ((ListView)findViewById(R.id.list_TramByTuyen)).getChildCount();
+        for (int i = 0; i < c; i++)
+        {
+            final int indexView=i;
+            View view = ((ListView)findViewById(R.id.list_TramByTuyen)).getChildAt(i);
+            view.findViewById(R.id.txtView).setBackground(Resources.getSystem().getDrawable(android.R.color.white));
+            if (Helper.currentTram!=null && ((DmTram)view.getTag()).getId().equals(Helper.currentTram.getId()) )
+            {
+                if( view.findViewById(R.id.txtView)!=null)
+                {
+                    view.findViewById(R.id.txtView).setBackground(Resources.getSystem().getDrawable(android.R.color.holo_blue_dark));
+
+                    if ( view.findViewById(R.id.txtView).getBackground()!=Resources.getSystem().getDrawable(android.R.color.holo_blue_dark))
+                    {
+
+
+                        ((ListView)findViewById(R.id.list_TramByTuyen)).post(new Runnable() {
+                            @Override
+                            public void run() {
+                                // Select the last row so it will scroll into view...
+                                ((ListView)findViewById(R.id.list_TramByTuyen)).setSelection(indexView);
+                                ((ListView)findViewById(R.id.list_TramByTuyen)).smoothScrollToPosition(21);
+                            }
+                        });
+                    }
+
+                }
+
+
+
+            }
+            if (Helper.nextTram!=null&& ((DmTram)view.getTag()).getId().equals(Helper.nextTram.getId()) )
+            {
+                if( view.findViewById(R.id.txtView)!=null)
+                {
+                    view.findViewById(R.id.txtView).setBackground(Resources.getSystem().getDrawable(android.R.color.darker_gray));
+
+
+                }
+
+            }
+        }
+
+
     }
     private void chooseTuyen(DmTuyen dmTuyen)
     {
