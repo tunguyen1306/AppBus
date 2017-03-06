@@ -137,7 +137,7 @@ public class MainActivity extends AppCompatActivity {
 
                         }
 
-                            Thread.sleep(2000);
+                            Thread.sleep(12000);
 
 
                     }
