@@ -2,6 +2,7 @@ package davisoft.app.busticket;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
+import android.animation.ObjectAnimator;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -27,6 +28,7 @@ import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayout;
+import android.support.v7.widget.LinearLayoutCompat;
 import android.text.format.Time;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -38,6 +40,7 @@ import android.widget.ArrayAdapter;
 import android.widget.GridView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -1156,7 +1159,34 @@ public class MainActivity extends AppCompatActivity {
     private void  initListViewTuyen()
     {
 
-        ((ListView)findViewById(R.id.list_TramByTuyen)).setAdapter(new ListTramAdapter(getApplicationContext(),R.layout.tram_item,ListTrambyTuyen));
+        ((LinearLayout)((ScrollView)findViewById(R.id.list_TramByTuyen)).getChildAt(0)).removeAllViews();
+        for (int i=0;i<ListTrambyTuyen.size();i++)
+        {
+
+            View v = null;
+            if(null == v) {
+                LayoutInflater inflater = (LayoutInflater)getApplicationContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                v = inflater.inflate(R.layout.tram_item, null);
+            }
+
+            DmTram dmTram = ListTrambyTuyen.get(i);
+            TextView txtView = (TextView) v.findViewById(R.id.txtView);
+            txtView.setBackground(Resources.getSystem().getDrawable(android.R.color.white));
+            if (Helper.currentTram!=null && Helper.currentTram.getId()==dmTram.getId())
+            {
+                txtView.setBackground(Resources.getSystem().getDrawable(android.R.color.holo_blue_dark));
+            }
+            if (Helper.nextTram!=null&& Helper.nextTram.getId()==dmTram.getId())
+            {
+                txtView.setBackground(Resources.getSystem().getDrawable(android.R.color.holo_green_dark));
+            }
+            txtView.setText(dmTram.getTenTram());
+            v.setTag(dmTram);
+
+            ((LinearLayout)((ScrollView)findViewById(R.id.list_TramByTuyen)).getChildAt(0)).addView(v, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+
+        }
+
     }
     public void updateGridView()
     {
@@ -1171,11 +1201,11 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-        int c = ((ListView)findViewById(R.id.list_TramByTuyen)).getChildCount();
+        int c = ((LinearLayout)((ScrollView)findViewById(R.id.list_TramByTuyen)).getChildAt(0)).getChildCount();
         for (int i = 0; i < c; i++)
         {
             final int indexView=i;
-            View view = ((ListView)findViewById(R.id.list_TramByTuyen)).getChildAt(i);
+            View view = ((LinearLayout)((ScrollView)findViewById(R.id.list_TramByTuyen)).getChildAt(0)).getChildAt(i);
             view.findViewById(R.id.txtView).setBackground(Resources.getSystem().getDrawable(android.R.color.white));
             if (Helper.currentTram!=null && ((DmTram)view.getTag()).getId().equals(Helper.currentTram.getId()) )
             {
@@ -1186,13 +1216,20 @@ public class MainActivity extends AppCompatActivity {
                     if ( view.findViewById(R.id.txtView).getBackground()!=Resources.getSystem().getDrawable(android.R.color.holo_blue_dark))
                     {
 
-
-                        ((ListView)findViewById(R.id.list_TramByTuyen)).post(new Runnable() {
+                        final int ix=i;
+                        ((ScrollView)findViewById(R.id.list_TramByTuyen)).post(new Runnable() {
                             @Override
                             public void run() {
                                 // Select the last row so it will scroll into view...
-                                ((ListView)findViewById(R.id.list_TramByTuyen)).setSelection(indexView);
-                                ((ListView)findViewById(R.id.list_TramByTuyen)).smoothScrollToPosition(21);
+
+
+                                ObjectAnimator animator= ObjectAnimator.ofInt(((ScrollView)findViewById(R.id.list_TramByTuyen)), "scrollY",((LinearLayout)((ScrollView)findViewById(R.id.list_TramByTuyen)).getChildAt(0)).getChildAt(0).getHeight()*ix );
+                                animator.setDuration(100);
+                                animator.start();
+
+
+                               // ((ScrollView)findViewById(R.id.list_TramByTuyen)).scrollTo(0,((LinearLayout)((ScrollView)findViewById(R.id.list_TramByTuyen)).getChildAt(0)).getChildAt(0).getHeight()*ix);
+
                             }
                         });
                     }
