@@ -2,6 +2,7 @@ package davisoft.app.busticket.util;
 
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.location.Location;
 import android.media.AudioFormat;
 import android.media.AudioManager;
@@ -9,6 +10,7 @@ import android.media.AudioTrack;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Environment;
+import android.util.DisplayMetrics;
 
 import com.google.android.gms.maps.model.LatLng;
 import com.google.maps.android.SphericalUtil;
@@ -200,5 +202,19 @@ public class Helper {
             e.printStackTrace();
             return null;
         }
+    }
+    public static float convertDpToPixel(float dp, Context context)
+    {
+        Resources resources = context.getResources();
+        DisplayMetrics metrics = resources.getDisplayMetrics();
+        float px = dp * ((float)metrics.densityDpi / DisplayMetrics.DENSITY_DEFAULT);
+        return px;
+    }
+    public static float convertPixelsToDp(float px, Context context)
+    {
+        Resources resources = context.getResources();
+        DisplayMetrics metrics = resources.getDisplayMetrics();
+        float dp = px / ((float)metrics.densityDpi / DisplayMetrics.DENSITY_DEFAULT);
+        return dp;
     }
 }

@@ -12,7 +12,6 @@ import android.content.IntentFilter;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.graphics.drawable.ColorDrawable;
-import android.graphics.drawable.Drawable;
 import android.hardware.usb.UsbConstants;
 import android.hardware.usb.UsbDevice;
 import android.hardware.usb.UsbDeviceConnection;
@@ -28,7 +27,6 @@ import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayout;
-import android.support.v7.widget.LinearLayoutCompat;
 import android.text.format.Time;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -39,7 +37,6 @@ import android.view.WindowManager;
 import android.widget.ArrayAdapter;
 import android.widget.GridView;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -65,7 +62,7 @@ import davisoft.app.busticket.adapter.GPSTracker;
 
 import davisoft.app.busticket.data.ControlDatabase;
 import davisoft.app.busticket.data.DatabaseHelper;
-import davisoft.app.busticket.data.ResClien;
+import davisoft.app.busticket.data.RESTClient;
 import davisoft.app.busticket.data.pojo.Counters;
 import davisoft.app.busticket.data.pojo.DichVu;
 import davisoft.app.busticket.data.pojo.DmHoaDon;
@@ -243,10 +240,10 @@ public class MainActivity extends AppCompatActivity {
         tracker = new LocationTracker(context,settings) {
             @Override
             public void onLocationFound(@NonNull Location location) {
-               /* Toast.makeText(context,
-                        "Provider: " + location.getProvider()+" - Location:"+location.getLatitude()+";"+location.getLongitude()+" - Serinumber:"+getSerinumber()+" - AndroidID:"+getAndroidId(), Toast.LENGTH_SHORT)
+                Toast.makeText(context,
+                       "Provider: " + location.getProvider()+" - Location:"+location.getLatitude()+";"+location.getLongitude()+" - Serinumber:"+getSerinumber()+" - AndroidID:"+getAndroidId(), Toast.LENGTH_SHORT)
                         .show();
-                /*currentlocation=location;
+                currentlocation=location;
                 if (DmTuyenLocal!=null)
                 {
                     TrackingGps tracking=new TrackingGps();
@@ -272,10 +269,12 @@ public class MainActivity extends AppCompatActivity {
                     else
                         oldLocation=currentlocation;
 
+                    currentlocation=location;
 
+                    Helper.getNextTram(context,oldLocation,currentlocation,ListTrambyTuyen);
 
-
-                }*/
+                    updateListView();
+                }
 
 
                 // update
@@ -290,6 +289,7 @@ public class MainActivity extends AppCompatActivity {
             }
         };
         tracker.startListening();
+
         PowerManager powerManager = (PowerManager) getSystemService(POWER_SERVICE);
         wakeLock = powerManager.newWakeLock(PowerManager.SCREEN_DIM_WAKE_LOCK,
                 "MyWakelockTag");
@@ -566,7 +566,7 @@ public class MainActivity extends AppCompatActivity {
                     print(sotien,dienGiai);
                     try
                     {
-                        ResClien resClient = new ResClien();
+                        RESTClient resClient = new RESTClient();
                         resClient.GetService().CountView(hoaDonIDClone, new Callback<List<DmHoaDon>>() {
                             @Override
                             public void success(List<DmHoaDon> advertDtos, Response response) {
@@ -981,7 +981,7 @@ public class MainActivity extends AppCompatActivity {
 
                 }
 
-                testLocation();
+              //  testLocation();
 
 
             }
@@ -1193,7 +1193,7 @@ public class MainActivity extends AppCompatActivity {
 
         ((GridView)findViewById(R.id.gv_Tuyen)).requestLayout();
         Log.d("W-I-GV", ((GridView)findViewById(R.id.gv_Tuyen)).getWidth() + " - " + ((GridView)findViewById(R.id.gv_Tuyen)).getHeight());
-        Log.d("W-I-GV1", MainActivity.convertPixelsToDp(((GridView)findViewById(R.id.gv_Tuyen)).getWidth() ,getApplicationContext()) + " - " +MainActivity.convertPixelsToDp( ((GridView)findViewById(R.id.gv_Tuyen)).getHeight(),getApplicationContext()));
+        Log.d("W-I-GV1", Helper.convertPixelsToDp(((GridView)findViewById(R.id.gv_Tuyen)).getWidth() ,getApplicationContext()) + " - " +Helper.convertPixelsToDp( ((GridView)findViewById(R.id.gv_Tuyen)).getHeight(),getApplicationContext()));
     }
 
     public void updateListView()
@@ -1506,8 +1506,8 @@ public class MainActivity extends AppCompatActivity {
                         int countView = gridLayout.getChildCount();
                         for (int i = 0; i < countView; i++) {
                             Log.d("W-I-G", gridLayout.getChildAt(i).getWidth() + " - " + gridLayout.getChildAt(i).getHeight());    LinearLayout.LayoutParams lParam = (LinearLayout.LayoutParams) gridLayout.getChildAt(i).findViewById(R.id.layout_button).getLayoutParams();
-                            lParam.width = gridLayout.getChildAt(i).getWidth()-(int)MainActivity.convertDpToPixel(10,getApplicationContext());
-                            lParam.height = gridLayout.getChildAt(i).getHeight()-(int)MainActivity.convertDpToPixel(10,getApplicationContext());
+                            lParam.width = gridLayout.getChildAt(i).getWidth()-(int)Helper.convertDpToPixel(10,getApplicationContext());
+                            lParam.height = gridLayout.getChildAt(i).getHeight()-(int)Helper.convertDpToPixel(10,getApplicationContext());
                             gridLayout.getChildAt(i).findViewById(R.id.layout_button).setLayoutParams(lParam);
                             gridLayout.getChildAt(i).requestLayout();
                             //lParam.width=  gridLayout.getChildAt(i).findViewById(R.id.button_text).getLayoutParams().width;
@@ -1541,20 +1541,7 @@ public class MainActivity extends AppCompatActivity {
 
 
     }
-    public static float convertDpToPixel(float dp, Context context)
-    {
-        Resources resources = context.getResources();
-        DisplayMetrics metrics = resources.getDisplayMetrics();
-        float px = dp * ((float)metrics.densityDpi / DisplayMetrics.DENSITY_DEFAULT);
-        return px;
-    }
-    public static float convertPixelsToDp(float px, Context context)
-    {
-        Resources resources = context.getResources();
-        DisplayMetrics metrics = resources.getDisplayMetrics();
-        float dp = px / ((float)metrics.densityDpi / DisplayMetrics.DENSITY_DEFAULT);
-        return dp;
-    }
+
     @Override
     protected void onStart()
     {
@@ -1633,7 +1620,7 @@ public class MainActivity extends AppCompatActivity {
     public void CallDmTaiXe() {
         final StackTraceElement[] ste = Thread.currentThread().getStackTrace();
         hasSyncRest.put(ste[2].getMethodName(),false);
-        ResClien restClient = new ResClien();
+        RESTClient restClient = new RESTClient();
         restClient.GetService().GetDMTAIXEs(new Callback<List<DmTaiXe>>() {
             @Override
             public void success(List<DmTaiXe> DmTaiXe, Response response) {
@@ -1697,7 +1684,7 @@ public class MainActivity extends AppCompatActivity {
     public void CallDmTram() {
         final StackTraceElement[] ste = Thread.currentThread().getStackTrace();
         hasSyncRest.put(ste[2].getMethodName(),false);
-        ResClien restClient = new ResClien();
+        RESTClient restClient = new RESTClient();
         restClient.GetService().GetDMTRAMs(new Callback<List<DmTram>>() {
             @Override
             public void success(List<DmTram> DmTram, Response response) {
@@ -1785,7 +1772,7 @@ public class MainActivity extends AppCompatActivity {
     public void CallDmTuyen() {
         final StackTraceElement[] ste = Thread.currentThread().getStackTrace();
         hasSyncRest.put(ste[2].getMethodName(),false);
-        ResClien restClient = new ResClien();
+        RESTClient restClient = new RESTClient();
         restClient.GetService().GetDMTUYENs(new Callback<List<DmTuyen>>() {
             @Override
             public void success(List<DmTuyen> DmTuyen, Response response) {
@@ -1938,7 +1925,7 @@ public class MainActivity extends AppCompatActivity {
     public void CallDmXe() {
         final StackTraceElement[] ste = Thread.currentThread().getStackTrace();
         hasSyncRest.put(ste[2].getMethodName(),false);
-        ResClien restClient = new ResClien();
+        RESTClient restClient = new RESTClient();
         restClient.GetService().GetDMXEs(new Callback<List<DmXe>>() {
             @Override
             public void success(List<DmXe> DmXe, Response response) {
@@ -1990,7 +1977,7 @@ public class MainActivity extends AppCompatActivity {
     public void CallCHiTietTuyen() {
         final StackTraceElement[] ste = Thread.currentThread().getStackTrace();
         hasSyncRest.put(ste[2].getMethodName(),false);
-        ResClien restClient = new ResClien();
+        RESTClient restClient = new RESTClient();
         restClient.GetService().GetDMTUYENCHITIETTRAMs(new Callback<List<DmTuyenChiTietTram>>() {
             @Override
             public void success(List<DmTuyenChiTietTram> DmXe, Response response) {
@@ -2040,7 +2027,7 @@ public class MainActivity extends AppCompatActivity {
     public void CallLoTrinhChoXe() {
         final StackTraceElement[] ste = Thread.currentThread().getStackTrace();
         hasSyncRest.put(ste[2].getMethodName(),false);
-        ResClien restClient = new ResClien();
+        RESTClient restClient = new RESTClient();
         restClient.GetService().GetLOTRINHCHOXEs(new Callback<List<LoTrinhChoXe>>() {
             @Override
             public void success(List<LoTrinhChoXe> DmXe, Response response) {
@@ -2108,7 +2095,7 @@ public class MainActivity extends AppCompatActivity {
     public void CallCounters() {
         final StackTraceElement[] ste = Thread.currentThread().getStackTrace();
         hasSyncRest.put(ste[2].getMethodName(),false);
-        ResClien restClient = new ResClien();
+        RESTClient restClient = new RESTClient();
         restClient.GetService().GetCounters(new Callback<List<Counters>>() {
             @Override
             public void success(List<Counters> DmXe, Response response) {
@@ -2278,7 +2265,7 @@ public class MainActivity extends AppCompatActivity {
     public void CallDmHoaDon() {
         final StackTraceElement[] ste = Thread.currentThread().getStackTrace();
         hasSyncRest.put(ste[2].getMethodName(),false);
-        ResClien restClient = new ResClien();
+        RESTClient restClient = new RESTClient();
         restClient.GetService().GetDMHOADONs(new Callback<List<DmHoaDon>>() {
             @Override
             public void success(List<DmHoaDon> DmHoaDon, Response response) {
@@ -2378,7 +2365,7 @@ public class MainActivity extends AppCompatActivity {
     public void CallDichVu() {
         final StackTraceElement[] ste = Thread.currentThread().getStackTrace();
         hasSyncRest.put(ste[2].getMethodName(),false);
-        ResClien restClient = new ResClien();
+        RESTClient restClient = new RESTClient();
         restClient.GetService().GetDICHVUs(new Callback<List<DichVu>>() {
             @Override
             public void success(List<DichVu> DichVu, Response response) {

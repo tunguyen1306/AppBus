@@ -12,7 +12,6 @@ import com.j256.ormlite.stmt.UpdateBuilder;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -41,72 +40,6 @@ public class ControlDatabase {
         return databaseHelper;
     }
 
-//    ////Advert Read///////
-//    static List<DmTaiXe> ItemAllDmTaiXe;
-//    static List<String> ListmaTaiXe = new ArrayList<>();
-//    static List<String> ListtenTaiXe = new ArrayList<>();
-//    static List<String> Listtuoi = new ArrayList<>();
-//    static List<String> ListgioiTinh = new ArrayList<>();
-//    static List<String> ListbangLai = new ArrayList<>();
-//    static List<String> Listsdt = new ArrayList<>();
-//    static List<String> ListdiaChiNoiO = new ArrayList<>();
-//    static List<String> Listemail = new ArrayList<>();
-//
-//
-//    ////End Advert Read///////
-//    public static void LoadDmTaiXe() {
-//        ResClien restClient = new ResClien();
-//        restClient.GetService().GetDMTAIXEs(new Callback<List<DmTaiXe>>() {
-//            @Override
-//            public void success(List<DmTaiXe> DmTaiXe, Response response) {
-//                for (int i = 0; i < DmTaiXe.size(); i++) {
-//                    String tmpStr10 = Integer.toString(DmTaiXe.get(i).getTUOI());
-//                    ListmaTaiXe.add(DmTaiXe.get(i).getMATAIXE());
-//                    ListtenTaiXe.add(DmTaiXe.get(i).getTENTAIXE());
-//                    Listtuoi.add(tmpStr10);
-//                    ListgioiTinh.add(DmTaiXe.get(i).getGIOITINH());
-//                    ListbangLai.add(DmTaiXe.get(i).getBANGLAI());
-//                    Listsdt.add(DmTaiXe.get(i).getSDT());
-//                    ListdiaChiNoiO.add(DmTaiXe.get(i).getDIACHINOIO());
-//                    Listemail.add(DmTaiXe.get(i).getEMAIL());
-//                }
-//                getAllItemsAllAdvert();
-//            }
-//
-//            @Override
-//            public void failure(RetrofitError error) {
-//                Log.d("myLogs", "-------ERROR-------Slide");
-//                Log.d("myLogs", Log.getStackTraceString(error));
-//            }
-//        });
-//
-//    }
-//
-//    public static List<DmTaiXe> getAllItemsAllAdvert() {
-//
-//        List<DmTaiXe> items = new ArrayList<>();
-//        for (int i = 0; i < ListmaTaiXe.size(); i++) {
-//            items.add(
-//                    new DmTaiXe(
-//                            ListmaTaiXe.get(i),
-//                            ListtenTaiXe.get(i),
-//                            Listtuoi.get(i),
-//                            ListgioiTinh.get(i),
-//                            ListbangLai.get(i),
-//                            Listsdt.get(i),
-//                            ListdiaChiNoiO.get(i),
-//                            Listemail.get(i)
-//                    )
-//            );
-//        }
-//        return items;
-//    }
-//
-//    public static List<DmTaiXe> loadDataAllAdvert() {
-//        LoadDmTaiXe();
-//        ItemAllDmTaiXe = getAllItemsAllAdvert();
-//        return ItemAllDmTaiXe;
-//    }
 
     private static Date changeToate(String transferTime) {
         SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy hh:mm:ss aa");
@@ -122,7 +55,7 @@ public class ControlDatabase {
 
     //////////DmTaiXe//////////
     public static void AddDmTaiXe(final Context context) {
-        ResClien restClient = new ResClien();
+        RESTClient restClient = new RESTClient();
         restClient.GetService().GetDMTAIXEs(new Callback<List<DmTaiXe>>() {
             @Override
             public void success(List<DmTaiXe> DmTaiXe, Response response) {
@@ -189,7 +122,7 @@ public class ControlDatabase {
 
     //////////Counters/////////
     public static void AddCounters(final Context context) {
-        ResClien restClient = new ResClien();
+        RESTClient restClient = new RESTClient();
         restClient.GetService().GetCounters(new Callback<List<Counters>>() {
             @Override
             public void success(List<Counters> Counters, Response response) {
@@ -306,7 +239,7 @@ public class ControlDatabase {
 
     //////////DmTram//////////
     public static void AddDmTram(final Context context) {
-        ResClien restClient = new ResClien();
+        RESTClient restClient = new RESTClient();
         restClient.GetService().GetDMTRAMs(new Callback<List<DmTram>>() {
             @Override
             public void success(List<DmTram> DmTram, Response response) {
@@ -364,7 +297,7 @@ public class ControlDatabase {
 
     //////////DmXe//////////
     public static void AddDmXe(final Context context) {
-        ResClien restClient = new ResClien();
+        RESTClient restClient = new RESTClient();
         restClient.GetService().GetDMXEs(new Callback<List<DmXe>>() {
             @Override
             public void success(List<DmXe> DmXe, Response response) {
@@ -425,7 +358,7 @@ public class ControlDatabase {
 
     //////////DmTuyenChiTietTram//////////
     public static void AddDmTuyenChiTietTram(final Context context) {
-        ResClien restClient = new ResClien();
+        RESTClient restClient = new RESTClient();
         restClient.GetService().GetDMTUYENCHITIETTRAMs(new Callback<List<DmTuyenChiTietTram>>() {
             @Override
             public void success(List<DmTuyenChiTietTram> DmTuyenChiTietTram, Response response) {
@@ -486,7 +419,7 @@ public class ControlDatabase {
 
     //////////LoTrinhChoXe//////////
     public static void AddLoTrinhChoXe(final Context context) {
-        ResClien restClient = new ResClien();
+        RESTClient restClient = new RESTClient();
         restClient.GetService().GetLOTRINHCHOXEs(new Callback<List<LoTrinhChoXe>>() {
             @Override
             public void success(List<LoTrinhChoXe> LoTrinhChoXe, Response response) {
@@ -549,7 +482,7 @@ public class ControlDatabase {
 
     //////////DmTuyen//////////
     public static void AddDmTuyen(final Context context) {
-        ResClien restClient = new ResClien();
+        RESTClient restClient = new RESTClient();
         restClient.GetService().GetDMTUYENs(new Callback<List<DmTuyen>>() {
             @Override
             public void success(List<DmTuyen> DmTuyen, Response response) {
@@ -689,7 +622,7 @@ public class ControlDatabase {
 
     //////////DICHVU//////////
     public static void AddDichVu(final Context context) {
-        ResClien restClient = new ResClien();
+        RESTClient restClient = new RESTClient();
         restClient.GetService().GetDICHVUs(new Callback<List<DichVu>>() {
             @Override
             public void success(List<DichVu> DichVu, Response response) {
@@ -890,7 +823,7 @@ public class ControlDatabase {
 
     //////////DmHoaDon//////////
     public static void AddDmHoaDon(final Context context) {
-        ResClien restClient = new ResClien();
+        RESTClient restClient = new RESTClient();
         restClient.GetService().GetDMHOADONs(new Callback<List<DmHoaDon>>() {
             @Override
             public void success(List<DmHoaDon> DmHoaDon, Response response) {
@@ -968,7 +901,7 @@ public class ControlDatabase {
     //////////DmHoaDon//////////
     public static void AddtrackingGPS(final Context context,TrackingGps trackingGps) {
 
-        ResClien restClient = new ResClien();
+        RESTClient restClient = new RESTClient();
         restClient.GetService().PostTrackingGP(trackingGps,new Callback<List<TrackingGps>>() {
             @Override
             public void success(List<TrackingGps> TrackingGps, Response response) {

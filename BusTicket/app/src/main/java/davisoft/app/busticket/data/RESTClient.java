@@ -12,7 +12,7 @@ import retrofit.client.OkClient;
  * Created by TuNguyen on 01/12/2017.
  */
 
-public class ResClien {
+public class RESTClient {
     //You need to change the IP if you testing environment is not local machine
     //or you may have different URL than we have here
     // private static final String URL = "http://instinctcoder.com/wp-content/uploads/2015/08/";
@@ -20,7 +20,7 @@ public class ResClien {
     private retrofit.RestAdapter restAdapter;
     private ServiceConnect serviceman;
 
-    public ResClien()
+    public RESTClient()
     {
 
         final OkHttpClient okHttpClient = new OkHttpClient();
